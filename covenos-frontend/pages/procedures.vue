@@ -93,6 +93,8 @@
         </div>
         <select v-model="categoryFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
           <option value="">Todas as categorias</option>
+          <option value="CABELO">Cabelo</option>
+          <option value="ALISAMENTO">Alisamento</option>
           <option value="CORTE">Corte</option>
           <option value="TRATAMENTO">Tratamento</option>
           <option value="COLORACAO">Coloração</option>
@@ -100,6 +102,7 @@
           <option value="EPILACAO">Epilação</option>
           <option value="ESTETICA_FACIAL">Estética Facial</option>
           <option value="ESTETICA_CORPORAL">Estética Corporal</option>
+          <option value="OUTROS">Outros</option>
         </select>
         <select v-model="statusFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
           <option value="">Todos os status</option>
@@ -169,8 +172,10 @@
             </div>
             
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Produtos:</span>
-              <span class="text-white">{{ (procedure.products?.length || procedure.procedureProducts?.length || 0) }} itens</span>
+              <span class="text-gray-400">Ativo:</span>
+              <span :class="procedure.active ? 'text-green-400' : 'text-red-400'">
+                {{ procedure.active ? 'Sim' : 'Não' }}
+              </span>
             </div>
           </div>
           
@@ -267,6 +272,8 @@
                     <label class="block text-sm font-medium text-gray-300 mb-2">Categoria *</label>
                     <select v-model="procedureForm.category" required class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
                       <option value="">Selecione uma categoria</option>
+                      <option value="CABELO">Cabelo</option>
+                      <option value="ALISAMENTO">Alisamento</option>
                       <option value="CORTE">Corte</option>
                       <option value="TRATAMENTO">Tratamento</option>
                       <option value="COLORACAO">Coloração</option>
@@ -274,6 +281,7 @@
                       <option value="EPILACAO">Epilação</option>
                       <option value="ESTETICA_FACIAL">Estética Facial</option>
                       <option value="ESTETICA_CORPORAL">Estética Corporal</option>
+                      <option value="OUTROS">Outros</option>
                     </select>
                   </div>
                 </div>
@@ -318,104 +326,19 @@
                   </div>
                 </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Produtos Utilizados</label>
-            
-            <!-- Busca de produtos -->
-            <div class="relative mb-4">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          <div class="p-4 bg-blue-900/10 border border-blue-800 rounded-lg">
+            <div class="flex items-center space-x-3 mb-3">
+              <div class="p-2 bg-blue-500/20 rounded-lg">
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <input
-                v-model="productSearchTerm"
-                type="text"
-                placeholder="Buscar produtos..."
-                class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
-              />
-            </div>
-            
-            <!-- Lista de produtos -->
-            <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4 max-h-64 overflow-y-auto">
-              <div v-if="filteredProductsForModal.length === 0 && productSearchTerm" class="text-center py-4">
-                <svg class="w-12 h-12 mx-auto text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <p class="text-gray-400">Nenhum produto encontrado</p>
-                <p class="text-sm text-gray-500 mt-1">Tente buscar por outro termo</p>
+              <div>
+                <h4 class="text-sm font-medium text-blue-400">Produtos do Procedimento</h4>
+                <p class="text-sm text-gray-400">
+                  Os produtos serão selecionados durante a criação da comanda
+                </p>
               </div>
-              
-              <div v-else-if="products.length === 0" class="text-center py-8">
-                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-                <h3 class="text-lg font-semibold text-white mb-2">Nenhum produto disponível</h3>
-                <p class="text-gray-400">Cadastre produtos na página de Produtos primeiro</p>
-              </div>
-              
-              <div v-else class="space-y-2">
-                <label
-                  v-for="product in filteredProductsForModal"
-                  :key="product.id"
-                  class="flex items-center space-x-3 p-3 rounded-lg cursor-pointer hover:bg-gray-800/50 transition-all duration-200 group"
-                >
-                  <input
-                    type="checkbox"
-                    :value="product.id"
-                    v-model="procedureForm.productIds"
-                    class="w-4 h-4 text-purple-600 bg-gray-800 border-gray-700 rounded focus:ring-purple-500 focus:ring-2"
-                  />
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <h4 class="text-white font-medium group-hover:text-purple-400 transition-colors">
-                        {{ product.name }}
-                      </h4>
-                      <span class="text-xs px-2 py-1 bg-blue-900/30 text-blue-400 border border-blue-800 rounded-full">
-                        {{ getProductTypeLabel(product.type) }}
-                      </span>
-                    </div>
-                    <div class="flex items-center justify-between mt-1">
-                      <p class="text-sm text-gray-400">
-                        Estoque: {{ product.stock }} {{ product.unit || 'un' }}
-                        <span v-if="product.type === 'USO_INTERNO' && product.unitQuantity" class="text-gray-500">
-                          ({{ calculateTotalStock(product) }} {{ product.unitMeasurement }})
-                        </span>
-                      </p>
-                      <p v-if="product.price" class="text-sm font-medium text-green-400">
-                        {{ formatCurrency(product.price) }}
-                      </p>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-            
-            <!-- Produtos selecionados -->
-            <div v-if="procedureForm.productIds.length > 0" class="mt-4 p-4 bg-purple-900/20 border border-purple-800 rounded-lg">
-              <h4 class="text-sm font-medium text-purple-400 mb-2">
-                Produtos selecionados ({{ procedureForm.productIds.length }})
-              </h4>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="productId in procedureForm.productIds"
-                  :key="productId"
-                  class="inline-flex items-center px-3 py-1 bg-purple-900/40 text-purple-300 text-sm rounded-full border border-purple-800"
-                >
-                  {{ products.find(p => p.id === productId)?.name }}
-                  <button
-                    @click="removeProduct(productId)"
-                    class="ml-2 text-purple-400 hover:text-purple-300"
-                  >
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </span>
-              </div>
-              <p class="text-xs text-gray-400 mt-2">
-                💡 A quantidade de cada produto será definida durante a execução da comanda
-              </p>
             </div>
           </div>
                 
@@ -545,7 +468,6 @@ useSeoMeta({
 
 // Estado
 const procedures = ref([])
-const products = ref([])
 const loading = ref(true)
 const saving = ref(false)
 const deleting = ref(false)
@@ -553,7 +475,6 @@ const deleting = ref(false)
 const searchTerm = ref('')
 const categoryFilter = ref('')
 const statusFilter = ref('')
-const productSearchTerm = ref('')
 
 const showCreateModal = ref(false)
 const editingProcedure = ref(null)
@@ -565,7 +486,6 @@ const procedureForm = reactive({
   description: '',
   duration: '',
   price: '',
-  productIds: [],
   isActive: true
 })
 
@@ -609,16 +529,6 @@ const averagePrice = computed(() => {
   return total / procedures.value.length
 })
 
-const filteredProductsForModal = computed(() => {
-  if (!productSearchTerm.value) return products.value
-  
-  const term = productSearchTerm.value.toLowerCase()
-  return products.value.filter(product =>
-    product.name.toLowerCase().includes(term) ||
-    product.description?.toLowerCase().includes(term) ||
-    product.type?.toLowerCase().includes(term)
-  )
-})
 
 // Métodos
 const formatCurrency = (value) => {
@@ -630,38 +540,22 @@ const formatCurrency = (value) => {
 
 const getCategoryText = (category) => {
   const categories = {
+    CABELO: 'Cabelo',
+    ALISAMENTO: 'Alisamento',
     CORTE: 'Corte',
     TRATAMENTO: 'Tratamento',
     COLORACAO: 'Coloração',
     DESCOLORACAO: 'Descoloração',
     EPILACAO: 'Epilação',
     ESTETICA_FACIAL: 'Estética Facial',
-    ESTETICA_CORPORAL: 'Estética Corporal'
+    ESTETICA_CORPORAL: 'Estética Corporal',
+    OUTROS: 'Outros'
   }
   return categories[category] || category
 }
 
-const getProductTypeLabel = (type) => {
-  switch (type) {
-    case 'USO_INTERNO': return 'Uso Interno'
-    case 'VENDA_DIRETA': return 'Venda Direta'
-    default: return type
-  }
-}
 
-const calculateTotalStock = (product) => {
-  if (product.type === 'USO_INTERNO' && product.unitQuantity) {
-    return (product.stock * parseFloat(product.unitQuantity)).toFixed(2)
-  }
-  return product.stock
-}
 
-const removeProduct = (productId) => {
-  const index = procedureForm.productIds.indexOf(productId)
-  if (index > -1) {
-    procedureForm.productIds.splice(index, 1)
-  }
-}
 
 const loadData = async () => {
   try {
@@ -669,32 +563,16 @@ const loadData = async () => {
     
     console.log('🔄 Carregando procedimentos e produtos...')
     
-    const [proceduresRes, productsRes] = await Promise.all([
-      $api('/procedures').catch((error) => {
-        console.error('❌ Erro ao carregar procedimentos:', error)
-        return []
-      }),
-      $api('/products').catch((error) => {
-        console.error('❌ Erro ao carregar produtos:', error)
-        return []
-      })
-    ])
+    const proceduresRes = await $api('/procedures').catch((error) => {
+      console.error('❌ Erro ao carregar procedimentos:', error)
+      return []
+    })
     
     procedures.value = proceduresRes || []
-    products.value = (productsRes || []).filter(p => p.active)
     
     console.log('✅ Dados carregados:')
     console.log(`   📋 Procedimentos: ${procedures.value.length}`)
-    console.log(`   🧪 Produtos ativos: ${products.value.length}`)
-    console.log('   🧪 Produtos disponíveis:', products.value.map(p => `${p.name} (${p.active ? 'ativo' : 'inativo'})`))
     
-    // Debug: Verificar estrutura dos procedimentos
-    if (procedures.value.length > 0) {
-      console.log('📋 Estrutura do primeiro procedimento:', procedures.value[0])
-      console.log('📋 Produtos do primeiro procedimento:')
-      console.log('   - products:', procedures.value[0].products)
-      console.log('   - procedureProducts:', procedures.value[0].procedureProducts)
-    }
   } catch (error) {
     console.error('💥 Erro geral ao carregar dados:', error)
   } finally {
@@ -709,22 +587,12 @@ const resetForm = () => {
     description: '',
     duration: '',
     price: '',
-    productIds: [],
     isActive: true
   })
-  productSearchTerm.value = ''
 }
 
 const editProcedure = (procedure) => {
   editingProcedure.value = procedure
-  
-  // Mapear produtos corretamente (pode vir como 'products' ou 'procedureProducts')
-  let productIds = []
-  if (procedure.products?.length) {
-    productIds = procedure.products.map(p => p.id)
-  } else if (procedure.procedureProducts?.length) {
-    productIds = procedure.procedureProducts.map(pp => pp.productId || pp.product?.id).filter(Boolean)
-  }
   
   Object.assign(procedureForm, {
     name: procedure.name,
@@ -732,10 +600,8 @@ const editProcedure = (procedure) => {
     description: procedure.description || '',
     duration: procedure.duration,
     price: procedure.price,
-    productIds,
     isActive: procedure.active
   })
-  productSearchTerm.value = ''
   showCreateModal.value = false
 }
 
@@ -751,11 +617,6 @@ const saveProcedure = async () => {
   try {
     const { $api } = useNuxtApp()
     const token = useCookie('covenos-token')
-    
-    // Criar objeto apenas com os IDs dos produtos (sem quantidade)
-    const procedureProducts = procedureForm.productIds.map(productId => ({
-      productId
-    }))
     
     const payload = {
       name: procedureForm.name,
@@ -779,57 +640,6 @@ const saveProcedure = async () => {
       body: payload
     })
     
-    // Se há produtos selecionados, vinculá-los ao procedimento
-    if (procedureProducts.length > 0) {
-      const procedureId = editingProcedure.value?.id || response.id
-      
-      // Primeiro, desvincular todos os produtos existentes se for edição
-      if (editingProcedure.value) {
-        // Tentar ambos os formatos: products e procedureProducts
-        const existingProducts = editingProcedure.value.products || []
-        const existingProcedureProducts = editingProcedure.value.procedureProducts || []
-        
-        // Desvincular produtos do formato 'products'
-        for (const product of existingProducts) {
-          try {
-            await $api(`/procedures/${procedureId}/products/${product.id}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token.value}` }
-            })
-          } catch (error) {
-            console.warn('Erro ao desvincular produto:', product.id, error)
-          }
-        }
-        
-        // Desvincular produtos do formato 'procedureProducts'
-        for (const pp of existingProcedureProducts) {
-          const productId = pp.productId || pp.product?.id
-          if (productId) {
-            try {
-              await $api(`/procedures/${procedureId}/products/${productId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token.value}` }
-              })
-            } catch (error) {
-              console.warn('Erro ao desvincular produto:', productId, error)
-            }
-          }
-        }
-      }
-      
-      // Vincular os novos produtos (sem quantidade definida)
-      for (const productData of procedureProducts) {
-        try {
-          await $api(`/procedures/${procedureId}/products`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token.value}` },
-            body: productData
-          })
-        } catch (error) {
-          console.error('Erro ao vincular produto:', error)
-        }
-      }
-    }
     
     await loadData()
     closeModal()

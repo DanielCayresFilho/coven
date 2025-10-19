@@ -205,6 +205,14 @@
             >
               Concluído
             </button>
+            <button
+              v-if="comanda.status === 'CONCLUIDO' && (comanda.comandaClosedAt || comanda.status === 'CONCLUIDO')"
+              @click="rescheduleClient(comanda)"
+              class="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors"
+              title="Reagendar cliente"
+            >
+              Reagendar
+            </button>
           </div>
         </div>
       </div>
@@ -1605,6 +1613,11 @@ const finishComanda = async () => {
     
     console.error('Erro ao finalizar comanda:', errorMessage)
   }
+}
+
+const rescheduleClient = (comanda) => {
+  // Navigate to appointments page with client prefilled for new appointment
+  navigateTo(`/appointments?client=${comanda.clientId}&reschedule=${comanda.id}`)
 }
 
 // Função loadComandas removida - agora usamos apenas loadDashboardData

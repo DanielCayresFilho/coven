@@ -91,6 +91,7 @@
             <option value="AGENDADO">Agendado</option>
             <option value="CONCLUIDO">Concluído</option>
             <option value="CANCELADO">Cancelado</option>
+            <option value="BLOQUEADO">Bloqueado</option>
           </select>
         </div>
         <div>
@@ -206,7 +207,10 @@
                   </span>
                   <span v-if="appointment.procedures?.length" class="flex items-center">
                     <SparklesIcon class="w-4 h-4 mr-1" />
-                    {{ appointment.procedures.length }} procedimento{{ appointment.procedures.length > 1 ? 's' : '' }}
+                    {{ appointment.procedures[0]?.procedure?.name || 'Procedimento' }}
+                    <span v-if="appointment.procedures.length > 1" class="ml-1">
+                      +{{ appointment.procedures.length - 1 }} outros
+                    </span>
                   </span>
                 </div>
               </div>
@@ -284,11 +288,13 @@
             <div
               v-for="day in weekDays"
               :key="`${day.date}-${hour}`"
-              class="border-r border-gray-700/30 last:border-r-0 relative"
+              class="border-r border-gray-700/30 last:border-r-0 relative cursor-pointer hover:bg-purple-900/10 transition-colors"
               :class="{ 'bg-purple-900/5': day.isToday }"
+              @click="handleTimeSlotClick(day.date, hour)"
+              :title="`Clique para agendar ou bloquear às ${formatHour(hour)} de ${day.dayNumber}/${day.fullDate.getMonth() + 1}`"
             >
               <!-- Half-hour line -->
-              <div class="absolute top-1/2 left-0 right-0 border-t border-gray-800/30"></div>
+              <div class="absolute top-1/2 left-0 right-0 border-t border-gray-800/30 pointer-events-none"></div>
             </div>
           </div>
 
@@ -302,13 +308,31 @@
               :style="getAppointmentStyle(appointment)"
               :class="getAppointmentClass(appointment.status)"
             >
-              <div class="p-2 h-full flex flex-col justify-between overflow-hidden">
+              <!-- Blocked time slot content -->
+              <div v-if="appointment.status === 'BLOQUEADO'" class="p-2 h-full flex flex-col justify-center items-center">
+                <div class="text-center">
+                  <div class="text-lg mb-1">🔒</div>
+                  <div class="text-xs font-medium text-white opacity-90">BLOQUEADO</div>
+                  <div v-if="appointment.observations" class="text-xs text-gray-300 opacity-75 mt-1 truncate">
+                    {{ appointment.observations }}
+                  </div>
+                  <div class="text-xs text-gray-400 opacity-60 mt-1">
+                    {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Normal appointment content -->
+              <div v-else class="p-2 h-full flex flex-col justify-between overflow-hidden">
                 <div class="space-y-1">
                   <div class="text-xs font-semibold text-white truncate group-hover:scale-105 transition-transform">
                     {{ appointment.client?.name }}
                   </div>
                   <div class="text-xs text-gray-200 opacity-90 truncate">
                     {{ appointment.user?.name || 'Sem profissional' }}
+                  </div>
+                  <div class="text-xs text-blue-300 opacity-75 truncate">
+                    {{ appointment.procedures?.[0]?.procedure?.name || 'Sem procedimento' }}
                   </div>
                 </div>
                 
@@ -847,8 +871,13 @@ const weekAppointments = computed(() => {
   end.setDate(start.getDate() + 7)
   
   return filteredAppointments.value.filter(apt => {
-    const aptDate = new Date(apt.date)
-    return aptDate >= start && aptDate < end
+    // Use startTime for more accurate date comparison
+    const aptDateTime = new Date(apt.startTime)
+    const aptDate = new Date(aptDateTime.getFullYear(), aptDateTime.getMonth(), aptDateTime.getDate())
+    const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+    const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate())
+    
+    return aptDate >= startDate && aptDate < endDate
   })
 })
 
@@ -947,13 +976,12 @@ const formatTimeRange = (startTime, endTime) => {
 }
 
 const getAppointmentStyle = (appointment) => {
-  const appointmentDate = new Date(appointment.date)
   const startTime = new Date(appointment.startTime)
   const endTime = appointment.endTime ? new Date(appointment.endTime) : new Date(startTime.getTime() + (60 * 60 * 1000)) // Default 1 hour
   
-  // Find which day column this appointment belongs to
+  // Find which day column this appointment belongs to - use startTime for consistency
   const dayIndex = weekDays.value.findIndex(day => 
-    appointmentDate.toDateString() === new Date(day.date).toDateString()
+    startTime.toDateString() === new Date(day.date).toDateString()
   )
   
   if (dayIndex === -1) return { display: 'none' }
@@ -1004,6 +1032,8 @@ const getAppointmentClass = (status) => {
       return `${baseClasses} bg-purple-600/90 border-purple-400 hover:bg-purple-500/90`
     case 'CANCELADO':
       return `${baseClasses} bg-red-600/90 border-red-400 hover:bg-red-500/90`
+    case 'BLOQUEADO':
+      return `${baseClasses} bg-gray-600/90 border-gray-400 hover:bg-gray-500/90`
     default:
       return `${baseClasses} bg-blue-600/90 border-blue-400 hover:bg-blue-500/90`
   }
@@ -1019,6 +1049,8 @@ const getStatusBadgeClass = (status) => {
       return 'bg-purple-900/50 text-purple-400 border border-purple-800'
     case 'CANCELADO':
       return 'bg-red-900/50 text-red-400 border border-red-800'
+    case 'BLOQUEADO':
+      return 'bg-gray-900/50 text-gray-400 border border-gray-800'
     default:
       return 'bg-blue-900/50 text-blue-400 border border-blue-800'
   }
@@ -1030,6 +1062,7 @@ const getStatusLabel = (status) => {
     case 'CONFIRMADO': return 'Confirmado'
     case 'CONCLUIDO': return 'Concluído'
     case 'CANCELADO': return 'Cancelado'
+    case 'BLOQUEADO': return 'Bloqueado'
     default: return status
   }
 }
@@ -1045,9 +1078,186 @@ const handleAppointmentClick = (appointment) => {
       // Option to open comanda
       openComanda(appointment)
       break
+    case 'BLOQUEADO':
+      // Option to remove block or edit reason
+      handleBlockedSlot(appointment)
+      break
     default:
       // Default to edit
       editAppointment(appointment)
+  }
+}
+
+const handleTimeSlotClick = (date, hour) => {
+  // Formato da data para o input (YYYY-MM-DD)
+  const formattedDate = date
+  
+  // Formato do horário (HH:MM)
+  const formattedTime = hour.toString().padStart(2, '0') + ':00'
+  
+  // Check if there's already an appointment at this time slot
+  const existingAppointment = weekAppointments.value.find(apt => {
+    const aptDate = new Date(apt.startTime)
+    const slotDate = new Date(`${date}T${formattedTime}`)
+    return Math.abs(aptDate - slotDate) < 60000 // Within 1 minute
+  })
+  
+  if (existingAppointment) {
+    // If there's an existing appointment, open it for editing
+    handleAppointmentClick(existingAppointment)
+    return
+  }
+  
+  // Show context menu for empty slot
+  const action = confirm('O que deseja fazer neste horário?\n\nOK = Agendar cliente\nCancelar = Bloquear horário')
+  
+  if (action) {
+    // User chose to create appointment
+    Object.assign(appointmentForm, {
+      clientId: '',
+      userId: '',
+      date: formattedDate,
+      startTime: formattedTime,
+      procedureIds: [],
+      status: 'AGENDADO',
+      observations: '',
+      discount: 0
+    })
+    
+    editingAppointment.value = null
+    showCreateModal.value = true
+  } else {
+    // User chose to block time slot
+    createTimeBlock(date, hour)
+  }
+}
+
+const handleBlockedSlot = async (appointment) => {
+  const action = confirm(`Horário bloqueado: "${appointment.observations || 'Sem motivo especificado'}"\n\nO que deseja fazer?\n\nOK = Remover bloqueio\nCancelar = Editar motivo`)
+  
+  if (action) {
+    // Remove block
+    await removeTimeBlock(appointment)
+  } else {
+    // Edit block reason
+    await editTimeBlock(appointment)
+  }
+}
+
+const removeTimeBlock = async (appointment) => {
+  try {
+    const { $api } = useNuxtApp()
+    deleting.value = true
+    
+    const confirmed = confirm('Tem certeza que deseja remover este bloqueio?')
+    if (!confirmed) return
+    
+    await $api(`/appointments/${appointment.id}`, {
+      method: 'DELETE'
+    })
+    
+    useToast().add({
+      type: 'success',
+      title: 'Bloqueio removido!',
+      description: 'O horário foi desbloqueado com sucesso.'
+    })
+    
+    // Reload appointments
+    await loadData()
+    
+  } catch (error) {
+    console.error('❌ Erro ao remover bloqueio:', error)
+    useToast().add({
+      type: 'error',
+      title: 'Erro ao remover bloqueio',
+      description: 'Não foi possível remover o bloqueio. Tente novamente.'
+    })
+  } finally {
+    deleting.value = false
+  }
+}
+
+const editTimeBlock = async (appointment) => {
+  try {
+    const { $api } = useNuxtApp()
+    
+    const newReason = prompt('Novo motivo do bloqueio:', appointment.observations || 'Horário bloqueado')
+    if (newReason === null) return // User cancelled
+    
+    await $api(`/appointments/${appointment.id}`, {
+      method: 'PATCH',
+      body: {
+        observations: newReason
+      }
+    })
+    
+    useToast().add({
+      type: 'success',
+      title: 'Bloqueio atualizado!',
+      description: 'O motivo do bloqueio foi atualizado.'
+    })
+    
+    // Reload appointments
+    await loadData()
+    
+  } catch (error) {
+    console.error('❌ Erro ao editar bloqueio:', error)
+    useToast().add({
+      type: 'error',
+      title: 'Erro ao editar bloqueio',
+      description: 'Não foi possível editar o bloqueio. Tente novamente.'
+    })
+  }
+}
+
+const createTimeBlock = async (date, hour) => {
+  try {
+    const { $api } = useNuxtApp()
+    saving.value = true
+    
+    // Get block reason from user
+    const reason = prompt('Motivo do bloqueio (opcional):', 'Horário bloqueado')
+    if (reason === null) return // User cancelled
+    
+    const formattedTime = hour.toString().padStart(2, '0') + ':00'
+    const startTime = new Date(`${date}T${formattedTime}`)
+    const endTime = new Date(startTime.getTime() + (60 * 60 * 1000)) // 1 hour duration
+    
+    const blockData = {
+      clientId: null, // No client for blocks
+      userId: hairdressers.value[0]?.id || null, // Default to first hairdresser or null
+      date: date,
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      status: 'BLOQUEADO',
+      observations: reason,
+      totalPrice: 0,
+      procedureIds: [] // No procedures for blocks
+    }
+    
+    await $api('/appointments', {
+      method: 'POST',
+      body: blockData
+    })
+    
+    useToast().add({
+      type: 'success',
+      title: 'Horário bloqueado!',
+      description: `Horário das ${hour}:00 foi bloqueado com sucesso.`
+    })
+    
+    // Reload appointments to show the new block
+    await loadData()
+    
+  } catch (error) {
+    console.error('❌ Erro ao bloquear horário:', error)
+    useToast().add({
+      type: 'error',
+      title: 'Erro ao bloquear horário',
+      description: 'Não foi possível bloquear o horário. Tente novamente.'
+    })
+  } finally {
+    saving.value = false
   }
 }
 
@@ -1188,11 +1398,20 @@ const resetForm = () => {
 
 const editAppointment = (appointment) => {
   editingAppointment.value = appointment
+  
+  // Formatar data corretamente para o input date (YYYY-MM-DD)
+  const appointmentDate = new Date(appointment.date)
+  const formattedDate = appointmentDate.toISOString().split('T')[0]
+  
+  // Formatar horário corretamente para o input time (HH:MM)
+  const appointmentStartTime = new Date(appointment.startTime)
+  const formattedTime = appointmentStartTime.toTimeString().substring(0, 5)
+  
   Object.assign(appointmentForm, {
     clientId: appointment.clientId,
     userId: appointment.userId || '',
-    date: appointment.date,
-    startTime: appointment.startTime?.split('T')[1]?.substr(0, 5),
+    date: formattedDate,
+    startTime: formattedTime,
     procedureIds: appointment.procedures?.map(p => p.procedureId) || [],
     status: appointment.status,
     observations: appointment.observations || '',
@@ -1397,5 +1616,15 @@ onMounted(() => {
   currentWeekStart.value = lastMonday
   
   loadData()
+  
+  // Check for reschedule parameters
+  const route = useRoute()
+  if (route.query.client && route.query.reschedule) {
+    // Pre-fill form for reschedule
+    setTimeout(() => {
+      newAppointmentForm.clientId = route.query.client
+      showNewAppointmentModal.value = true
+    }, 1000) // Wait for data to load
+  }
 })
 </script>

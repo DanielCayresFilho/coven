@@ -85,6 +85,7 @@
           <option value="today">Hoje</option>
           <option value="week">Esta Semana</option>
           <option value="month">Este Mês</option>
+          <option value="last-month">Mês Anterior</option>
           <option value="year">Este Ano</option>
         </select>
         
@@ -510,7 +511,7 @@ const loading = ref(true)
 const saving = ref(false)
 const deleting = ref(false)
 
-const periodFilter = ref('month')
+const periodFilter = ref('all')
 const typeFilter = ref('')
 const categoryFilter = ref('')
 const searchTerm = ref('')
@@ -550,6 +551,9 @@ const filteredTransactions = computed(() => {
           return transDate >= weekStart;
         case 'month':
           return transDate.getMonth() === now.getMonth() && transDate.getFullYear() === now.getFullYear();
+        case 'last-month':
+          const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+          return transDate.getMonth() === lastMonth.getMonth() && transDate.getFullYear() === lastMonth.getFullYear();
         case 'year':
           return transDate.getFullYear() === now.getFullYear();
         default:

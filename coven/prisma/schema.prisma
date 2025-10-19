@@ -181,18 +181,19 @@ model FinancialTransaction {
 }
 
 model Reminder {
-  id          String       @id @default(uuid())
+  id          String          @id @default(uuid())
   type        ReminderType
   title       String
   description String?
   date        DateTime
+  priority    ReminderPriority @default(POUCO_URGENTE)
   userId      String?
   clientId    String?
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  client      Client?      @relation(fields: [clientId], references: [id])
-  user        User?        @relation(fields: [userId], references: [id])
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  client      Client?          @relation(fields: [clientId], references: [id])
+  user        User?            @relation(fields: [userId], references: [id])
 
   @@index([clientId], map: "reminders_clientId_fkey")
   @@index([userId], map: "reminders_userId_fkey")
@@ -209,6 +210,7 @@ enum AppointmentStatus {
   CONFIRMADO
   CONCLUIDO
   CANCELADO
+  BLOQUEADO
 }
 
 enum PaymentMethod {
@@ -231,6 +233,12 @@ enum ReminderType {
   MANUAL
   PRODUTO_BAIXO
   AGENDAMENTO
+}
+
+enum ReminderPriority {
+  POUCO_URGENTE
+  URGENTE
+  IMEDIATO
 }
 
 enum TransactionType {

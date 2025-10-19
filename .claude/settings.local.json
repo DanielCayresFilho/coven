@@ -50,7 +50,16 @@
       "Bash(git remote add:*)",
       "Bash(git push:*)",
       "Bash(ssh:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(sudo systemctl status:*)",
+      "Bash(sudo nginx:*)",
+      "Bash(sudo tail:*)",
+      "Bash(sudo systemctl:*)",
+      "Bash(sudo mysql:*)",
+      "Bash(pm2 logs:*)",
+      "Bash(pm2 restart:*)",
+      "Bash(pm2 stop:*)",
+      "Bash(pm2 start:*)"
     ],
     "deny": []
   }

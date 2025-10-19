@@ -5,7 +5,7 @@ import {
   IsEnum,
   IsDateString,
 } from 'class-validator';
-import { ReminderType } from '@prisma/client';
+import { ReminderType, ReminderPriority } from '@prisma/client';
 
 export class CreateReminderDto {
   @IsEnum(ReminderType)
@@ -21,6 +21,10 @@ export class CreateReminderDto {
 
   @IsDateString()
   date: string;
+
+  @IsEnum(ReminderPriority)
+  @IsOptional()
+  priority?: ReminderPriority;
 
   @IsString()
   @IsOptional()

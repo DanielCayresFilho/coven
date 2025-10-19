@@ -148,16 +148,16 @@
               <span class="text-gray-400">Estoque:</span>
               <span class="text-white">
                 <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
-                  <span>{{ calculateAvailableStock(product).availableUnits }} {{ product.unit || 'un' }} disponível</span>
+                  <span>{{ calculateAvailableStock(product).availableUnits }} {{ product.unit || 'unidade' }} disponível</span>
                   <span v-if="calculateAvailableStock(product).remainingVolume > 0" class="text-gray-400 text-xs">
                     + {{ calculateAvailableStock(product).remainingVolume }}{{ product.unitMeasurement }}
                   </span>
                   <div class="text-gray-500 text-xs">
-                    {{ product.stock }} {{ product.unit || 'un' }} total | {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }} disponível
+                    {{ product.stock }} {{ product.unit || 'unidade' }} total | {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }} disponível
                   </div>
                 </template>
                 <template v-else>
-                  {{ product.stock }} {{ product.unit || 'un' }}
+                  {{ product.stock }} {{ product.unit || 'unidade' }}
                 </template>
               </span>
             </div>
@@ -450,7 +450,7 @@
                 
                 <div class="mb-4 p-4 bg-gray-800/50 rounded-lg">
                   <p class="text-sm text-gray-400">Estoque atual:</p>
-                  <p class="text-xl font-bold text-white mt-1">{{ stockProduct.stock }} {{ stockProduct.unit || 'un' }}</p>
+                  <p class="text-xl font-bold text-white mt-1">{{ stockProduct.stock }} {{ stockProduct.unit || 'unidade' }}</p>
                 </div>
                 
                 <form @submit.prevent="adjustStock" class="space-y-4">
@@ -489,7 +489,7 @@
                   
                   <div v-if="stockForm.type && stockForm.quantity" class="p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
                     <p class="text-sm text-blue-400">
-                      <strong>Novo estoque:</strong> {{ calculateNewStock() }} {{ stockProduct.unit || 'un' }}
+                      <strong>Novo estoque:</strong> {{ calculateNewStock() }} {{ stockProduct.unit || 'unidade' }}
                     </p>
                   </div>
                   

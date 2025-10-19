@@ -105,6 +105,9 @@
                       <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" :class="getReminderTypeClass(reminder.type)">
                         {{ getReminderTypeText(reminder.type) }}
                       </span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" :class="getPriorityClass(reminder.priority)">
+                        {{ getPriorityText(reminder.priority) }}
+                      </span>
                     </div>
                   </div>
                   
@@ -817,6 +820,15 @@
                 </div>
                 
                 <div>
+                  <label class="block text-sm font-medium text-gray-300 mb-2">Prioridade</label>
+                  <select v-model="reminderForm.priority" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-yellow-500 transition-colors">
+                    <option value="POUCO_URGENTE">Pouco Urgente</option>
+                    <option value="URGENTE">Urgente</option>
+                    <option value="IMEDIATO">Imediato</option>
+                  </select>
+                </div>
+                
+                <div>
                   <label class="block text-sm font-medium text-gray-300 mb-2">Data e Hora *</label>
                   <input
                     v-model="reminderForm.date"
@@ -927,6 +939,7 @@ const reminderFilters = reactive({
 const reminderForm = reactive({
   title: '',
   type: 'MANUAL',
+  priority: 'POUCO_URGENTE',
   date: '',
   clientId: '',
   description: ''
@@ -1033,6 +1046,24 @@ const getReminderTypeText = (type) => {
     AGENDAMENTO: 'Agendamento'
   }
   return texts[type] || type
+}
+
+const getPriorityClass = (priority) => {
+  const classes = {
+    POUCO_URGENTE: 'bg-green-900/50 text-green-400 border border-green-800',
+    URGENTE: 'bg-yellow-900/50 text-yellow-400 border border-yellow-800', 
+    IMEDIATO: 'bg-red-900/50 text-red-400 border border-red-800'
+  }
+  return classes[priority] || 'bg-gray-900/50 text-gray-400 border border-gray-800'
+}
+
+const getPriorityText = (priority) => {
+  const texts = {
+    POUCO_URGENTE: 'Pouco Urgente',
+    URGENTE: 'Urgente',
+    IMEDIATO: 'Imediato'
+  }
+  return texts[priority] || priority
 }
 
 // Funções Evolution API
@@ -1351,6 +1382,7 @@ const resetReminderForm = () => {
   Object.assign(reminderForm, {
     title: '',
     type: 'MANUAL',
+    priority: 'POUCO_URGENTE',
     date: '',
     clientId: '',
     description: ''
@@ -1362,6 +1394,7 @@ const editReminder = (reminder) => {
   Object.assign(reminderForm, {
     title: reminder.title,
     type: reminder.type,
+    priority: reminder.priority || 'POUCO_URGENTE',
     date: reminder.date ? new Date(reminder.date).toISOString().slice(0, 16) : '',
     clientId: reminder.clientId || '',
     description: reminder.description || ''
@@ -1385,6 +1418,7 @@ const saveReminder = async () => {
     const payload = {
       title: reminderForm.title,
       type: reminderForm.type,
+      priority: reminderForm.priority,
       date: new Date(reminderForm.date).toISOString(),
       clientId: reminderForm.clientId || undefined,
       description: reminderForm.description || undefined
