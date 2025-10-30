@@ -18,6 +18,9 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     // Inicializar store com dados salvos
     async initAuth() {
+      // Executar apenas no client-side
+      if (import.meta.server) return
+
       const token = useCookie('covenos-token', {
         default: () => null,
         httpOnly: false,

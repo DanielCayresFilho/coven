@@ -14,6 +14,14 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
+  // Configuração do Pinia
+  pinia: {
+    storesDirs: ['./stores/**'],
+    disableVuex: true,
+    // Desabilitar hidratação automática para evitar problemas de serialização
+    autoImports: ['defineStore', 'acceptHMRUpdate']
+  },
+
   // CSS Global
   css: [
     '~/assets/css/main.css'
