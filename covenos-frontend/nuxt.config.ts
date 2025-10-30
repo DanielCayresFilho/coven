@@ -2,6 +2,11 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+
+  // Desabilitar SSR para evitar problemas de serialização
+  // Este é um CRM interno, não precisa de SEO
+  ssr: false,
+
   typescript: {
     typeCheck: false
   },
