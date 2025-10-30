@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   // Runtime Config para API
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3009/api',
+      apiBase: process.env.NUXT_PUBLIC_API_URL || process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3009',
       appName: 'Coven Beauty'
     }
   },

@@ -36,9 +36,10 @@ export const useAuthStore = defineStore('auth', {
 
       if (token.value && userData.value) {
         this.token = token.value
-        this.user = userData.value
+        // Converter para objeto simples para evitar problemas de serialização
+        this.user = JSON.parse(JSON.stringify(userData.value))
         this.isAuthenticated = true
-        
+
         // Validar token no servidor
         try {
           await this.validateToken()
@@ -108,7 +109,8 @@ export const useAuthStore = defineStore('auth', {
     // Definir dados de autenticação
     async setAuthData(token: string, user: User) {
       this.token = token
-      this.user = user
+      // Converter para objeto simples para evitar problemas de serialização
+      this.user = JSON.parse(JSON.stringify(user))
       this.isAuthenticated = true
 
       // Salvar nos cookies
@@ -119,7 +121,7 @@ export const useAuthStore = defineStore('auth', {
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7 // 7 dias
       })
-      
+
       const userCookie = useCookie('covenos-user', {
         default: () => null,
         httpOnly: false,
@@ -129,7 +131,7 @@ export const useAuthStore = defineStore('auth', {
       })
 
       tokenCookie.value = token
-      userCookie.value = user
+      userCookie.value = JSON.parse(JSON.stringify(user))
     },
 
     // Validar token no servidor
@@ -153,9 +155,9 @@ export const useAuthStore = defineStore('auth', {
 
         // Atualizar dados do usuário se necessário
         if (response.user) {
-          this.user = response.user
+          this.user = JSON.parse(JSON.stringify(response.user))
           const userCookie = useCookie('covenos-user')
-          userCookie.value = response.user
+          userCookie.value = JSON.parse(JSON.stringify(response.user))
         }
 
         return true
@@ -178,9 +180,9 @@ export const useAuthStore = defineStore('auth', {
         })
 
         if (response) {
-          this.user = response
+          this.user = JSON.parse(JSON.stringify(response))
           const userCookie = useCookie('covenos-user')
-          userCookie.value = response
+          userCookie.value = JSON.parse(JSON.stringify(response))
         }
       } catch (error) {
         console.error('Error refreshing user data:', error)
