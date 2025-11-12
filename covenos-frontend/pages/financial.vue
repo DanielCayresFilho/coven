@@ -187,9 +187,24 @@
     <!-- Transactions Table -->
     <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden">
       <div class="p-6 border-b border-gray-800">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-4">
           <h3 class="text-lg font-semibold text-white">Transações</h3>
-          <span class="text-sm text-gray-400">{{ filteredTransactions.length }} registros</span>
+          <span class="text-sm text-gray-400">{{ displayTransactions.length }} registros</span>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button
+            v-for="tab in transactionTabs"
+            :key="tab.key"
+            @click="transactionCategoryTab = tab.key"
+            :class="[
+              'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
+              transactionCategoryTab === tab.key
+                ? 'bg-purple-600 text-white border-purple-500'
+                : 'bg-gray-800/60 text-gray-300 border-gray-700 hover:border-purple-500/60'
+            ]"
+          >
+            {{ tab.label }}
+          </button>
         </div>
       </div>
       
@@ -199,7 +214,7 @@
         </div>
       </div>
       
-      <div v-else-if="filteredTransactions.length === 0" class="text-center py-16">
+      <div v-else-if="displayTransactions.length === 0" class="text-center py-16">
         <BanknotesIcon class="w-16 h-16 mx-auto text-gray-600 mb-4" />
         <p class="text-lg font-medium text-white mb-2">Nenhuma transação encontrada</p>
         <p class="text-sm text-gray-400">Adicione uma nova transação para começar</p>
@@ -219,7 +234,7 @@
           </thead>
           <tbody class="divide-y divide-gray-800">
             <tr
-              v-for="transaction in filteredTransactions"
+              v-for="transaction in displayTransactions"
               :key="transaction.id"
               class="hover:bg-gray-800/30 transition-colors duration-150"
             >
@@ -515,6 +530,14 @@ const periodFilter = ref('all')
 const typeFilter = ref('')
 const categoryFilter = ref('')
 const searchTerm = ref('')
+const transactionCategoryTab = ref('ALL')
+
+const transactionTabs = [
+  { key: 'ALL', label: 'Todas' },
+  { key: 'Atendimentos', label: 'Atendimentos' },
+  { key: 'Vendas', label: 'Vendas' },
+  { key: 'Uso Interno', label: 'Uso interno' }
+]
 
 const showCreateModal = ref(false)
 const editingTransaction = ref(null)
@@ -582,6 +605,15 @@ const filteredTransactions = computed(() => {
   }
 
   return filtered.sort((a, b) => new Date(b.date) - new Date(a.date))
+})
+
+const displayTransactions = computed(() => {
+  if (transactionCategoryTab.value === 'ALL') {
+    return filteredTransactions.value
+  }
+  return filteredTransactions.value.filter(
+    transaction => transaction.category === transactionCategoryTab.value
+  )
 })
 
 const categories = computed(() => {

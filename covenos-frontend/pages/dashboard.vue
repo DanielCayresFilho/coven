@@ -92,9 +92,17 @@
             <h2 class="text-lg font-semibold text-white">Metas em andamento</h2>
             <p class="text-sm text-gray-400">Acompanhe o progresso semanal e mensal</p>
           </div>
-          <NuxtLink to="/financial" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
-            Ver financeiro →
-          </NuxtLink>
+          <div class="flex items-center gap-3">
+            <button
+              @click="openGoalsModal"
+              class="px-3 py-1.5 text-xs font-medium text-white bg-purple-600/80 hover:bg-purple-600 rounded-lg transition-colors"
+            >
+              Editar metas
+            </button>
+            <NuxtLink to="/financial" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+              Ver financeiro →
+            </NuxtLink>
+          </div>
         </div>
 
         <div v-if="loadingGoals" class="space-y-3">
@@ -514,7 +522,70 @@
       </div>
     </div>
 
-    <!-- Modal de Lembrete -->
+    <!-- Modal de Metas -->
+    <div v-if="showGoalsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-gray-900 rounded-2xl border border-gray-700/60 w-full max-w-lg overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60">
+          <div>
+            <h2 class="text-xl font-semibold text-white">Atualizar metas</h2>
+            <p class="text-xs text-gray-400 mt-1">Defina as metas financeiras semanais e mensais.</p>
+          </div>
+          <button @click="closeGoalsModal" class="text-gray-400 hover:text-white transition-colors">
+            <XMarkIcon class="w-6 h-6" />
+          </button>
+        </div>
+
+        <form @submit.prevent="saveGoals" class="px-6 py-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Meta semanal</label>
+            <div class="relative">
+              <input
+                v-model.number="goalsForm.weeklyTarget"
+                type="number"
+                min="0"
+                step="10"
+                class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                placeholder="Valor em reais"
+              />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">R$</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Meta mensal</label>
+            <div class="relative">
+              <input
+                v-model.number="goalsForm.monthlyTarget"
+                type="number"
+                min="0"
+                step="10"
+                class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                placeholder="Valor em reais"
+              />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">R$</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              @click="closeGoalsModal"
+              class="px-4 py-2 rounded-lg border border-gray-700 text-sm text-gray-300 hover:text-white hover:border-gray-500 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              :disabled="isSavingGoals"
+              class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-medium shadow-lg shadow-purple-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {{ isSavingGoals ? 'Salvando...' : 'Salvar metas' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div v-if="showReminderModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div class="bg-gray-900 rounded-2xl border border-gray-700/60 w-full max-w-lg overflow-hidden">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60">
@@ -1033,6 +1104,13 @@ const activeComandas = ref([])
 const goals = ref([])
 const reminders = ref([])
 
+const showGoalsModal = ref(false)
+const isSavingGoals = ref(false)
+const goalsForm = reactive({
+  weeklyTarget: 0,
+  monthlyTarget: 0
+})
+
 // Modal states
 const showProductModal = ref(false)
 const showFinishModal = ref(false)
@@ -1369,6 +1447,70 @@ const getQuantityStep = (product) => {
   
   // Para outros tipos, usar inteiros
   return 1
+}
+
+const openGoalsModal = () => {
+  goalsForm.weeklyTarget = weeklyGoal.value
+    ? toNumber(weeklyGoal.value.targetAmount)
+    : 0
+  goalsForm.monthlyTarget = monthlyGoal.value
+    ? toNumber(monthlyGoal.value.targetAmount)
+    : 0
+  showGoalsModal.value = true
+}
+
+const closeGoalsModal = () => {
+  showGoalsModal.value = false
+}
+
+const saveGoals = async () => {
+  if (isSavingGoals.value) return
+
+  try {
+    isSavingGoals.value = true
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+
+    const requests = []
+
+    if (weeklyGoal.value) {
+      requests.push(
+        $api(`/goals/${weeklyGoal.value.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            targetAmount: Number(goalsForm.weeklyTarget)
+          })
+        })
+      )
+    }
+
+    if (monthlyGoal.value) {
+      requests.push(
+        $api(`/goals/${monthlyGoal.value.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            targetAmount: Number(goalsForm.monthlyTarget)
+          })
+        })
+      )
+    }
+
+    await Promise.all(requests)
+    await loadDashboardData()
+    closeGoalsModal()
+  } catch (error) {
+    console.error('Erro ao salvar metas:', error)
+  } finally {
+    isSavingGoals.value = false
+  }
 }
 
 const formatReminderType = (type) => {
@@ -2008,10 +2150,6 @@ const loadDashboardData = async () => {
     
     // Carregar dados em paralelo
     const today = new Date()
-    const remindersStart = new Date(today)
-    remindersStart.setHours(0, 0, 0, 0)
-    const remindersEnd = new Date(remindersStart)
-    remindersEnd.setDate(remindersEnd.getDate() + 30)
 
     const [appointmentsResponse, clientsResponse, productsResponse, goalsResponse, remindersResponse] = await Promise.all([
       $api('/appointments', {
@@ -2038,7 +2176,7 @@ const loadDashboardData = async () => {
           'Authorization': `Bearer ${token.value}`
         }
       }).catch(() => []),
-      $api(`/reminders?status=active&startDate=${encodeURIComponent(remindersStart.toISOString())}&endDate=${encodeURIComponent(remindersEnd.toISOString())}`, {
+      $api('/reminders?status=active', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token.value}`
