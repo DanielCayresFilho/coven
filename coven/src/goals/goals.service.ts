@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
-import { GoalPeriod } from '@prisma/client';
+import { Goal, GoalPeriod } from '@prisma/client';
 
 @Injectable()
 export class GoalsService {
@@ -230,7 +230,7 @@ export class GoalsService {
       },
     });
 
-    const goals = [];
+    const goals: Goal[] = [];
 
     if (!existingWeekly) {
       const weeklyGoal = await this.prisma.goal.create({

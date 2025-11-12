@@ -26,9 +26,14 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto) {
     // Calcular usableAmount inicial se for produto de uso interno
-    let usableAmount = null;
-    if (createProductDto.type === 'USO_INTERNO' && createProductDto.unitQuantity && createProductDto.stock) {
-      usableAmount = createProductDto.stock * Number(createProductDto.unitQuantity);
+    let usableAmount: number | null = null;
+    if (
+      createProductDto.type === 'USO_INTERNO' &&
+      createProductDto.unitQuantity &&
+      createProductDto.stock
+    ) {
+      usableAmount =
+        Number(createProductDto.stock) * Number(createProductDto.unitQuantity);
     }
 
     const product = await this.prisma.product.create({
