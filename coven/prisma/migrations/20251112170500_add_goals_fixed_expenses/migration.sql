@@ -1,6 +1,6 @@
 -- Alter products to support usable amount for internal-use items
 ALTER TABLE `products`
-ADD COLUMN `usableAmount` DECIMAL(10, 2) NULL AFTER `unitMeasurement`;
+  ADD COLUMN IF NOT EXISTS `usableAmount` DECIMAL(10, 2) NULL AFTER `unitMeasurement`;
 
 -- Extend reminders enum with DESPESA_FIXA
 ALTER TABLE `reminders`
@@ -9,7 +9,7 @@ MODIFY COLUMN `type`
     NOT NULL;
 
 -- Create goals table for monthly/weekly targets
-CREATE TABLE `goals` (
+CREATE TABLE IF NOT EXISTS `goals` (
   `id` VARCHAR(191) NOT NULL,
   `period` ENUM('SEMANAL', 'MENSAL') NOT NULL,
   `targetAmount` DECIMAL(10, 2) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `goals` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Create fixed expenses table for recurring costs
-CREATE TABLE `fixed_expenses` (
+CREATE TABLE IF NOT EXISTS `fixed_expenses` (
   `id` VARCHAR(191) NOT NULL,
   `name` VARCHAR(191) NOT NULL,
   `amount` DECIMAL(10, 2) NOT NULL,
