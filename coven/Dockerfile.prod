@@ -35,6 +35,8 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY prisma ./prisma
+# Deliver database dump for restores/external usage
+COPY --from=builder /app/coven_backup_20251023.sql ./coven_backup_20251023.sql
 
 # Generate Prisma Client in production image
 RUN npx prisma generate
