@@ -25,8 +25,17 @@ export class ProductsService {
   }
 
   async create(createProductDto: CreateProductDto) {
+    // Calcular usableAmount inicial se for produto de uso interno
+    let usableAmount = null;
+    if (createProductDto.type === 'USO_INTERNO' && createProductDto.unitQuantity && createProductDto.stock) {
+      usableAmount = createProductDto.stock * Number(createProductDto.unitQuantity);
+    }
+
     const product = await this.prisma.product.create({
-      data: createProductDto,
+      data: {
+        ...createProductDto,
+        usableAmount,
+      },
     });
 
     // Se o produto tem estoque inicial e preço, criar transação financeira automaticamente
@@ -42,7 +51,6 @@ export class ProductsService {
     return this.prisma.product.findMany({
       where: { active: true },
       include: {
-        productUsages: true,
         stockMovements: {
           take: 5,
           orderBy: { createdAt: 'desc' }
@@ -113,11 +121,20 @@ export class ProductsService {
         },
       });
 
+      // Calcular novo usableAmount se for produto de uso interno
+      const newStock = product.stock + stockMovementDto.quantity;
+      let updateData: any = { stock: newStock };
+
+      if (product.type === 'USO_INTERNO' && product.unitQuantity) {
+        const additionalAmount = stockMovementDto.quantity * Number(product.unitQuantity);
+        const currentUsable = Number(product.usableAmount) || 0;
+        updateData.usableAmount = currentUsable + additionalAmount;
+        console.log(`📦 Atualizando usableAmount: ${currentUsable} + ${additionalAmount} = ${updateData.usableAmount}`);
+      }
+
       return prisma.product.update({
         where: { id },
-        data: {
-          stock: product.stock + stockMovementDto.quantity,
-        },
+        data: updateData,
       });
     });
 
@@ -253,7 +270,7 @@ export class ProductsService {
 
       const transaction = await this.financialService.create({
         type: 'DESPESA',
-        category: 'Produtos/Estoque',
+        category: 'Uso Interno',
         description,
         amount: totalAmount,
         date: new Date().toISOString(),
@@ -300,7 +317,7 @@ export class ProductsService {
 
       const transaction = await this.financialService.create({
         type: 'DESPESA',
-        category: 'Produtos/Estoque',
+        category: 'Uso Interno',
         description,
         amount: totalAmount,
         date: new Date().toISOString(),

@@ -81,9 +81,9 @@
               v-model="statusFilter" 
               class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors"
             >
-              <option value="">Todos os status</option>
               <option value="ABERTA">Abertas</option>
               <option value="FINALIZADA">Finalizadas</option>
+              <option value="">Todos os status</option>
             </select>
           </div>
 
@@ -459,13 +459,17 @@ const rescheduleForm = reactive({
 
 // Filters
 const clientFilter = ref('')
-const statusFilter = ref('')
+const statusFilter = ref('ABERTA') // Padrão: Abertas
 const hairdresserFilter = ref('')
 const dateFilter = ref('')
 
 // Computed
 const filteredCommands = computed(() => {
   let filtered = commands.value
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const sixtyDaysLater = new Date(today)
+  sixtyDaysLater.setDate(sixtyDaysLater.getDate() + 60)
 
   if (clientFilter.value) {
     const term = clientFilter.value.toLowerCase()
@@ -477,10 +481,31 @@ const filteredCommands = computed(() => {
   if (statusFilter.value) {
     filtered = filtered.filter(cmd => {
       if (statusFilter.value === 'ABERTA') {
-        return !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO'
+        const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO'
+        if (!isOpen) return false
+
+        // Para comandas abertas, mostrar:
+        // 1. Todas as que já passaram (data < hoje)
+        // 2. As entre hoje e 60 dias no futuro
+        const cmdDate = new Date(cmd.date || cmd.startTime)
+        cmdDate.setHours(0, 0, 0, 0)
+
+        // Mostrar todas as passadas + próximos 60 dias
+        return cmdDate <= sixtyDaysLater
       } else {
         return !!cmd.comandaClosedAt || cmd.status === 'CONCLUIDO'
       }
+    })
+  } else {
+    // Se não há filtro de status, ainda aplicar filtro de data para abertas
+    filtered = filtered.filter(cmd => {
+      const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO'
+      if (isOpen) {
+        const cmdDate = new Date(cmd.date || cmd.startTime)
+        cmdDate.setHours(0, 0, 0, 0)
+        return cmdDate <= sixtyDaysLater
+      }
+      return true
     })
   }
 
@@ -494,6 +519,7 @@ const filteredCommands = computed(() => {
     )
   }
 
+  // Ordenar do mais recente para o mais antigo
   return filtered.sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
 })
 
@@ -572,8 +598,15 @@ const viewCommand = (command) => {
 }
 
 const editCommand = (command) => {
-  // Navigate to appointments page with edit mode
-  navigateTo(`/appointments?edit=${command.id}`)
+  // Navegar para a página de comandas ou agendamentos - precisa abrir a comanda diretamente
+  // Como a comanda está relacionada a um agendamento, vamos redirecionar para abrir a comanda
+  if (command.status === 'CONFIRMADO' && !command.comandaClosedAt) {
+    // Se a comanda está aberta, redirecionar para a página de comanda
+    navigateTo(`/appointments?viewComanda=${command.id}`)
+  } else {
+    // Caso contrário, editar o agendamento
+    navigateTo(`/appointments?edit=${command.id}`)
+  }
 }
 
 const rescheduleCommand = (command) => {

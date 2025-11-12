@@ -29,8 +29,9 @@ export class FinancialController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
     @Query('type') type?: string,
+    @Query('category') category?: string,
   ) {
-    return this.financialService.findAll(startDate, endDate, type);
+    return this.financialService.findAll(startDate, endDate, type, category);
   }
 
   @Get('dashboard')

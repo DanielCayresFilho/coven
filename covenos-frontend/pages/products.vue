@@ -144,22 +144,32 @@
               <span class="text-white font-semibold">{{ formatCurrency(product.price || 0) }}</span>
             </div>
             
-            <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Estoque:</span>
-              <span class="text-white">
-                <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
-                  <span>{{ calculateAvailableStock(product).availableUnits }} {{ product.unit || 'unidade' }} disponível</span>
-                  <span v-if="calculateAvailableStock(product).remainingVolume > 0" class="text-gray-400 text-xs">
-                    + {{ calculateAvailableStock(product).remainingVolume }}{{ product.unitMeasurement }}
-                  </span>
-                  <div class="text-gray-500 text-xs">
-                    {{ product.stock }} {{ product.unit || 'unidade' }} total | {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }} disponível
+            <div class="flex flex-col text-sm">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-gray-400">Estoque:</span>
+                <span class="text-white font-semibold">
+                  <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
+                    {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }} usável
+                  </template>
+                  <template v-else>
+                    {{ product.stock }} {{ product.unit || 'unidade' }}
+                  </template>
+                </span>
+              </div>
+              <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
+                <div class="text-gray-500 text-xs space-y-0.5">
+                  <div>
+                    Quantidade: {{ product.stock }} {{ product.unit || 'unidade' }}
                   </div>
-                </template>
-                <template v-else>
-                  {{ product.stock }} {{ product.unit || 'unidade' }}
-                </template>
-              </span>
+                  <div>
+                    Quantidade unitária: {{ product.unitQuantity }}{{ product.unitMeasurement }} por unidade 
+                    (total: {{ (product.stock * parseFloat(product.unitQuantity)).toFixed(0) }}{{ product.unitMeasurement }})
+                  </div>
+                  <div class="text-purple-400">
+                    Quantidade usável: {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }}
+                  </div>
+                </div>
+              </template>
             </div>
             
             <div v-if="product.addToCost" class="flex items-center justify-between text-sm">

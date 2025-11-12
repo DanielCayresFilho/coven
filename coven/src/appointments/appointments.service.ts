@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { FinancialService } from '../financial/financial.service';
+import { GoalsService } from '../goals/goals.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { Appointment, AppointmentStatus } from '@prisma/client';
@@ -17,6 +18,7 @@ export class AppointmentsService {
     private prisma: PrismaService,
     private productsService: ProductsService,
     private financialService: FinancialService,
+    private goalsService: GoalsService,
   ) {}
 
   // REESTRUTURADO: Lógica de criação otimizada e mais clara
@@ -205,7 +207,10 @@ export class AppointmentsService {
   // ... (findAll, findOne, remove, checkAvailability, etc.)
 
   async findAll(startDate?: string, endDate?: string, userId?: string) {
-    const where: any = {};
+    const where: any = {
+      // Não mostrar agendamentos cancelados
+      status: { not: 'CANCELADO' }
+    };
     if (startDate && endDate) {
       where.date = { gte: new Date(startDate), lte: new Date(endDate) };
     }
@@ -221,7 +226,8 @@ export class AppointmentsService {
           include: { procedure: { select: { name: true, duration: true } } },
         },
       },
-      orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+      // Ordenar do mais recente para o mais antigo
+      orderBy: [{ date: 'desc' }, { startTime: 'desc' }],
     });
   }
 
@@ -413,16 +419,12 @@ export class AppointmentsService {
     // Calcula custo baseado no tipo de produto
     let quantityToUse = quantity;
     let unitCost = 0;
-    
+
     if (product.type === 'USO_INTERNO' && product.unitQuantity) {
-      // Para produtos por medida, verifica o estoque considerando o que já foi usado
-      const existingUsages = await this.prisma.productUsage.findMany({
-        where: { productId }
-      });
-      const totalUsed = existingUsages.reduce((sum, usage) => sum + Number(usage.quantityUsed), 0);
+      // Para produtos por medida, verifica o estoque usando usableAmount
+      const remainingAvailable = Number(product.usableAmount) || 0;
       const totalCapacity = product.stock * Number(product.unitQuantity);
-      const remainingAvailable = totalCapacity - totalUsed;
-      
+
       if (quantity > remainingAvailable) {
         if (remainingAvailable <= 0) {
           throw new BadRequestException(`Produto esgotado. Necessário repor estoque. Total em ${product.stock} ${product.unit} já foi usado completamente.`);
@@ -430,7 +432,7 @@ export class AppointmentsService {
           throw new BadRequestException(`Estoque insuficiente. Disponível: ${remainingAvailable}${product.unitMeasurement} de ${totalCapacity}${product.unitMeasurement} total`);
         }
       }
-      
+
       if (product.price) {
         // Custo por unidade de medida (ex: por ml)
         unitCost = Number(product.price) / Number(product.unitQuantity);
@@ -440,7 +442,7 @@ export class AppointmentsService {
       if (quantity > product.stock) {
         throw new BadRequestException(`Estoque insuficiente. Disponível: ${product.stock} ${product.unit || 'un'}`);
       }
-      
+
       if (product.price) {
         unitCost = Number(product.price);
       }
@@ -461,16 +463,20 @@ export class AppointmentsService {
 
     // Atualiza o estoque
     if (product.type === 'USO_INTERNO' && product.unitQuantity) {
-      // Para produtos por medida, não alteramos o stock aqui
+      // Para produtos por medida, reduz apenas o usableAmount, não o stock
       // O stock representa quantas unidades físicas temos
-      // A quantidade usada é controlada pelo ProductUsage
-      // O stock só deve ser alterado quando:
-      // 1. Comprar/adicionar produtos (manual via interface)
-      // 2. Corrigir inventário
-      // 3. Produto danificado/vencido
-      console.log(`✓ Registrado uso de ${quantity}${product.unitMeasurement} de ${product.name}`);
+      // O usableAmount representa quanto ainda pode ser usado em ML
+      const currentUsable = Number(product.usableAmount) || 0;
+      const newUsable = Math.max(0, currentUsable - quantity);
+
+      await this.prisma.product.update({
+        where: { id: productId },
+        data: { usableAmount: newUsable }
+      });
+
+      console.log(`✓ Registrado uso de ${quantity}${product.unitMeasurement} de ${product.name}. Restam ${newUsable}${product.unitMeasurement} usáveis.`);
     } else {
-      // Para produtos unitários, reduz normalmente
+      // Para produtos unitários, reduz normalmente o stock
       await this.prisma.product.update({
         where: { id: productId },
         data: { stock: Math.max(0, product.stock - quantity) }
@@ -607,13 +613,19 @@ export class AppointmentsService {
         }
       });
 
+      // Atualiza o último atendimento do cliente
+      await tx.client.update({
+        where: { id: appointment.clientId },
+        data: { lastAppointmentAt: new Date() }
+      });
+
       // Registra receita final no financeiro (descontando a entrada já paga)
       const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);
       
       if (remainingAmount > 0) {
         await this.financialService.create({
           type: 'RECEITA',
-          category: 'Serviços - Finalização',
+          category: 'Atendimentos',
           description: `Finalização - ${appointment.client.name} - Agendamento ${appointmentId.substring(0, 8)}`,
           amount: remainingAmount,
           date: new Date().toISOString(),
@@ -635,13 +647,21 @@ export class AppointmentsService {
 
         await this.financialService.create({
           type: 'DESPESA',
-          category: 'Custos Operacionais',
+          category: 'Uso Interno',
           description: `Custos de produtos - ${appointment.client.name} - ${productDescriptions}`,
           amount: totalProductCosts,
           date: new Date().toISOString(),
           isPaid: true,
           recurrent: false,
         });
+      }
+
+      // Atualiza as metas automaticamente quando a comanda é finalizada
+      if (finalAmountAfterTax > 0) {
+        await this.goalsService.updateGoalsForCompletedAppointment(
+          finalAmountAfterTax,
+          appointment.date,
+        );
       }
 
       return updatedAppointment;

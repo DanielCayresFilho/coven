@@ -104,7 +104,7 @@ export interface FinancialTransaction {
 
 export interface Reminder {
   id: string
-  type: 'ANIVERSARIO' | 'MANUAL' | 'PRODUTO_BAIXO' | 'AGENDAMENTO'
+  type: 'ANIVERSARIO' | 'MANUAL' | 'PRODUTO_BAIXO' | 'AGENDAMENTO' | 'DESPESA_FIXA'
   title: string
   description?: string
   date: string
@@ -145,4 +145,15 @@ export interface FinancialDashboard {
     total: number
     valor_medio: number
   }
+}
+
+export interface FixedExpense {
+  id: string
+  name: string
+  amount: number
+  dueDay: number
+  description?: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
 }

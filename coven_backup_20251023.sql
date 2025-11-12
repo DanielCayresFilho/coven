@@ -323,7 +323,7 @@ DROP TABLE IF EXISTS `reminders`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reminders` (
   `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` enum('ANIVERSARIO','MANUAL','PRODUTO_BAIXO','AGENDAMENTO') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('ANIVERSARIO','MANUAL','PRODUTO_BAIXO','AGENDAMENTO','DESPESA_FIXA') COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime(3) NOT NULL,
@@ -349,6 +349,64 @@ LOCK TABLES `reminders` WRITE;
 /*!40000 ALTER TABLE `reminders` DISABLE KEYS */;
 INSERT INTO `reminders` VALUES ('afbcf8e6-4223-45e5-b515-24354526b775','MANUAL','arrumar cafeteira ',NULL,'2025-08-05 14:30:00.000','POUCO_URGENTE',NULL,NULL,1,'2025-07-28 18:14:52.709','2025-07-28 18:14:52.709');
 /*!40000 ALTER TABLE `reminders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `goals`
+--
+
+DROP TABLE IF EXISTS `goals`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `goals` (
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `period` enum('SEMANAL','MENSAL') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `targetAmount` decimal(10,2) NOT NULL,
+  `currentAmount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `startDate` datetime(3) NOT NULL,
+  `endDate` datetime(3) NOT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `goals`
+--
+
+LOCK TABLES `goals` WRITE;
+/*!40000 ALTER TABLE `goals` DISABLE KEYS */;
+/*!40000 ALTER TABLE `goals` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fixed_expenses`
+--
+
+DROP TABLE IF EXISTS `fixed_expenses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fixed_expenses` (
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `dueDay` int NOT NULL,
+  `description` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fixed_expenses`
+--
+
+LOCK TABLES `fixed_expenses` WRITE;
+/*!40000 ALTER TABLE `fixed_expenses` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fixed_expenses` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

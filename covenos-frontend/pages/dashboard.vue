@@ -83,6 +83,117 @@
       </div>
     </div>
 
+    <!-- Goals & Reminders -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <!-- Goals -->
+      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-white">Metas em andamento</h2>
+            <p class="text-sm text-gray-400">Acompanhe o progresso semanal e mensal</p>
+          </div>
+          <NuxtLink to="/financial" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+            Ver financeiro →
+          </NuxtLink>
+        </div>
+
+        <div v-if="loadingGoals" class="space-y-3">
+          <div v-for="i in 2" :key="`goal-skeleton-${i}`" class="animate-pulse">
+            <div class="bg-gray-800/40 h-24 rounded-lg"></div>
+          </div>
+        </div>
+
+        <div v-else-if="goalItems.length === 0" class="text-center py-8 text-sm text-gray-400">
+          Nenhuma meta configurada. Crie metas mensais e semanais no módulo financeiro para acompanhar seus resultados.
+        </div>
+
+        <div v-else class="space-y-4">
+          <div
+            v-for="goal in goalItems"
+            :key="goal.id"
+            class="p-4 bg-gray-800/40 rounded-lg border border-gray-700/40"
+          >
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm font-semibold text-white">{{ goal.title }}</p>
+                <p class="text-xs text-gray-400 mt-1">{{ goal.subtitle }}</p>
+              </div>
+              <span class="text-sm font-semibold text-purple-300">{{ goal.progress }}%</span>
+            </div>
+            <div class="mt-3 h-2 w-full bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-2 rounded-full bg-gradient-to-r from-purple-500 via-purple-400 to-pink-400 transition-all duration-500"
+                :style="`width: ${goal.progress}%`"
+              ></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-400 mt-2">
+              <span>Realizado: {{ formatCurrency(goal.current) }}</span>
+              <span>Meta: {{ formatCurrency(goal.target) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders -->
+      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-white">Lembretes</h2>
+            <p class="text-sm text-gray-400">Organize atividades importantes do salão</p>
+          </div>
+          <button
+            @click="openReminderModal"
+            class="inline-flex items-center space-x-2 text-sm text-purple-300 hover:text-white transition-colors"
+          >
+            <PlusCircleIcon class="w-5 h-5" />
+            <span>Novo lembrete</span>
+          </button>
+        </div>
+
+        <div v-if="loadingReminders" class="space-y-3">
+          <div v-for="i in 3" :key="`reminder-skeleton-${i}`" class="animate-pulse">
+            <div class="bg-gray-800/40 h-20 rounded-lg"></div>
+          </div>
+        </div>
+
+        <div v-else-if="remindersList.length === 0" class="text-center py-8 text-sm text-gray-400">
+          Nenhum lembrete ativo para os próximos 30 dias. Crie um lembrete para não esquecer de tarefas importantes.
+        </div>
+
+        <div v-else class="space-y-3">
+          <div
+            v-for="reminder in remindersList"
+            :key="reminder.id"
+            class="p-4 bg-gray-800/40 rounded-lg border border-gray-700/40 flex items-start justify-between space-x-4"
+          >
+            <div class="flex items-start space-x-3">
+              <div class="p-2 bg-purple-500/10 rounded-lg">
+                <BellIcon class="w-5 h-5 text-purple-300" />
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-white">{{ reminder.title }}</p>
+                <p class="text-xs text-gray-400 mt-1">
+                  {{ formatReminderType(reminder.type) }} • {{ formatReminderPriority(reminder.priority) }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {{ formatDateTime(reminder.date) }}
+                  <span v-if="reminder.description" class="block text-[11px] text-gray-500 mt-1">
+                    {{ reminder.description }}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <button
+              @click="completeReminder(reminder.id)"
+              class="text-xs px-3 py-1 bg-green-600/20 border border-green-500/40 rounded-md text-green-300 hover:bg-green-600/30 transition-colors"
+            >
+              Concluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Active Comandas -->
     <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
       <div class="flex items-center justify-between mb-4">
@@ -397,7 +508,98 @@
             ></div>
           </div>
           <p class="text-xs text-gray-400 mt-2">{{ day.label }}</p>
+          <p class="text-[11px] text-gray-500">{{ day.count }} agend.</p>
+          <p class="text-[11px] text-gray-500">{{ formatCurrency(day.value) }}</p>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal de Lembrete -->
+    <div v-if="showReminderModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-gray-900 rounded-2xl border border-gray-700/60 w-full max-w-lg overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60">
+          <div>
+            <h2 class="text-xl font-semibold text-white">Novo lembrete</h2>
+            <p class="text-xs text-gray-400 mt-1">O lembrete será exibido aqui no dashboard e em utilidades</p>
+          </div>
+          <button @click="closeReminderModalInternal" class="text-gray-400 hover:text-white transition-colors">
+            <XMarkIcon class="w-6 h-6" />
+          </button>
+        </div>
+
+        <form @submit.prevent="saveReminder" class="px-6 py-6 space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Título</label>
+            <input
+              v-model="reminderForm.title"
+              type="text"
+              placeholder="Ex: Confirmar pedido de produtos"
+              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+              required
+            >
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Descrição</label>
+            <textarea
+              v-model="reminderForm.description"
+              rows="3"
+              placeholder="Anote detalhes importantes sobre esse lembrete"
+              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all resize-none"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1.5">Data e hora</label>
+              <input
+                v-model="reminderForm.date"
+                type="datetime-local"
+                class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                required
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1.5">Prioridade</label>
+              <select
+                v-model="reminderForm.priority"
+                class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+              >
+                <option v-for="option in reminderPriorities" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Tipo</label>
+            <select
+              v-model="reminderForm.type"
+              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+            >
+              <option v-for="option in reminderTypes" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-2">
+            <button
+              type="button"
+              @click="closeReminderModalInternal"
+              class="px-5 py-2.5 bg-gray-700/80 hover:bg-gray-700 text-white rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all"
+            >
+              Salvar lembrete
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -786,7 +988,10 @@ import {
   CubeIcon,
   BanknotesIcon,
   CheckCircleIcon,
-  ClipboardDocumentCheckIcon
+  ClipboardDocumentCheckIcon,
+  BellIcon,
+  PlusCircleIcon,
+  XMarkIcon
 } from '@heroicons/vue/24/outline'
 
 // Page meta
@@ -825,6 +1030,8 @@ const products = ref([])
 const recentAppointments = ref([])
 const lowStockProducts = ref([])
 const activeComandas = ref([])
+const goals = ref([])
+const reminders = ref([])
 
 // Modal states
 const showProductModal = ref(false)
@@ -865,6 +1072,30 @@ const loadingStats = ref(true)
 const loadingAppointments = ref(true)
 const loadingProducts = ref(true)
 const loadingComandas = ref(true)
+const loadingGoals = ref(true)
+const loadingReminders = ref(true)
+
+const showReminderModal = ref(false)
+const reminderForm = reactive({
+  title: '',
+  description: '',
+  date: '',
+  type: 'MANUAL',
+  priority: 'POUCO_URGENTE'
+})
+
+const reminderTypes = [
+  { value: 'MANUAL', label: 'Manual' },
+  { value: 'AGENDAMENTO', label: 'Agendamento' },
+  { value: 'PRODUTO_BAIXO', label: 'Produto baixo' },
+  { value: 'ANIVERSARIO', label: 'Aniversário' }
+]
+
+const reminderPriorities = [
+  { value: 'POUCO_URGENTE', label: 'Pouco urgente' },
+  { value: 'URGENTE', label: 'Urgente' },
+  { value: 'IMEDIATO', label: 'Imediato' }
+]
 
 // Computed
 const selectedProduct = computed(() => {
@@ -891,6 +1122,57 @@ const filteredProcedures = computed(() => {
     procedure.name.toLowerCase().includes(procedureSearch.value.toLowerCase()) ||
     procedure.category?.toLowerCase().includes(procedureSearch.value.toLowerCase())
   )
+})
+
+const toNumber = (value) => typeof value === 'number' ? value : Number(value || 0)
+
+const weeklyGoal = computed(() => goals.value.find(goal => goal.period === 'SEMANAL'))
+const monthlyGoal = computed(() => goals.value.find(goal => goal.period === 'MENSAL'))
+
+const calculateGoalProgress = (goal) => {
+  if (!goal) return 0
+  const target = toNumber(goal.targetAmount)
+  if (target <= 0) return 0
+  const current = toNumber(goal.currentAmount)
+  return Math.min(100, Math.round((current / target) * 100))
+}
+
+const formatGoalRange = (goal) => {
+  if (!goal) return ''
+  const start = new Date(goal.startDate)
+  const end = new Date(goal.endDate)
+  return `${start.toLocaleDateString('pt-BR')} - ${end.toLocaleDateString('pt-BR')}`
+}
+
+const goalItems = computed(() => {
+  const items = []
+  if (weeklyGoal.value) {
+    items.push({
+      id: weeklyGoal.value.id,
+      title: 'Meta da semana',
+      subtitle: formatGoalRange(weeklyGoal.value),
+      progress: calculateGoalProgress(weeklyGoal.value),
+      current: toNumber(weeklyGoal.value.currentAmount),
+      target: toNumber(weeklyGoal.value.targetAmount)
+    })
+  }
+  if (monthlyGoal.value) {
+    items.push({
+      id: monthlyGoal.value.id,
+      title: 'Meta do mês',
+      subtitle: formatGoalRange(monthlyGoal.value),
+      progress: calculateGoalProgress(monthlyGoal.value),
+      current: toNumber(monthlyGoal.value.currentAmount),
+      target: toNumber(monthlyGoal.value.targetAmount)
+    })
+  }
+  return items
+})
+
+const remindersList = computed(() => {
+  return [...reminders.value]
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(0, 6)
 })
 
 const calculatedFinish = computed(() => {
@@ -1087,6 +1369,101 @@ const getQuantityStep = (product) => {
   
   // Para outros tipos, usar inteiros
   return 1
+}
+
+const formatReminderType = (type) => {
+  switch (type) {
+    case 'AGENDAMENTO':
+      return 'Agendamento'
+    case 'PRODUTO_BAIXO':
+      return 'Produto baixo'
+    case 'ANIVERSARIO':
+      return 'Aniversário'
+    case 'DESPESA_FIXA':
+      return 'Despesa fixa'
+    default:
+      return 'Manual'
+  }
+}
+
+const formatReminderPriority = (priority) => {
+  switch (priority) {
+    case 'IMEDIATO':
+      return 'Imediato'
+    case 'URGENTE':
+      return 'Urgente'
+    default:
+      return 'Pouco urgente'
+  }
+}
+
+const resetReminderForm = () => {
+  reminderForm.title = ''
+  reminderForm.description = ''
+  const now = new Date()
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+  reminderForm.date = now.toISOString().slice(0, 16)
+  reminderForm.type = 'MANUAL'
+  reminderForm.priority = 'POUCO_URGENTE'
+}
+
+const openReminderModal = () => {
+  resetReminderForm()
+  showReminderModal.value = true
+}
+
+const closeReminderModalInternal = () => {
+  showReminderModal.value = false
+}
+
+const saveReminder = async () => {
+  if (!reminderForm.title || !reminderForm.date) {
+    console.error('Título e data são obrigatórios para criar um lembrete')
+    return
+  }
+
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+
+    await $api('/reminders', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: reminderForm.title,
+        description: reminderForm.description || undefined,
+        type: reminderForm.type,
+        priority: reminderForm.priority,
+        date: new Date(reminderForm.date).toISOString()
+      })
+    })
+
+    closeReminderModalInternal()
+    await loadDashboardData()
+  } catch (error) {
+    console.error('Erro ao criar lembrete:', error)
+  }
+}
+
+const completeReminder = async (reminderId) => {
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+
+    await $api(`/reminders/${reminderId}/complete`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      }
+    })
+
+    await loadDashboardData()
+  } catch (error) {
+    console.error('Erro ao concluir lembrete:', error)
+  }
 }
 
 const loadProcedures = async () => {
@@ -1626,9 +2003,17 @@ const loadDashboardData = async () => {
   try {
     const { $api } = useNuxtApp()
     const token = useCookie('covenos-token')
+    loadingGoals.value = true
+    loadingReminders.value = true
     
     // Carregar dados em paralelo
-    const [appointmentsResponse, clientsResponse, productsResponse] = await Promise.all([
+    const today = new Date()
+    const remindersStart = new Date(today)
+    remindersStart.setHours(0, 0, 0, 0)
+    const remindersEnd = new Date(remindersStart)
+    remindersEnd.setDate(remindersEnd.getDate() + 30)
+
+    const [appointmentsResponse, clientsResponse, productsResponse, goalsResponse, remindersResponse] = await Promise.all([
       $api('/appointments', {
         method: 'GET',
         headers: {
@@ -1646,15 +2031,28 @@ const loadDashboardData = async () => {
         headers: {
           'Authorization': `Bearer ${token.value}`
         }
+      }).catch(() => []),
+      $api('/goals/active', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token.value}`
+        }
+      }).catch(() => []),
+      $api(`/reminders?status=active&startDate=${encodeURIComponent(remindersStart.toISOString())}&endDate=${encodeURIComponent(remindersEnd.toISOString())}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token.value}`
+        }
       }).catch(() => [])
     ])
     
     appointments.value = appointmentsResponse || []
     clients.value = clientsResponse || []
     products.value = productsResponse || []
+    goals.value = goalsResponse || []
+    reminders.value = remindersResponse || []
     
     // Calcular estatísticas
-    const today = new Date()
     const todayStr = today.toISOString().split('T')[0]
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
@@ -1745,13 +2143,16 @@ const loadDashboardData = async () => {
     }).slice(0, 6)
     
     // Calcular atividade semanal
-    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+    const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
     const weekData = Array(7).fill(0)
     const weekRevenue = Array(7).fill(0)
     
     // Calcular os últimos 7 dias
     const startOfWeek = new Date(today)
-    startOfWeek.setDate(today.getDate() - today.getDay()) // Domingo da semana atual
+    const currentDay = startOfWeek.getDay()
+    const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay
+    startOfWeek.setDate(startOfWeek.getDate() + diffToMonday)
+    startOfWeek.setHours(0, 0, 0, 0)
     
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(startOfWeek)
@@ -1782,6 +2183,8 @@ const loadDashboardData = async () => {
     loadingAppointments.value = false
     loadingProducts.value = false
     loadingComandas.value = false
+    loadingGoals.value = false
+    loadingReminders.value = false
     
   } catch (error) {
     console.error('Erro ao carregar dados do dashboard:', error)
@@ -1789,6 +2192,8 @@ const loadDashboardData = async () => {
     loadingAppointments.value = false 
     loadingProducts.value = false
     loadingComandas.value = false
+    loadingGoals.value = false
+    loadingReminders.value = false
   }
 }
 

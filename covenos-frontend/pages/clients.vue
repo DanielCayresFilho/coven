@@ -134,8 +134,11 @@
                 </span>
               </td>
               <td class="py-4 px-6">
-                <p class="text-sm text-gray-300">
-                  {{ client.lastAppointment ? formatDate(client.lastAppointment) : 'Nunca agendou' }}
+                <p v-if="client.lastAppointment" class="text-sm text-gray-300">
+                  {{ formatDate(client.lastAppointment) }}
+                </p>
+                <p v-else class="text-sm text-gray-500 italic">
+                  Nunca agendou
                 </p>
               </td>
               <td class="py-4 px-6 text-right">

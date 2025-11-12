@@ -34,9 +34,34 @@ export class ClientsService {
   }
 
   async findAll() {
-    return this.prisma.client.findMany({
+    const clients = await this.prisma.client.findMany({
       where: { active: true },
+      include: {
+        appointments: {
+          where: {
+            status: { not: 'CANCELADO' }
+          },
+          orderBy: { date: 'desc' },
+          take: 1,
+          select: {
+            date: true,
+            startTime: true
+          }
+        }
+      },
       orderBy: { name: 'asc' },
+    });
+
+    // Adiciona o último atendimento (data mais recente)
+    return clients.map(client => {
+      const lastAppointment = client.appointments && client.appointments.length > 0
+        ? client.appointments[0].date || client.appointments[0].startTime
+        : null;
+      
+      return {
+        ...client,
+        lastAppointment
+      };
     });
   }
 

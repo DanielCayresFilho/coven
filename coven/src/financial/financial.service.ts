@@ -13,7 +13,7 @@ export class FinancialService {
     });
   }
 
-  async findAll(startDate?: string, endDate?: string, type?: string) {
+  async findAll(startDate?: string, endDate?: string, type?: string, category?: string) {
     const where: any = {};
 
     if (startDate && endDate) {
@@ -25,6 +25,10 @@ export class FinancialService {
 
     if (type) {
       where.type = type;
+    }
+
+    if (category) {
+      where.category = category;
     }
 
     return this.prisma.financialTransaction.findMany({
@@ -85,41 +89,54 @@ export class FinancialService {
       }),
     ]);
 
-    const receitas = transactions
-      .filter((t) => t.type === 'RECEITA')
+    // Agrupar receitas por categoria
+    const receitasAtendimentos = transactions
+      .filter((t) => t.type === 'RECEITA' && t.category === 'Atendimentos')
       .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
-    const despesas = transactions
-      .filter((t) => t.type === 'DESPESA')
+    const receitasVendas = transactions
+      .filter((t) => t.type === 'RECEITA' && t.category === 'Vendas')
       .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
-    const receitaAgendamentos = appointments.reduce(
-      (sum, apt) => sum + parseFloat((apt.totalPrice || 0).toString()),
-      0,
-    );
+    const receitasOutras = transactions
+      .filter((t) => t.type === 'RECEITA' && t.category !== 'Atendimentos' && t.category !== 'Vendas')
+      .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
-    const totalReceitas = receitas + receitaAgendamentos;
-    const lucroLiquido = totalReceitas - despesas;
+    // Agrupar despesas por categoria
+    const despesasUsoInterno = transactions
+      .filter((t) => t.type === 'DESPESA' && t.category === 'Uso Interno')
+      .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
+
+    const despesasOutras = transactions
+      .filter((t) => t.type === 'DESPESA' && t.category !== 'Uso Interno')
+      .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
+
+    const totalReceitas = receitasAtendimentos + receitasVendas + receitasOutras;
+    const totalDespesas = despesasUsoInterno + despesasOutras;
+    const lucroLiquido = totalReceitas - totalDespesas;
 
     return {
       periodo: { inicio: start, fim: end },
       receitas: {
-        agendamentos: receitaAgendamentos,
-        outras: receitas,
+        atendimentos: receitasAtendimentos,
+        vendas: receitasVendas,
+        outras: receitasOutras,
         total: totalReceitas,
       },
       despesas: {
-        total: despesas,
+        usoInterno: despesasUsoInterno,
+        outras: despesasOutras,
+        total: totalDespesas,
       },
       lucro: {
-        bruto: receitaAgendamentos,
+        bruto: receitasAtendimentos + receitasVendas,
         liquido: lucroLiquido,
       },
       agendamentos: {
         total: appointments.length,
         valor_medio:
           appointments.length > 0
-            ? receitaAgendamentos / appointments.length
+            ? receitasAtendimentos / appointments.length
             : 0,
       },
     };

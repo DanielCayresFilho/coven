@@ -815,17 +815,18 @@ const filteredProcedures = computed(() => {
 const filteredAppointments = computed(() => {
   let filtered = appointments.value
 
+  // Não mostrar cancelados por padrão (a menos que seja explicitamente selecionado)
+  if (!statusFilter.value) {
+    filtered = filtered.filter(apt => apt.status !== 'CANCELADO')
+  } else if (statusFilter.value) {
+    filtered = filtered.filter(apt => apt.status === statusFilter.value)
+  }
+
   if (dateFilter.value) {
-    filtered = filtered.filter(apt => 
+    filtered = filtered.filter(apt =>
       apt.date?.startsWith(dateFilter.value)
     )
   }
-
-  if (statusFilter.value) {
-    filtered = filtered.filter(apt => apt.status === statusFilter.value)
-  }
-  // Removido filtro automático de cancelados para mostrar todos por padrão
-
 
   if (clientFilter.value) {
     const term = clientFilter.value.toLowerCase()
@@ -838,7 +839,8 @@ const filteredAppointments = computed(() => {
     filtered = filtered.filter(apt => apt.userId === hairdresserFilter.value)
   }
 
-  return filtered.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+  // Ordenar do mais recente para o mais antigo
+  return filtered.sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
 })
 
 // Week days with proper formatting for weekly view (Monday to Sunday)
@@ -976,38 +978,65 @@ const formatTimeRange = (startTime, endTime) => {
 }
 
 const getAppointmentStyle = (appointment) => {
+  // Converter startTime para Date, garantindo fuso horário local
   const startTime = new Date(appointment.startTime)
-  const endTime = appointment.endTime ? new Date(appointment.endTime) : new Date(startTime.getTime() + (60 * 60 * 1000)) // Default 1 hour
   
-  // Find which day column this appointment belongs to - use startTime for consistency
-  const dayIndex = weekDays.value.findIndex(day => 
-    startTime.toDateString() === new Date(day.date).toDateString()
-  )
+  // Se não tiver endTime, calcular baseado na duração dos procedimentos ou usar 1 hora padrão
+  let endTime
+  if (appointment.endTime) {
+    endTime = new Date(appointment.endTime)
+  } else if (appointment.procedures && appointment.procedures.length > 0) {
+    // Calcular endTime baseado na duração dos procedimentos
+    const totalDuration = appointment.procedures.reduce((sum, ap) => 
+      sum + (ap.procedure?.duration || 60), 0
+    )
+    endTime = new Date(startTime.getTime() + (totalDuration * 60 * 1000))
+  } else {
+    // Default 1 hour
+    endTime = new Date(startTime.getTime() + (60 * 60 * 1000))
+  }
+  
+  // Criar datas locais para comparação (sem fuso horário)
+  const startDateLocal = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate())
+  
+  // Find which day column this appointment belongs to - usar data local
+  const dayIndex = weekDays.value.findIndex(day => {
+    const dayDate = new Date(day.date + 'T00:00:00') // Garantir hora local
+    return startDateLocal.getTime() === dayDate.getTime()
+  })
   
   if (dayIndex === -1) return { display: 'none' }
   
-  // Calculate position
+  // Calcular posição usando hora local
   const startHour = startTime.getHours()
   const startMinute = startTime.getMinutes()
   const endHour = endTime.getHours()
   const endMinute = endTime.getMinutes()
   
-  // Only show appointments within working hours
+  // Verificar se está dentro do horário de trabalho
   if (startHour < START_HOUR || startHour >= END_HOUR) {
     return { display: 'none' }
   }
   
-  // Position from start hour
+  // Calcular posição vertical em pixels (considerando minutos)
   const topOffset = (startHour - START_HOUR) * HOUR_HEIGHT + (startMinute / 60) * HOUR_HEIGHT
   
-  // Duration in pixels  
-  const durationInHours = (endHour - startHour) + (endMinute - startMinute) / 60
-  const height = Math.max(durationInHours * HOUR_HEIGHT, 40) // Minimum height for visibility
+  // Calcular duração em horas (considerando que pode passar da meia-noite)
+  let durationInHours = 0
+  if (endTime >= startTime) {
+    // Duração normal (não passou da meia-noite)
+    durationInHours = (endTime - startTime) / (1000 * 60 * 60) // Converter ms para horas
+  } else {
+    // Se endTime for menor que startTime, assumir que passou da meia-noite (caso raro, mas possível)
+    durationInHours = ((endTime.getHours() + 24) - startHour) + (endMinute - startMinute) / 60
+  }
   
-  // Column position with proper spacing
-  const columnWidth = 100 / 8 // 8 columns total (1 time + 7 days)
+  const height = Math.max(durationInHours * HOUR_HEIGHT, 40) // Altura mínima de 40px
+  
+  // Posição da coluna
+  const columnWidth = 100 / 8 // 8 colunas (1 hora + 7 dias)
   const leftPercent = (dayIndex + 1) * columnWidth
-  const widthPercent = columnWidth - 0.5 // Small margin for visual separation
+  const widthPercent = columnWidth - 0.5 // Margem pequena para separação visual
   
   return {
     top: `${topOffset}px`,
@@ -1400,12 +1429,17 @@ const editAppointment = (appointment) => {
   editingAppointment.value = appointment
   
   // Formatar data corretamente para o input date (YYYY-MM-DD)
-  const appointmentDate = new Date(appointment.date)
-  const formattedDate = appointmentDate.toISOString().split('T')[0]
-  
-  // Formatar horário corretamente para o input time (HH:MM)
+  // Usar a data do startTime para garantir consistência
   const appointmentStartTime = new Date(appointment.startTime)
-  const formattedTime = appointmentStartTime.toTimeString().substring(0, 5)
+  const year = appointmentStartTime.getFullYear()
+  const month = String(appointmentStartTime.getMonth() + 1).padStart(2, '0')
+  const day = String(appointmentStartTime.getDate()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day}`
+  
+  // Formatar horário corretamente para o input time (HH:MM) usando hora local
+  const hours = String(appointmentStartTime.getHours()).padStart(2, '0')
+  const minutes = String(appointmentStartTime.getMinutes()).padStart(2, '0')
+  const formattedTime = `${hours}:${minutes}`
   
   Object.assign(appointmentForm, {
     clientId: appointment.clientId,
@@ -1418,7 +1452,7 @@ const editAppointment = (appointment) => {
     discount: appointment.discount || 0
   })
   procedureSearchTerm.value = ''
-  showCreateModal.value = false
+  showCreateModal.value = true // Abrir modal para editar
 }
 
 const closeModal = () => {
@@ -1583,12 +1617,16 @@ const confirmReschedule = async () => {
     // Usar o primeiro usuário (hairdresser) disponível como padrão
     const defaultUserId = hairdressers.value[0]?.id || null
     
-    await $api('http://localhost:3009/api/messages/schedule-followup', {
+    // Criar novo agendamento para reagendamento
+    await $api('/appointments', {
       method: 'POST',
       body: {
         clientId: completedClient.value.id,
-        appointmentDate: rescheduleDate.value,
-        userId: defaultUserId
+        date: rescheduleDate.value,
+        startTime: `${rescheduleDate.value}T10:00:00`, // Horário padrão 10h
+        userId: defaultUserId,
+        procedureIds: [], // Será preenchido ao editar o agendamento
+        status: 'AGENDADO'
       }
     })
     
@@ -1605,7 +1643,7 @@ const confirmReschedule = async () => {
 }
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
   const today = new Date()
   const dayOfWeek = today.getDay()
   // Calculate days to subtract to get to Monday (day 1)
@@ -1615,15 +1653,26 @@ onMounted(() => {
   lastMonday.setDate(today.getDate() - daysToSubtract)
   currentWeekStart.value = lastMonday
   
-  loadData()
+  await loadData()
+  
+  // Check for edit parameter from comandas page
+  const route = useRoute()
+  if (route.query.edit) {
+    const appointmentId = route.query.edit
+    const appointment = appointments.value.find(apt => apt.id === appointmentId)
+    if (appointment) {
+      setTimeout(() => {
+        editAppointment(appointment)
+      }, 500) // Wait a bit for UI to settle
+    }
+  }
   
   // Check for reschedule parameters
-  const route = useRoute()
   if (route.query.client && route.query.reschedule) {
     // Pre-fill form for reschedule
     setTimeout(() => {
-      newAppointmentForm.clientId = route.query.client
-      showNewAppointmentModal.value = true
+      appointmentForm.clientId = route.query.client
+      showCreateModal.value = true
     }, 1000) // Wait for data to load
   }
 })

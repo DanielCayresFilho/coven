@@ -25,18 +25,19 @@ model User {
 }
 
 model Client {
-  id           String        @id @default(uuid())
-  name         String
-  email        String?       @unique
-  phone        String?
-  birthDate    DateTime?
-  address      String?
-  observations String?
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  appointments Appointment[]
-  reminders    Reminder[]
+  id                String        @id @default(uuid())
+  name              String
+  email             String?       @unique
+  phone             String?
+  birthDate         DateTime?
+  address           String?
+  observations      String?
+  lastAppointmentAt DateTime? // Data do último atendimento concluído
+  active            Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  appointments      Appointment[]
+  reminders         Reminder[]
 
   @@map("clients")
 }
@@ -45,7 +46,7 @@ model Procedure {
   id                    String                 @id @default(uuid())
   name                  String
   description           String?
-  category              String?                // Categoria do procedimento
+  category              String? // Categoria do procedimento
   duration              Int
   price                 Decimal                @db.Decimal(10, 2)
   active                Boolean                @default(true)
@@ -61,14 +62,15 @@ model Product {
   id                String             @id @default(uuid())
   name              String
   description       String?
-  category          String?            // Categoria do produto
+  category          String? // Categoria do produto
   type              ProductType
   price             Decimal?           @db.Decimal(10, 2)
-  stock             Int                @default(0)
+  stock             Int                @default(0) // Quantidade de unidades (ex: 2 garrafas)
   minStock          Int                @default(0)
   unit              String?
-  unitQuantity      Decimal?           @db.Decimal(10, 2) // Quantidade por unidade (ex: 100ml)
-  unitMeasurement   String?            // Unidade de medida (ml, g, etc)
+  unitQuantity      Decimal?           @db.Decimal(10, 2) // ML por unidade (ex: 1000ml)
+  unitMeasurement   String? // Unidade de medida (ml, g, etc)
+  usableAmount      Decimal?           @db.Decimal(10, 2) // Quantidade usável em ML (ex: 2000ml)
   addToCost         Boolean            @default(false) // Se deve ser adicionado como custo ao financeiro
   active            Boolean            @default(true)
   createdAt         DateTime           @default(now())
@@ -106,29 +108,29 @@ model ProcedureProduct {
 }
 
 model Appointment {
-  id                String                 @id @default(uuid())
-  clientId          String
-  userId            String
-  date              DateTime
-  startTime         DateTime
-  endTime           DateTime?
-  status            AppointmentStatus      @default(AGENDADO)
-  paymentMethod     PaymentMethod?
-  totalPrice        Decimal?               @db.Decimal(10, 2)
-  discount          Decimal?               @db.Decimal(10, 2)
-  partialPayment    Decimal?               @db.Decimal(10, 2) // Pagamento parcial (50%)
-  finalPrice        Decimal?               @db.Decimal(10, 2) // Preço final após descontos e taxas
-  cardTax           Decimal?               @db.Decimal(5, 4)  // Taxa do cartão aplicada
-  paymentData       String?                // JSON com dados de pagamento detalhados
-  observations      String?
-  comandaOpenedAt   DateTime?              // Quando a comanda foi aberta
-  comandaClosedAt   DateTime?              // Quando a comanda foi finalizada
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
-  procedures        AppointmentProcedure[]
-  productUsages     ProductUsage[]         // Produtos utilizados na comanda
-  client            Client                 @relation(fields: [clientId], references: [id])
-  user              User                   @relation(fields: [userId], references: [id])
+  id              String                 @id @default(uuid())
+  clientId        String
+  userId          String
+  date            DateTime
+  startTime       DateTime
+  endTime         DateTime?
+  status          AppointmentStatus      @default(AGENDADO)
+  paymentMethod   PaymentMethod?
+  totalPrice      Decimal?               @db.Decimal(10, 2)
+  discount        Decimal?               @db.Decimal(10, 2)
+  partialPayment  Decimal?               @db.Decimal(10, 2) // Pagamento parcial (50%)
+  finalPrice      Decimal?               @db.Decimal(10, 2) // Preço final após descontos e taxas
+  cardTax         Decimal?               @db.Decimal(5, 4) // Taxa do cartão aplicada
+  paymentData     String? // JSON com dados de pagamento detalhados
+  observations    String?
+  comandaOpenedAt DateTime? // Quando a comanda foi aberta
+  comandaClosedAt DateTime? // Quando a comanda foi finalizada
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  procedures      AppointmentProcedure[]
+  productUsages   ProductUsage[] // Produtos utilizados na comanda
+  client          Client                 @relation(fields: [clientId], references: [id])
+  user            User                   @relation(fields: [userId], references: [id])
 
   @@index([clientId], map: "appointments_clientId_fkey")
   @@index([userId], map: "appointments_userId_fkey")
@@ -149,15 +151,15 @@ model AppointmentProcedure {
 }
 
 model ProductUsage {
-  id              String      @id @default(uuid())
-  appointmentId   String
-  productId       String
-  quantityUsed    Decimal     @db.Decimal(10, 2) // Quantidade utilizada (pode ser em ml, g, etc)
-  unitCost        Decimal?    @db.Decimal(10, 2) // Custo por unidade no momento do uso
-  totalCost       Decimal?    @db.Decimal(10, 2) // Custo total calculado
-  createdAt       DateTime    @default(now())
-  appointment     Appointment @relation(fields: [appointmentId], references: [id])
-  product         Product     @relation(fields: [productId], references: [id])
+  id            String      @id @default(uuid())
+  appointmentId String
+  productId     String
+  quantityUsed  Decimal     @db.Decimal(10, 2) // Quantidade utilizada (pode ser em ml, g, etc)
+  unitCost      Decimal?    @db.Decimal(10, 2) // Custo por unidade no momento do uso
+  totalCost     Decimal?    @db.Decimal(10, 2) // Custo total calculado
+  createdAt     DateTime    @default(now())
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
 
   @@index([appointmentId], map: "product_usages_appointmentId_fkey")
   @@index([productId], map: "product_usages_productId_fkey")
@@ -181,7 +183,7 @@ model FinancialTransaction {
 }
 
 model Reminder {
-  id          String          @id @default(uuid())
+  id          String           @id @default(uuid())
   type        ReminderType
   title       String
   description String?
@@ -233,6 +235,7 @@ enum ReminderType {
   MANUAL
   PRODUTO_BAIXO
   AGENDAMENTO
+  DESPESA_FIXA
 }
 
 enum ReminderPriority {
@@ -244,4 +247,35 @@ enum ReminderPriority {
 enum TransactionType {
   RECEITA
   DESPESA
+}
+
+model Goal {
+  id            String     @id @default(uuid())
+  period        GoalPeriod
+  targetAmount  Decimal    @db.Decimal(10, 2)
+  currentAmount Decimal    @default(0) @db.Decimal(10, 2)
+  startDate     DateTime
+  endDate       DateTime
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("goals")
+}
+
+enum GoalPeriod {
+  SEMANAL
+  MENSAL
+}
+
+model FixedExpense {
+  id          String   @id @default(uuid())
+  name        String
+  amount      Decimal  @db.Decimal(10, 2)
+  dueDay      Int // Dia do mês que vence (1-31)
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("fixed_expenses")
 }

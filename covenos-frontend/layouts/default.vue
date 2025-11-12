@@ -79,6 +79,13 @@
               </svg>
               <span>Financeiro</span>
             </NuxtLink>
+
+            <NuxtLink to="/fixed-expenses" class="nav-link">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 11h18m-7 4h7m-18 0h6m-6 4h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+              <span>Despesas Fixas</span>
+            </NuxtLink>
             
             <NuxtLink to="/utilidades" class="nav-link">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,6 +222,12 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Financeiro
+              </NuxtLink>
+              <NuxtLink to="/fixed-expenses" @click="mobileMenuOpen = false" class="mobile-nav-link">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 11h18m-7 4h7m-18 0h6m-6 4h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                Despesas Fixas
               </NuxtLink>
               <NuxtLink to="/utilidades" @click="mobileMenuOpen = false" class="mobile-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

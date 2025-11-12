@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,15 +12,15 @@ import { ProductsModule } from './products/products.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { FinancialModule } from './financial/financial.module';
 import { RemindersModule } from './reminders/reminders.module';
-import { EvolutionModule } from './evolution/evolution.module';
-
+import { GoalsModule } from './goals/goals.module';
+import { FixedExpensesModule } from './fixed-expenses/fixed-expenses.module';
 @Module({
   imports: [
-   
+
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    EvolutionModule,
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     UsersModule,
@@ -29,6 +30,8 @@ import { EvolutionModule } from './evolution/evolution.module';
     AppointmentsModule,
     FinancialModule,
     RemindersModule,
+    GoalsModule,
+    FixedExpensesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
