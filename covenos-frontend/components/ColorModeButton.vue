@@ -1,7 +1,16 @@
 <template>
-  <button @click="toggleColorMode" class="p-2 text-gray-400 hover:text-gray-200 transition-colors duration-200">
-    <SunIcon v-if="colorMode.preference === 'dark'" class="w-6 h-6" />
-    <MoonIcon v-else class="w-6 h-6" />
+  <button 
+    @click="toggleColorMode" 
+    class="relative p-2 rounded-lg transition-all duration-200 hover:scale-110"
+    :class="[
+      colorMode.preference === 'dark' 
+        ? 'text-yellow-400 hover:bg-yellow-400/10' 
+        : 'text-gray-700 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800/50'
+    ]"
+    title="Alternar tema"
+  >
+    <SunIcon v-if="colorMode.preference === 'dark'" class="w-5 h-5" />
+    <MoonIcon v-else class="w-5 h-5" />
   </button>
 </template>
 

@@ -322,31 +322,49 @@
                 </div>
               </div>
               
-              <!-- Normal appointment content -->
-              <div v-else class="p-2 h-full flex flex-col justify-between overflow-hidden">
-                <div class="space-y-1">
-                  <div class="text-xs font-semibold text-white truncate group-hover:scale-105 transition-transform">
-                    {{ appointment.client?.name }}
+              <!-- Normal appointment content - Melhorado -->
+              <div v-else class="p-2.5 h-full flex flex-col justify-between overflow-hidden">
+                <div class="space-y-1.5 flex-1">
+                  <div class="flex items-center justify-between">
+                    <div class="text-xs font-bold text-white truncate group-hover:scale-105 transition-transform flex-1">
+                      {{ appointment.client?.name }}
+                    </div>
+                    <div v-if="appointment.totalPrice" class="text-xs font-semibold text-white/90 ml-2">
+                      {{ formatCurrency(appointment.totalPrice) }}
+                    </div>
                   </div>
-                  <div class="text-xs text-gray-200 opacity-90 truncate">
-                    {{ appointment.user?.name || 'Sem profissional' }}
+                  <div class="flex items-center space-x-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/80"></div>
+                    <div class="text-xs text-white/90 truncate">
+                      {{ appointment.user?.name || 'Sem profissional' }}
+                    </div>
                   </div>
-                  <div class="text-xs text-blue-300 opacity-75 truncate">
-                    {{ appointment.procedures?.[0]?.procedure?.name || 'Sem procedimento' }}
+                  <div v-if="appointment.procedures?.[0]?.procedure?.name" class="flex items-center space-x-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/60"></div>
+                    <div class="text-xs text-white/80 truncate">
+                      {{ appointment.procedures[0].procedure.name }}
+                      <span v-if="appointment.procedures.length > 1" class="text-white/60">
+                        +{{ appointment.procedures.length - 1 }}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 
-                <div class="space-y-1">
-                  <div class="text-xs text-gray-300 opacity-80">
+                <div class="space-y-1 pt-1 border-t border-white/20">
+                  <div class="text-xs font-medium text-white/90">
                     {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
                   </div>
-                  <div v-if="appointment.status !== 'AGENDADO'" class="text-xs">
+                  <div class="flex items-center justify-between">
                     <span 
-                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
-                      :class="getStatusBadgeClass(appointment.status)"
+                      v-if="appointment.status !== 'AGENDADO'"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold bg-white/20 text-white"
                     >
                       {{ getStatusLabel(appointment.status) }}
                     </span>
+                    <span v-else class="text-xs text-white/70">Agendado</span>
+                    <div v-if="appointment.paymentMethod" class="text-xs text-white/70">
+                      💳 {{ appointment.paymentMethod }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -761,7 +779,7 @@ const loading = ref(true)
 const saving = ref(false)
 const deleting = ref(false)
 
-const viewMode = ref('list')
+const viewMode = ref('calendar') // Calendário como padrão
 const dateFilter = ref('')
 const statusFilter = ref('')
 const clientFilter = ref('')
@@ -866,13 +884,14 @@ const weekDays = computed(() => {
   return days
 })
 
-// Appointments for the current week filtered and positioned
+// Appointments for the current week filtered and positioned - INCLUINDO CONCLUÍDOS
 const weekAppointments = computed(() => {
   const start = new Date(currentWeekStart.value)
   const end = new Date(start)
   end.setDate(start.getDate() + 7)
   
-  return filteredAppointments.value.filter(apt => {
+  // Incluir TODOS os agendamentos (agendados, confirmados, concluídos) - não filtrar por status
+  return appointments.value.filter(apt => {
     // Use startTime for more accurate date comparison
     const aptDateTime = new Date(apt.startTime)
     const aptDate = new Date(aptDateTime.getFullYear(), aptDateTime.getMonth(), aptDateTime.getDate())
@@ -1050,21 +1069,21 @@ const getAppointmentStyle = (appointment) => {
 }
 
 const getAppointmentClass = (status) => {
-  const baseClasses = 'border-l-4'
+  const baseClasses = 'border-l-4 shadow-md'
   
   switch (status) {
     case 'AGENDADO':
-      return `${baseClasses} bg-blue-600/90 border-blue-400 hover:bg-blue-500/90`
+      return `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-600 border-blue-400 hover:from-blue-400 hover:to-blue-500 text-white`
     case 'CONFIRMADO':
-      return `${baseClasses} bg-yellow-600/90 border-yellow-400 hover:bg-yellow-500/90`
+      return `${baseClasses} bg-gradient-to-r from-yellow-500 to-yellow-600 border-yellow-400 hover:from-yellow-400 hover:to-yellow-500 text-white`
     case 'CONCLUIDO':
-      return `${baseClasses} bg-purple-600/90 border-purple-400 hover:bg-purple-500/90`
+      return `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 border-green-400 hover:from-green-400 hover:to-green-500 text-white`
     case 'CANCELADO':
-      return `${baseClasses} bg-red-600/90 border-red-400 hover:bg-red-500/90`
+      return `${baseClasses} bg-gradient-to-r from-red-500 to-red-600 border-red-400 hover:from-red-400 hover:to-red-500 text-white opacity-60`
     case 'BLOQUEADO':
-      return `${baseClasses} bg-gray-600/90 border-gray-400 hover:bg-gray-500/90`
+      return `${baseClasses} bg-gradient-to-r from-gray-600 to-gray-700 border-gray-500 hover:from-gray-500 hover:to-gray-600 text-white`
     default:
-      return `${baseClasses} bg-blue-600/90 border-blue-400 hover:bg-blue-500/90`
+      return `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-600 border-blue-400 hover:from-blue-400 hover:to-blue-500 text-white`
   }
 }
 
