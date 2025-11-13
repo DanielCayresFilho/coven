@@ -6,11 +6,18 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with increased timeout and retry
+# Skip postinstall during npm install since it needs source code
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --ignore-scripts --legacy-peer-deps || npm install --ignore-scripts
 
 # Copy source code
 COPY . .
+
+# Run nuxt prepare manually after copying source code
+RUN npx nuxt prepare || true
 
 # Build the application
 RUN npm run build
