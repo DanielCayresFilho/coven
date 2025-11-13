@@ -380,7 +380,114 @@ const appointmentForm = reactive({
   discount: 0
 })
 
-// FullCalendar Options
+// Métodos auxiliares que precisam ser definidos antes do calendarOptions
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value)
+}
+
+const getStatusColor = (status) => {
+  const colors = {
+    AGENDADO: '#3b82f6',
+    CONFIRMADO: '#eab308',
+    CONCLUIDO: '#22c55e',
+    CANCELADO: '#ef4444',
+    BLOQUEADO: '#6b7280'
+  }
+  return colors[status] || '#3b82f6'
+}
+
+const renderEventContent = (eventInfo) => {
+  const { event } = eventInfo
+  const props = event.extendedProps
+  
+  return {
+    html: `
+      <div class="fc-event-main-content p-1">
+        <div class="font-bold text-xs truncate">${event.title}</div>
+        <div class="text-xs opacity-90">${props.professional}</div>
+        ${props.procedures ? `<div class="text-xs opacity-75 truncate">${props.procedures}</div>` : ''}
+        ${props.price ? `<div class="text-xs font-semibold mt-1">${formatCurrency(props.price)}</div>` : ''}
+      </div>
+    `
+  }
+}
+
+const handleEventClick = (info) => {
+  const appointment = info.event.extendedProps.appointment
+  editAppointment(appointment)
+}
+
+const handleDateSelect = (selectInfo) => {
+  const startDate = selectInfo.start
+  const date = startDate.toISOString().split('T')[0]
+  const hours = startDate.getHours().toString().padStart(2, '0')
+  const minutes = startDate.getMinutes().toString().padStart(2, '0')
+  const time = `${hours}:${minutes}`
+
+  Object.assign(appointmentForm, {
+    clientId: '',
+    userId: '',
+    date: date,
+    startTime: time,
+    procedureIds: [],
+    status: 'AGENDADO',
+    observations: '',
+    discount: 0
+  })
+
+  editingAppointment.value = null
+  showCreateModal.value = true
+}
+
+const handleEventDrop = async (info) => {
+  const appointment = info.event.extendedProps.appointment
+  const newStart = info.event.start
+  const newEnd = info.event.end
+
+  try {
+    const { $api } = useNuxtApp()
+    await $api(`/appointments/${appointment.id}`, {
+      method: 'PATCH',
+      body: {
+        startTime: newStart.toISOString(),
+        endTime: newEnd ? newEnd.toISOString() : undefined,
+        date: newStart.toISOString().split('T')[0]
+      }
+    })
+    
+    await loadData()
+    useToast().add({ type: 'success', title: 'Agendamento movido!' })
+  } catch (error) {
+    info.revert()
+    useToast().add({ type: 'error', title: 'Erro ao mover agendamento' })
+  }
+}
+
+const handleEventResize = async (info) => {
+  const appointment = info.event.extendedProps.appointment
+  const newEnd = info.event.end
+
+  try {
+    const { $api } = useNuxtApp()
+    await $api(`/appointments/${appointment.id}`, {
+      method: 'PATCH',
+      body: {
+        endTime: newEnd.toISOString()
+      }
+    })
+    
+    await loadData()
+    useToast().add({ type: 'success', title: 'Duração atualizada!' })
+  } catch (error) {
+    info.revert()
+    useToast().add({ type: 'error', title: 'Erro ao redimensionar' })
+  }
+}
+
+// FullCalendar Options - agora as funções já estão definidas
 const calendarOptions = ref({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
   initialView: 'timeGridWeek',
@@ -526,116 +633,10 @@ watch(calendarEvents, (newEvents) => {
 })
 
 // Métodos
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value)
-}
-
-const getStatusColor = (status) => {
-  const colors = {
-    AGENDADO: '#3b82f6',
-    CONFIRMADO: '#eab308',
-    CONCLUIDO: '#22c55e',
-    CANCELADO: '#ef4444',
-    BLOQUEADO: '#6b7280'
-  }
-  return colors[status] || '#3b82f6'
-}
-
 const clearFilters = () => {
   statusFilter.value = ''
   clientFilter.value = ''
   hairdresserFilter.value = ''
-}
-
-const renderEventContent = (eventInfo) => {
-  const { event } = eventInfo
-  const props = event.extendedProps
-  
-  return {
-    html: `
-      <div class="fc-event-main-content p-1">
-        <div class="font-bold text-xs truncate">${event.title}</div>
-        <div class="text-xs opacity-90">${props.professional}</div>
-        ${props.procedures ? `<div class="text-xs opacity-75 truncate">${props.procedures}</div>` : ''}
-        ${props.price ? `<div class="text-xs font-semibold mt-1">${formatCurrency(props.price)}</div>` : ''}
-      </div>
-    `
-  }
-}
-
-const handleEventClick = (info) => {
-  const appointment = info.event.extendedProps.appointment
-  editAppointment(appointment)
-}
-
-const handleDateSelect = (selectInfo) => {
-  const startDate = selectInfo.start
-  const date = startDate.toISOString().split('T')[0]
-  const hours = startDate.getHours().toString().padStart(2, '0')
-  const minutes = startDate.getMinutes().toString().padStart(2, '0')
-  const time = `${hours}:${minutes}`
-
-  Object.assign(appointmentForm, {
-    clientId: '',
-    userId: '',
-    date: date,
-    startTime: time,
-    procedureIds: [],
-    status: 'AGENDADO',
-    observations: '',
-    discount: 0
-  })
-
-  editingAppointment.value = null
-  showCreateModal.value = true
-}
-
-const handleEventDrop = async (info) => {
-  const appointment = info.event.extendedProps.appointment
-  const newStart = info.event.start
-  const newEnd = info.event.end
-
-  try {
-    const { $api } = useNuxtApp()
-    await $api(`/appointments/${appointment.id}`, {
-      method: 'PATCH',
-      body: {
-        startTime: newStart.toISOString(),
-        endTime: newEnd ? newEnd.toISOString() : undefined,
-        date: newStart.toISOString().split('T')[0]
-      }
-    })
-    
-    await loadData()
-    useToast().add({ type: 'success', title: 'Agendamento movido!' })
-  } catch (error) {
-    info.revert()
-    useToast().add({ type: 'error', title: 'Erro ao mover agendamento' })
-  }
-}
-
-const handleEventResize = async (info) => {
-  const appointment = info.event.extendedProps.appointment
-  const newEnd = info.event.end
-
-  try {
-    const { $api } = useNuxtApp()
-    await $api(`/appointments/${appointment.id}`, {
-      method: 'PATCH',
-      body: {
-        endTime: newEnd.toISOString()
-      }
-    })
-    
-    await loadData()
-    useToast().add({ type: 'success', title: 'Duração atualizada!' })
-  } catch (error) {
-    info.revert()
-    useToast().add({ type: 'error', title: 'Erro ao redimensionar' })
-  }
 }
 
 const loadData = async () => {
