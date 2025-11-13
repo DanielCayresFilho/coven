@@ -12,7 +12,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // ⚫ Paleta inspirada na logo
+        // ⚫ Paleta inspirada na logo (Dark)
         abyss: {
           DEFAULT: '#06202B',
           dark: '#04171F'
@@ -24,6 +24,38 @@ module.exports = {
         night: '#0c1418',
         neutral: {
           750: '#2e2e2e'
+        },
+        // ✨ Paleta Light - Cores claras e bonitas
+        light: {
+          primary: '#6366f1',
+          secondary: '#8b5cf6',
+          accent: '#ec4899',
+          background: '#fafafa',
+          surface: '#ffffff',
+          surfaceHover: '#f5f5f5',
+          text: '#1f2937',
+          textSecondary: '#6b7280',
+          border: '#e5e7eb',
+          borderHover: '#d1d5db',
+          success: '#10b981',
+          warning: '#f59e0b',
+          error: '#ef4444',
+          info: '#3b82f6'
+        },
+        sky: {
+          light: '#e0f2fe',
+          DEFAULT: '#0ea5e9',
+          dark: '#0284c7'
+        },
+        rose: {
+          light: '#fce7f3',
+          DEFAULT: '#f43f5e',
+          dark: '#e11d48'
+        },
+        lavender: {
+          light: '#f3e8ff',
+          DEFAULT: '#a855f7',
+          dark: '#9333ea'
         }
       },
 
@@ -89,13 +121,24 @@ module.exports = {
         'gradient-gothic': 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 35%, #16213e 65%, #0f0f23 100%)',
         'gradient-witch': 'linear-gradient(135deg, #4c1d95 0%, #2e1065 50%, #1e1b4b 100%)',
         'gradient-blood': 'linear-gradient(135deg, #981E1B 0%, #450a0a 50%, #1c1917 100%)',
-        'gradient-elegant': 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%)'
+        'gradient-elegant': 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%)',
+        // ✨ Gradientes Light
+        'gradient-light': 'linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f5f5f5 100%)',
+        'gradient-sky': 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
+        'gradient-rose': 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%)',
+        'gradient-lavender': 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 50%, #ddd6fe 100%)',
+        'gradient-soft': 'linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)'
       },
 
       boxShadow: {
         'gothic': '0 10px 25px -5px rgba(139, 92, 246, 0.3), 0 10px 10px -5px rgba(139, 92, 246, 0.1)',
         'blood': '0 10px 25px -5px rgba(152, 30, 27, 0.5), 0 10px 10px -5px rgba(152, 30, 27, 0.3)',
-        'witch': '0 10px 25px -5px rgba(109, 40, 217, 0.3), 0 10px 10px -5px rgba(109, 40, 217, 0.1)'
+        'witch': '0 10px 25px -5px rgba(109, 40, 217, 0.3), 0 10px 10px -5px rgba(109, 40, 217, 0.1)',
+        // ✨ Sombras Light
+        'light': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+        'light-md': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+        'light-lg': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'light-glow': '0 0 20px rgba(99, 102, 241, 0.15), 0 4px 6px rgba(0, 0, 0, 0.05)'
       }
     }
   },

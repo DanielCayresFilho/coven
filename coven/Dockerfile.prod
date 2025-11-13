@@ -27,8 +27,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm install --production
+# Install dependencies (including prisma for migrations)
+# We need prisma CLI for migrations, so we install it even in production
+RUN npm install --production && npm install prisma
 
 # Copy built application and prisma from builder
 COPY --from=builder /app/dist ./dist
@@ -44,5 +45,11 @@ RUN npx prisma generate
 # Expose port
 EXPOSE 3000
 
+# Create entrypoint script to run migrations before starting
+RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
+    echo 'npx prisma migrate deploy || true' >> /app/entrypoint.sh && \
+    echo 'exec node dist/src/main.js' >> /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
 # Start the application
-CMD ["node", "dist/src/main.js"]
+CMD ["/app/entrypoint.sh"]

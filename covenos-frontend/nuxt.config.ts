@@ -32,10 +32,10 @@ export default defineNuxtConfig({
     '~/assets/css/main.css'
   ],
 
-  // Configuração de Color Mode (Dark por padrão)
+  // Configuração de Color Mode (Light por padrão)
   colorMode: {
-    preference: 'dark',
-    fallback: 'dark',
+    preference: 'light',
+    fallback: 'light',
     classSuffix: '',
     storageKey: 'covenos-color-mode'
   },
