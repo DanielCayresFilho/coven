@@ -453,35 +453,35 @@
                       v-model="procedureSearchTerm"
                       type="text"
                       placeholder="Pesquisar procedimentos..."
-                      class="w-full px-4 py-2 pl-10 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                     />
-                    <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                    <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
                   </div>
                   
-                  <div class="max-h-32 sm:max-h-40 overflow-y-auto border border-gray-700 rounded-lg p-2 sm:p-3 bg-gray-800/30">
+                  <div class="max-h-32 sm:max-h-40 overflow-y-auto border border-gray-300 dark:border-gray-700 rounded-lg p-2 sm:p-3 bg-gray-50 dark:bg-gray-800/30">
                     <div class="space-y-1 sm:space-y-2">
                       <label
                         v-for="procedure in filteredProcedures"
                         :key="procedure.id"
-                        class="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:bg-gray-700/50 p-1.5 sm:p-2 rounded transition-colors"
+                        class="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1.5 sm:p-2 rounded transition-colors"
                       >
                         <input
                           type="checkbox"
                           :value="procedure.id"
                           v-model="appointmentForm.procedureIds"
-                          class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 flex-shrink-0"
+                          class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-purple-500 flex-shrink-0"
                         />
                         <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between min-w-0">
                           <div class="flex flex-col">
-                            <span class="text-white text-sm font-medium truncate">{{ procedure.name }}</span>
-                            <span v-if="procedure.category" class="text-xs text-gray-400">{{ procedure.category }}</span>
+                            <span class="text-gray-900 dark:text-white text-sm font-medium truncate">{{ procedure.name }}</span>
+                            <span v-if="procedure.category" class="text-xs text-gray-600 dark:text-gray-400">{{ procedure.category }}</span>
                           </div>
-                          <span class="text-xs sm:text-sm text-purple-400 font-semibold">{{ formatCurrency(procedure.price) }}</span>
+                          <span class="text-xs sm:text-sm text-blue-600 dark:text-purple-400 font-semibold">{{ formatCurrency(procedure.price) }}</span>
                         </div>
                       </label>
                       
                       <div v-if="filteredProcedures.length === 0" class="text-center py-4">
-                        <p class="text-gray-400 text-sm">Nenhum procedimento encontrado</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Nenhum procedimento encontrado</p>
                       </div>
                     </div>
                   </div>
@@ -501,8 +501,8 @@
                 </div>
                 
                 <!-- Seção de Preços -->
-                <div class="bg-gray-800/30 border border-gray-700 rounded-lg p-3 sm:p-4 space-y-3">
-                  <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center">
+                <div class="bg-gray-50 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700 rounded-lg p-3 sm:p-4 space-y-3">
+                  <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-300 mb-3 flex items-center">
                     <CurrencyDollarIcon class="w-4 h-4 mr-2" />
                     Valores
                   </h4>
@@ -528,31 +528,31 @@
                         <CalculatorIcon class="w-4 h-4" />
                         Total
                       </label>
-                      <div class="w-full px-3 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white font-semibold text-base sm:text-lg">
+                      <div class="w-full px-3 py-3 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white font-semibold text-base sm:text-lg">
                         {{ formatCurrency(calculatedTotalPrice) }}
                       </div>
-                      <p v-if="appointmentForm.procedureIds.length === 0" class="text-xs text-gray-400 mt-1">
+                      <p v-if="appointmentForm.procedureIds.length === 0" class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                         Selecione procedimentos para calcular o valor
                       </p>
                     </div>
                   </div>
                   
-                  <div v-if="appointmentForm.procedureIds.length > 0" class="mt-3 pt-3 border-t border-gray-700">
-                    <p class="text-xs text-gray-400 mb-2">Detalhamento:</p>
+                  <div v-if="appointmentForm.procedureIds.length > 0" class="mt-3 pt-3 border-t border-gray-300 dark:border-gray-700">
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Detalhamento:</p>
                     <div class="space-y-1">
                       <div 
                         v-for="procedure in procedures.filter(p => appointmentForm.procedureIds.includes(p.id))" 
                         :key="procedure.id"
                         class="flex justify-between text-sm"
                       >
-                        <span class="text-gray-300">{{ procedure.name }}</span>
-                        <span class="text-purple-400">{{ formatCurrency(procedure.price) }}</span>
+                        <span class="text-gray-900 dark:text-gray-300">{{ procedure.name }}</span>
+                        <span class="text-blue-600 dark:text-purple-400">{{ formatCurrency(procedure.price) }}</span>
                       </div>
-                      <div v-if="appointmentForm.discount > 0" class="flex justify-between text-sm text-red-400">
+                      <div v-if="appointmentForm.discount > 0" class="flex justify-between text-sm text-red-600 dark:text-red-400">
                         <span>Desconto</span>
                         <span>-{{ formatCurrency(appointmentForm.discount) }}</span>
                       </div>
-                      <div class="flex justify-between text-sm font-semibold text-white pt-2 border-t border-gray-700">
+                      <div class="flex justify-between text-sm font-semibold text-gray-900 dark:text-white pt-2 border-t border-gray-300 dark:border-gray-700">
                         <span>Total</span>
                         <span>{{ formatCurrency(calculatedTotalPrice) }}</span>
                       </div>

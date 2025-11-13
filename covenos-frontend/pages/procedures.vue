@@ -234,20 +234,20 @@
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <div class="bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-full max-w-4xl my-8">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-4xl my-8">
               <!-- Modal Header -->
-              <div class="flex items-center justify-between p-6 border-b border-gray-800">
+              <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                 <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                  <div class="p-2 bg-blue-600 dark:bg-gradient-to-br dark:from-purple-600 dark:to-pink-600 rounded-lg">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                     </svg>
                   </div>
-                  <h3 class="text-xl font-semibold text-white">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     {{ editingProcedure ? 'Editar Procedimento' : 'Novo Procedimento' }}
                   </h3>
                 </div>
-                <button @click="closeModal" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                <button @click="closeModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
@@ -258,19 +258,19 @@
               <form @submit.prevent="saveProcedure" class="p-6 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Nome do Procedimento *</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Procedimento *</label>
                     <input
                       v-model="procedureForm.name"
                       type="text"
                       required
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="Nome do procedimento"
                     />
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Categoria *</label>
-                    <select v-model="procedureForm.category" required class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
+                    <select v-model="procedureForm.category" required class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
                       <option value="">Selecione uma categoria</option>
                       <option value="CABELO">Cabelo</option>
                       <option value="ALISAMENTO">Alisamento</option>
@@ -287,72 +287,72 @@
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Descrição</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrição</label>
                   <textarea
                     v-model="procedureForm.description"
                     rows="3"
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors resize-none"
                     placeholder="Descrição do procedimento..."
                   ></textarea>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Duração (minutos) *</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duração (minutos) *</label>
                     <input
                       v-model="procedureForm.duration"
                       type="number"
                       required
                       min="1"
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="60"
                     />
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Preço *</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preço *</label>
                     <div class="relative">
-                      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">R$</span>
+                      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">R$</span>
                       <input
                         v-model="procedureForm.price"
                         type="number"
                         step="0.01"
                         required
                         min="0"
-                        class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                        class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                         placeholder="0,00"
                       />
                     </div>
                   </div>
                 </div>
 
-          <div class="p-4 bg-blue-900/10 border border-blue-800 rounded-lg">
+          <div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
             <div class="flex items-center space-x-3 mb-3">
-              <div class="p-2 bg-blue-500/20 rounded-lg">
-                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
               <div>
-                <h4 class="text-sm font-medium text-blue-400">Produtos do Procedimento</h4>
-                <p class="text-sm text-gray-400">
+                <h4 class="text-sm font-medium text-blue-600 dark:text-blue-400">Produtos do Procedimento</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
                   Os produtos serão selecionados durante a criação da comanda
                 </p>
               </div>
             </div>
           </div>
                 
-                <div class="flex items-center space-x-3 p-4 bg-green-900/10 border border-green-800 rounded-lg">
+                <div class="flex items-center space-x-3 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
                   <input
                     v-model="procedureForm.isActive"
                     type="checkbox"
                     id="isActive"
-                    class="w-4 h-4 text-purple-600 bg-gray-800 border-gray-700 rounded focus:ring-purple-500 focus:ring-2"
+                    class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded focus:ring-blue-500 dark:focus:ring-purple-500 focus:ring-2"
                   />
-                  <label for="isActive" class="text-sm text-gray-300">
+                  <label for="isActive" class="text-sm text-gray-700 dark:text-gray-300">
                     <strong>Procedimento ativo</strong>
                     <br>
-                    <span class="text-xs text-gray-400">
+                    <span class="text-xs text-gray-600 dark:text-gray-400">
                       Procedimentos ativos ficam disponíveis para agendamento
                     </span>
                   </label>
@@ -363,13 +363,13 @@
                   <button 
                     type="button" 
                     @click="closeModal" 
-                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-colors"
                   >
                     Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="saving"
                   >
                     <span v-if="saving" class="flex items-center">
