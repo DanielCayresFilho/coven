@@ -14,7 +14,7 @@
   </button>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline'
 
 const colorMode = useColorMode()
