@@ -3,14 +3,14 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold text-white">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
           Usuários
         </h1>
-        <p class="text-neutral-400 text-sm">
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
           Gerencie cabeleireiros e funcionários
         </p>
       </div>
-      <button @click="showCreateModal = true" class="btn-primary">
+      <button @click="showCreateModal = true" class="px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white rounded-lg font-medium transition-all flex items-center">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
@@ -20,69 +20,69 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="card">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
         <div class="flex items-center">
-          <div class="p-2 bg-violet-600 rounded-lg">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-2 bg-blue-100 dark:bg-violet-600 rounded-lg">
+            <svg class="w-5 h-5 text-blue-600 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
           </div>
           <div class="ml-3">
-            <p class="text-sm text-neutral-400">Total</p>
-            <p class="text-lg font-semibold text-white">{{ users.length }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Total</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ users.length }}</p>
           </div>
         </div>
       </div>
       
-      <div class="card">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
         <div class="flex items-center">
-          <div class="p-2 bg-green-600 rounded-lg">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-2 bg-green-100 dark:bg-green-600 rounded-lg">
+            <svg class="w-5 h-5 text-green-600 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
           <div class="ml-3">
-            <p class="text-sm text-neutral-400">Ativos</p>
-            <p class="text-lg font-semibold text-white">{{ activeUsers }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Ativos</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ activeUsers }}</p>
           </div>
         </div>
       </div>
       
-      <div class="card">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
         <div class="flex items-center">
-          <div class="p-2 bg-blue-600 rounded-lg">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-2 bg-blue-100 dark:bg-blue-600 rounded-lg">
+            <svg class="w-5 h-5 text-blue-600 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
           <div class="ml-3">
-            <p class="text-sm text-neutral-400">Cabeleireiros</p>
-            <p class="text-lg font-semibold text-white">{{ hairdressers }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Cabeleireiros</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ hairdressers }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Search and Filters -->
-    <div class="card">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <input
             v-model="searchTerm"
             type="text"
             placeholder="Buscar usuários..."
-            class="input w-full"
+            class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
         <div>
-          <select v-model="roleFilter" class="input w-full">
+          <select v-model="roleFilter" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
             <option value="">Todos os cargos</option>
             <option value="ADMIN">Administrador</option>
             <option value="CABELEIREIRO">Cabeleireiro</option>
           </select>
         </div>
         <div>
-          <select v-model="statusFilter" class="input w-full">
+          <select v-model="statusFilter" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
             <option value="">Todos os status</option>
             <option value="true">Ativo</option>
             <option value="false">Inativo</option>
@@ -113,22 +113,22 @@
         v-else
         v-for="user in filteredUsers"
         :key="user.id"
-        class="card-hover group"
+        class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group"
       >
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center">
-            <div class="w-12 h-12 bg-gradient-to-br from-violet-600 to-violet-800 rounded-full flex items-center justify-center text-white font-medium">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 dark:from-violet-600 dark:to-violet-800 rounded-full flex items-center justify-center text-white font-medium">
               {{ user.name.charAt(0).toUpperCase() }}
             </div>
             <div class="ml-3">
-              <h3 class="font-medium text-white">{{ user.name }}</h3>
-              <p class="text-sm text-neutral-400">{{ user.email }}</p>
+              <h3 class="font-medium text-gray-900 dark:text-white">{{ user.name }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ user.email }}</p>
             </div>
           </div>
           <div class="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
             <button
               @click="editUser(user)"
-              class="p-1 text-neutral-400 hover:text-violet-400 transition-colors"
+              class="p-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-violet-400 transition-colors"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -136,7 +136,7 @@
             </button>
             <button
               @click="confirmDelete(user)"
-              class="p-1 text-neutral-400 hover:text-red-400 transition-colors"
+              class="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -147,22 +147,22 @@
         
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-neutral-400">Cargo:</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400">Cargo:</span>
             <span :class="getRoleBadge(user.role)">
               {{ getRoleText(user.role) }}
             </span>
           </div>
           
           <div class="flex items-center justify-between">
-            <span class="text-sm text-neutral-400">Status:</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400">Status:</span>
             <span :class="user.active ? 'badge-success' : 'badge-error'">
               {{ user.active ? 'Ativo' : 'Inativo' }}
             </span>
           </div>
           
           <div v-if="user.phone" class="flex items-center justify-between">
-            <span class="text-sm text-neutral-400">Telefone:</span>
-            <span class="text-sm text-neutral-200">{{ user.phone }}</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400">Telefone:</span>
+            <span class="text-sm text-gray-900 dark:text-gray-200">{{ user.phone }}</span>
           </div>
         </div>
       </div>
@@ -296,11 +296,11 @@
         <div class="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
           <ExclamationTriangleIcon class="w-8 h-8 text-red-600 dark:text-red-400" />
         </div>
-        <p class="text-gray-400 leading-relaxed">
+        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
           Tem certeza que deseja excluir o usuário 
-          <span class="font-semibold text-white">{{ userToDelete?.name }}</span>?
+          <span class="font-semibold text-gray-900 dark:text-white">{{ userToDelete?.name }}</span>?
         </p>
-        <p class="text-sm text-red-400 mt-2 font-medium">
+        <p class="text-sm text-red-600 dark:text-red-400 mt-2 font-medium">
           Esta ação não pode ser desfeita.
         </p>
       </div>

@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Produtos</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie o estoque de produtos do salão</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Produtos</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie o estoque de produtos do salão</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/25">
+      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
         <PlusIcon class="w-5 h-5 mr-2" />
         Novo Produto
       </button>
@@ -14,78 +14,78 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Total de Produtos</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ products.length }}</p>
-            <p class="text-xs text-gray-500 mt-1">cadastrados</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total de Produtos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ products.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">cadastrados</p>
           </div>
-          <div class="p-3 bg-blue-500/10 rounded-xl">
-            <CubeIcon class="w-6 h-6 text-blue-400" />
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-xl">
+            <CubeIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Estoque Baixo</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ lowStockCount }}</p>
-            <p class="text-xs text-gray-500 mt-1">produtos em alerta</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Estoque Baixo</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ lowStockCount }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">produtos em alerta</p>
           </div>
-          <div class="p-3 bg-red-500/10 rounded-xl">
-            <ExclamationTriangleIcon class="w-6 h-6 text-red-400" />
+          <div class="p-3 bg-red-100 dark:bg-red-500/10 rounded-xl">
+            <ExclamationTriangleIcon class="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Valor dos Produtos</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ formatCurrency(totalValue) }}</p>
-            <p class="text-xs text-gray-500 mt-1">soma dos preços</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Valor dos Produtos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ formatCurrency(totalValue) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">soma dos preços</p>
           </div>
-          <div class="p-3 bg-green-500/10 rounded-xl">
-            <CurrencyDollarIcon class="w-6 h-6 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <CurrencyDollarIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Categorias</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ categories.length }}</p>
-            <p class="text-xs text-gray-500 mt-1">tipos de produto</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Categorias</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ categories.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">tipos de produto</p>
           </div>
-          <div class="p-3 bg-purple-500/10 rounded-xl">
-            <TagIcon class="w-6 h-6 text-purple-400" />
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl">
+            <TagIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
         </div>
       </div>
     </div>
 
     <!-- Search and Filters -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="relative">
-          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchTerm"
             type="text"
             placeholder="Buscar produtos..."
-            class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
-        <select v-model="categoryFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="categoryFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todas as categorias</option>
           <option v-for="type in categories" :key="type" :value="type">
             {{ getProductTypeLabel(type) }}
           </option>
         </select>
-        <select v-model="stockFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="stockFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todos os estoques</option>
           <option value="low">Estoque baixo</option>
           <option value="normal">Estoque normal</option>
@@ -97,30 +97,30 @@
     <!-- Products Grid -->
     <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="i in 6" :key="i" class="animate-pulse">
-        <div class="bg-gray-800/50 h-64 rounded-xl"></div>
+        <div class="bg-gray-200 dark:bg-gray-800/50 h-64 rounded-xl"></div>
       </div>
     </div>
     
-    <div v-else-if="filteredProducts.length === 0" class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-16 text-center">
-      <CubeIcon class="w-16 h-16 mx-auto text-gray-600 mb-4" />
-      <h3 class="text-lg font-semibold text-white mb-2">Nenhum produto encontrado</h3>
-      <p class="text-gray-400">Adicione um novo produto para começar</p>
+    <div v-else-if="filteredProducts.length === 0" class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-16 text-center shadow-sm">
+      <CubeIcon class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Nenhum produto encontrado</h3>
+      <p class="text-gray-600 dark:text-gray-400">Adicione um novo produto para começar</p>
     </div>
     
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="product in filteredProducts"
         :key="product.id"
-        class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-all duration-300 group"
+        class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 group shadow-sm"
       >
         <div class="p-6">
           <!-- Header with Badge -->
           <div class="flex items-start justify-between mb-4">
             <div>
-              <h3 class="text-lg font-semibold text-white group-hover:text-purple-400 transition-colors">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-purple-400 transition-colors">
                 {{ product.name }}
               </h3>
-              <p v-if="product.description" class="text-sm text-gray-400 mt-1">
+              <p v-if="product.description" class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {{ product.description }}
               </p>
             </div>
@@ -135,19 +135,19 @@
           <!-- Product Details -->
           <div class="space-y-3">
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Tipo:</span>
-              <span class="text-white">{{ getProductTypeLabel(product.type) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Tipo:</span>
+              <span class="text-gray-900 dark:text-white">{{ getProductTypeLabel(product.type) }}</span>
             </div>
             
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Preço:</span>
-              <span class="text-white font-semibold">{{ formatCurrency(product.price || 0) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Preço:</span>
+              <span class="text-gray-900 dark:text-white font-semibold">{{ formatCurrency(product.price || 0) }}</span>
             </div>
             
             <div class="flex flex-col text-sm">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-gray-400">Estoque:</span>
-                <span class="text-white font-semibold">
+                <span class="text-gray-600 dark:text-gray-400">Estoque:</span>
+                <span class="text-gray-900 dark:text-white font-semibold">
                   <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
                     {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }} usável
                   </template>
@@ -157,7 +157,7 @@
                 </span>
               </div>
               <template v-if="product.type === 'USO_INTERNO' && product.unitQuantity">
-                <div class="text-gray-500 text-xs space-y-0.5">
+                <div class="text-gray-500 dark:text-gray-500 text-xs space-y-0.5">
                   <div>
                     Quantidade: {{ product.stock }} {{ product.unit || 'unidade' }}
                   </div>
@@ -165,7 +165,7 @@
                     Quantidade unitária: {{ product.unitQuantity }}{{ product.unitMeasurement }} por unidade 
                     (total: {{ (product.stock * parseFloat(product.unitQuantity)).toFixed(0) }}{{ product.unitMeasurement }})
                   </div>
-                  <div class="text-purple-400">
+                  <div class="text-blue-600 dark:text-purple-400">
                     Quantidade usável: {{ calculateAvailableStock(product).totalAvailableVolume }}{{ product.unitMeasurement }}
                   </div>
                 </div>
@@ -173,8 +173,8 @@
             </div>
             
             <div v-if="product.addToCost" class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Custo Financeiro:</span>
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-900/30 text-green-400 border border-green-800">
+              <span class="text-gray-600 dark:text-gray-400">Custo Financeiro:</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800">
                 <CheckIcon class="w-3 h-3 mr-1" />
                 Ativo
               </span>
@@ -183,10 +183,10 @@
             <!-- Stock Progress Bar -->
             <div class="pt-2">
               <div class="flex items-center justify-between text-xs mb-1">
-                <span class="text-gray-500">Nível de estoque</span>
-                <span class="text-gray-500">Mín: {{ product.minStock || 5 }}</span>
+                <span class="text-gray-500 dark:text-gray-500">Nível de estoque</span>
+                <span class="text-gray-500 dark:text-gray-500">Mín: {{ product.minStock || 5 }}</span>
               </div>
-              <div class="w-full bg-gray-700 rounded-full h-1.5">
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                 <div 
                   :class="[
                     'h-1.5 rounded-full transition-all duration-300',
@@ -199,24 +199,24 @@
           </div>
           
           <!-- Actions -->
-          <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-700">
+          <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               @click="openStockModal(product)"
-              class="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
             >
               Ajustar Estoque
             </button>
             <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 @click="editProduct(product)"
-                class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                 title="Editar"
               >
                 <PencilIcon class="w-4 h-4" />
               </button>
               <button
                 @click="confirmDelete(product)"
-                class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                 title="Excluir"
               >
                 <TrashIcon class="w-4 h-4" />
@@ -246,18 +246,18 @@
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <div class="bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-full max-w-2xl my-8">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-2xl my-8">
               <!-- Modal Header -->
-              <div class="flex items-center justify-between p-6 border-b border-gray-800">
+              <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                 <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                  <div class="p-2 bg-blue-600 dark:bg-gradient-to-br dark:from-purple-600 dark:to-pink-600 rounded-lg">
                     <CubeIcon class="w-5 h-5 text-white" />
                   </div>
-                  <h3 class="text-xl font-semibold text-white">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     {{ editingProduct ? 'Editar Produto' : 'Novo Produto' }}
                   </h3>
                 </div>
-                <button @click="closeModal" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                <button @click="closeModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                   <XMarkIcon class="w-5 h-5" />
                 </button>
               </div>
@@ -265,30 +265,30 @@
               <!-- Modal Body -->
               <form @submit.prevent="saveProduct" class="p-6 space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Nome do Produto *</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Produto *</label>
                   <input
                     v-model="productForm.name"
                     type="text"
                     required
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                     placeholder="Nome do produto"
                   />
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Descrição</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrição</label>
                   <textarea
                     v-model="productForm.description"
                     rows="3"
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors resize-none"
                     placeholder="Descrição do produto..."
                   ></textarea>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Tipo *</label>
-                    <select v-model="productForm.type" required class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo *</label>
+                    <select v-model="productForm.type" required class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
                       <option value="">Selecione o tipo</option>
                       <option value="USO_INTERNO">Uso Interno</option>
                       <option value="VENDA_DIRETA">Venda Direta</option>
@@ -296,8 +296,8 @@
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Unidade</label>
-                    <select v-model="productForm.unit" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade</label>
+                    <select v-model="productForm.unit" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
                       <option value="">Selecione a unidade</option>
                       <option value="ml">ml</option>
                       <option value="L">L</option>
@@ -310,22 +310,22 @@
                 </div>
                 
                 <!-- Campos específicos para produtos de uso interno -->
-                <div v-if="productForm.type === 'USO_INTERNO'" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-900/10 border border-blue-800 rounded-lg">
+                <div v-if="productForm.type === 'USO_INTERNO'" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Quantidade por Unidade</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantidade por Unidade</label>
                     <input
                       v-model="productForm.unitQuantity"
                       type="number"
                       step="0.01"
                       min="0"
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="Ex: 100"
                     />
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Unidade de Medida</label>
-                    <select v-model="productForm.unitMeasurement" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade de Medida</label>
+                    <select v-model="productForm.unitMeasurement" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
                       <option value="">Selecione</option>
                       <option value="ml">ml (mililitros)</option>
                       <option value="g">g (gramas)</option>
@@ -337,24 +337,24 @@
                   </div>
                   
                   <div class="md:col-span-2">
-                    <p class="text-xs text-blue-400">
+                    <p class="text-xs text-blue-600 dark:text-blue-400">
                       <strong>Exemplo:</strong> Se você tem 5 frascos de 100ml cada, o estoque total calculado será 500ml disponíveis para uso.
                     </p>
                   </div>
                 </div>
                 
                 <!-- Checkbox para adicionar como custo -->
-                <div class="flex items-center space-x-3 p-4 bg-green-900/10 border border-green-800 rounded-lg">
+                <div class="flex items-center space-x-3 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
                   <input
                     id="addToCost"
                     v-model="productForm.addToCost"
                     type="checkbox"
-                    class="w-4 h-4 text-purple-600 bg-gray-800 border-gray-700 rounded focus:ring-purple-500 focus:ring-2"
+                    class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded focus:ring-blue-500 dark:focus:ring-purple-500 focus:ring-2"
                   />
-                  <label for="addToCost" class="text-sm text-gray-300">
+                  <label for="addToCost" class="text-sm text-gray-700 dark:text-gray-300">
                     <strong>Adicionar como custo ao financeiro</strong>
                     <br>
-                    <span class="text-xs text-gray-400">
+                    <span class="text-xs text-gray-600 dark:text-gray-400">
                       Quando este produto for utilizado em procedimentos, será registrado automaticamente como custo no módulo financeiro.
                     </span>
                   </label>
@@ -362,39 +362,39 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Preço</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preço</label>
                     <div class="relative">
-                      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">R$</span>
+                      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">R$</span>
                       <input
                         v-model="productForm.price"
                         type="number"
                         step="0.01"
                         min="0"
-                        class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                        class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                         placeholder="0,00"
                       />
                     </div>
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Estoque Inicial *</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estoque Inicial *</label>
                     <input
                       v-model="productForm.stock"
                       type="number"
                       min="0"
                       required
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="0"
                     />
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Estoque Mínimo</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estoque Mínimo</label>
                     <input
                       v-model="productForm.minStock"
                       type="number"
                       min="0"
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="5"
                     />
                   </div>
@@ -405,13 +405,13 @@
                   <button 
                     type="button" 
                     @click="closeModal" 
-                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-colors"
                   >
                     Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="saving"
                   >
                     <span v-if="saving" class="flex items-center">
@@ -719,9 +719,9 @@ const getStockStatus = (product) => {
 
 const getStockBadgeClass = (product) => {
   const minStock = product.minStock || 5
-  if (product.stock <= minStock) return 'bg-red-900/50 text-red-400 border border-red-800'
-  if (product.stock <= minStock * 3) return 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
-  return 'bg-green-900/50 text-green-400 border border-green-800'
+  if (product.stock <= minStock) return 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
+  if (product.stock <= minStock * 3) return 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-800'
+  return 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800'
 }
 
 const getStockBarColor = (product) => {

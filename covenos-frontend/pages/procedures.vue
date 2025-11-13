@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Procedimentos</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie os procedimentos e serviços oferecidos</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Procedimentos</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie os procedimentos e serviços oferecidos</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/25">
+      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
@@ -16,60 +16,60 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Total de Procedimentos</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ procedures.length }}</p>
-            <p class="text-xs text-gray-500 mt-1">cadastrados</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total de Procedimentos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ procedures.length }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">cadastrados</p>
           </div>
-          <div class="p-3 bg-purple-500/10 rounded-xl">
-            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl">
+            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
             </svg>
           </div>
         </div>
       </div>
       
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Procedimentos Ativos</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ activeProcedures }}</p>
-            <p class="text-xs text-gray-500 mt-1">disponíveis</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Procedimentos Ativos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ activeProcedures }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">disponíveis</p>
           </div>
-          <div class="p-3 bg-green-500/10 rounded-xl">
-            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
         </div>
       </div>
       
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Duração Média</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ averageDuration }}min</p>
-            <p class="text-xs text-gray-500 mt-1">por sessão</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Duração Média</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ averageDuration }}min</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">por sessão</p>
           </div>
-          <div class="p-3 bg-blue-500/10 rounded-xl">
-            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-xl">
+            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
         </div>
       </div>
       
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Preço Médio</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ formatCurrency(averagePrice) }}</p>
-            <p class="text-xs text-gray-500 mt-1">por procedimento</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Preço Médio</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ formatCurrency(averagePrice) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">por procedimento</p>
           </div>
-          <div class="p-3 bg-yellow-500/10 rounded-xl">
-            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-xl">
+            <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
             </svg>
           </div>
@@ -78,20 +78,20 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="relative">
-          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
           <input
             v-model="searchTerm"
             type="text"
             placeholder="Buscar procedimentos..."
-            class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
-        <select v-model="categoryFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="categoryFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todas as categorias</option>
           <option value="CABELO">Cabelo</option>
           <option value="ALISAMENTO">Alisamento</option>
@@ -104,7 +104,7 @@
           <option value="ESTETICA_CORPORAL">Estética Corporal</option>
           <option value="OUTROS">Outros</option>
         </select>
-        <select v-model="statusFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="statusFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todos os status</option>
           <option value="true">Ativo</option>
           <option value="false">Inativo</option>
@@ -115,38 +115,38 @@
     <!-- Procedures List -->
     <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="i in 6" :key="i" class="animate-pulse">
-        <div class="bg-gray-800/50 h-64 rounded-xl"></div>
+        <div class="bg-gray-200 dark:bg-gray-800/50 h-64 rounded-xl"></div>
       </div>
     </div>
     
-    <div v-else-if="filteredProcedures.length === 0" class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-16 text-center">
-      <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div v-else-if="filteredProcedures.length === 0" class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-16 text-center shadow-sm">
+      <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
       </svg>
-      <h3 class="text-lg font-semibold text-white mb-2">Nenhum procedimento encontrado</h3>
-      <p class="text-gray-400">Crie um novo procedimento para começar</p>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Nenhum procedimento encontrado</h3>
+      <p class="text-gray-600 dark:text-gray-400">Crie um novo procedimento para começar</p>
     </div>
     
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="procedure in filteredProcedures"
         :key="procedure.id"
-        class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-all duration-300 group"
+        class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 group shadow-sm"
       >
         <div class="p-6">
           <!-- Header with Badge -->
           <div class="flex items-start justify-between mb-4">
             <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-semibold text-white group-hover:text-purple-400 transition-colors truncate">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-purple-400 transition-colors truncate">
                 {{ procedure.name }}
               </h3>
-              <p v-if="procedure.description" class="text-sm text-gray-400 mt-1 line-clamp-2">
+              <p v-if="procedure.description" class="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
                 {{ procedure.description }}
               </p>
             </div>
             <span :class="[
               'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ml-3 flex-shrink-0',
-              procedure.active ? 'bg-green-900/50 text-green-400 border border-green-800' : 'bg-red-900/50 text-red-400 border border-red-800'
+              procedure.active ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800' : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
             ]">
               {{ procedure.active ? 'Ativo' : 'Inativo' }}
             </span>
@@ -154,7 +154,7 @@
           
           <!-- Category Badge -->
           <div class="mb-4">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-900/30 text-blue-400 border border-blue-800">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-800">
               {{ getCategoryText(procedure.category) }}
             </span>
           </div>
@@ -162,30 +162,30 @@
           <!-- Procedure Details -->
           <div class="space-y-3">
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Duração:</span>
-              <span class="text-white font-medium">{{ procedure.duration }}min</span>
+              <span class="text-gray-600 dark:text-gray-400">Duração:</span>
+              <span class="text-gray-900 dark:text-white font-medium">{{ procedure.duration }}min</span>
             </div>
             
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Preço:</span>
-              <span class="text-white font-semibold">{{ formatCurrency(procedure.price) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Preço:</span>
+              <span class="text-gray-900 dark:text-white font-semibold">{{ formatCurrency(procedure.price) }}</span>
             </div>
             
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-400">Ativo:</span>
-              <span :class="procedure.active ? 'text-green-400' : 'text-red-400'">
+              <span class="text-gray-600 dark:text-gray-400">Ativo:</span>
+              <span :class="procedure.active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
                 {{ procedure.active ? 'Sim' : 'Não' }}
               </span>
             </div>
           </div>
           
           <!-- Actions -->
-          <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-700">
+          <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               @click="toggleProcedureStatus(procedure)"
               :class="[
                 'text-sm font-medium transition-colors',
-                procedure.active ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'
+                procedure.active ? 'text-yellow-600 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-300' : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300'
               ]"
             >
               {{ procedure.active ? 'Desativar' : 'Ativar' }}
@@ -193,7 +193,7 @@
             <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 @click="editProcedure(procedure)"
-                class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                 title="Editar"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +202,7 @@
               </button>
               <button
                 @click="confirmDelete(procedure)"
-                class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                 title="Excluir"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

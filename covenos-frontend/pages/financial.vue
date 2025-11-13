@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Financeiro</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie as finanças do salão</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Financeiro</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie as finanças do salão</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/25">
+      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
         <BanknotesIcon class="w-5 h-5 mr-2" />
         Nova Transação
       </button>
@@ -14,73 +14,73 @@
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Receitas do Mês</p>
-            <p class="text-2xl font-bold text-green-400 mt-2">{{ formatCurrency(monthlyRevenue) }}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              <span class="text-green-400">↑ 12%</span> vs. mês anterior
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Receitas do Mês</p>
+            <p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-2">{{ formatCurrency(monthlyRevenue) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <span class="text-green-600 dark:text-green-400">↑ 12%</span> vs. mês anterior
             </p>
           </div>
-          <div class="p-3 bg-green-500/10 rounded-xl">
-            <ArrowTrendingUpIcon class="w-6 h-6 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <ArrowTrendingUpIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Despesas do Mês</p>
-            <p class="text-2xl font-bold text-red-400 mt-2">{{ formatCurrency(monthlyExpenses) }}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              <span class="text-red-400">↑ 5%</span> vs. mês anterior
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Despesas do Mês</p>
+            <p class="text-2xl font-bold text-red-600 dark:text-red-400 mt-2">{{ formatCurrency(monthlyExpenses) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <span class="text-red-600 dark:text-red-400">↑ 5%</span> vs. mês anterior
             </p>
           </div>
-          <div class="p-3 bg-red-500/10 rounded-xl">
-            <ArrowTrendingDownIcon class="w-6 h-6 text-red-400" />
+          <div class="p-3 bg-red-100 dark:bg-red-500/10 rounded-xl">
+            <ArrowTrendingDownIcon class="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Lucro do Mês</p>
-            <p :class="['text-2xl font-bold mt-2', monthlyProfit >= 0 ? 'text-blue-400' : 'text-red-400']">
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Lucro do Mês</p>
+            <p :class="['text-2xl font-bold mt-2', monthlyProfit >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400']">
               {{ formatCurrency(monthlyProfit) }}
             </p>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
               Margem de {{ ((monthlyProfit / monthlyRevenue) * 100).toFixed(1) }}%
             </p>
           </div>
-          <div class="p-3 bg-blue-500/10 rounded-xl">
-            <CalculatorIcon class="w-6 h-6 text-blue-400" />
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-xl">
+            <CalculatorIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Saldo Total</p>
-            <p :class="['text-2xl font-bold mt-2', totalBalance >= 0 ? 'text-purple-400' : 'text-red-400']">
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Saldo Total</p>
+            <p :class="['text-2xl font-bold mt-2', totalBalance >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400']">
               {{ formatCurrency(totalBalance) }}
             </p>
-            <p class="text-xs text-gray-500 mt-1">Acumulado geral</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Acumulado geral</p>
           </div>
-          <div class="p-3 bg-purple-500/10 rounded-xl">
-            <WalletIcon class="w-6 h-6 text-purple-400" />
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl">
+            <WalletIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
         </div>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <select v-model="periodFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="periodFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="all">Todos os períodos</option>
           <option value="today">Hoje</option>
           <option value="week">Esta Semana</option>
@@ -89,13 +89,13 @@
           <option value="year">Este Ano</option>
         </select>
         
-        <select v-model="typeFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="typeFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todos os tipos</option>
           <option value="RECEITA">Receitas</option>
           <option value="DESPESA">Despesas</option>
         </select>
         
-        <select v-model="categoryFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="categoryFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todas as categorias</option>
           <option v-for="category in categories" :key="category" :value="category">
             {{ category }}
@@ -103,12 +103,12 @@
         </select>
         
         <div class="relative">
-          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchTerm"
             type="text"
             placeholder="Buscar transação..."
-            class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
       </div>
@@ -117,16 +117,16 @@
     <!-- Charts and Overview -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Monthly Overview -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-6">Resumo Mensal</h3>
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Resumo Mensal</h3>
         <div class="space-y-4">
           <!-- Revenue Bar -->
           <div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-gray-400">Receitas</span>
-              <span class="text-sm font-medium text-green-400">{{ formatCurrency(monthlyRevenue) }}</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Receitas</span>
+              <span class="text-sm font-medium text-green-600 dark:text-green-400">{{ formatCurrency(monthlyRevenue) }}</span>
             </div>
-            <div class="w-full bg-gray-700 rounded-full h-2">
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
                 class="bg-gradient-to-r from-green-500 to-green-400 h-2 rounded-full transition-all duration-500"
                 :style="`width: ${(monthlyRevenue / (monthlyRevenue + monthlyExpenses)) * 100}%`"
@@ -137,10 +137,10 @@
           <!-- Expenses Bar -->
           <div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-gray-400">Despesas</span>
-              <span class="text-sm font-medium text-red-400">{{ formatCurrency(monthlyExpenses) }}</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Despesas</span>
+              <span class="text-sm font-medium text-red-600 dark:text-red-400">{{ formatCurrency(monthlyExpenses) }}</span>
             </div>
-            <div class="w-full bg-gray-700 rounded-full h-2">
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
                 class="bg-gradient-to-r from-red-500 to-red-400 h-2 rounded-full transition-all duration-500"
                 :style="`width: ${(monthlyExpenses / (monthlyRevenue + monthlyExpenses)) * 100}%`"
@@ -149,10 +149,10 @@
           </div>
           
           <!-- Profit -->
-          <div class="pt-4 border-t border-gray-700">
+          <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400">Lucro Líquido</span>
-              <span :class="['text-lg font-bold', monthlyProfit >= 0 ? 'text-blue-400' : 'text-red-400']">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Lucro Líquido</span>
+              <span :class="['text-lg font-bold', monthlyProfit >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400']">
                 {{ formatCurrency(monthlyProfit) }}
               </span>
             </div>
@@ -161,22 +161,22 @@
       </div>
 
       <!-- Categories Breakdown -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-white mb-6">Por Categoria</h3>
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Por Categoria</h3>
         <div class="space-y-3 max-h-64 overflow-y-auto">
           <div
             v-for="category in categoryBreakdown"
             :key="category.name"
-            class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors"
+            class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div class="flex items-center space-x-3">
               <div 
                 class="w-3 h-3 rounded-full"
                 :class="category.type === 'INCOME' ? 'bg-green-500' : 'bg-red-500'"
               ></div>
-              <span class="text-sm text-gray-300">{{ category.name }}</span>
+              <span class="text-sm text-gray-900 dark:text-gray-300">{{ category.name }}</span>
             </div>
-            <span :class="['text-sm font-medium', category.type === 'INCOME' ? 'text-green-400' : 'text-red-400']">
+            <span :class="['text-sm font-medium', category.type === 'INCOME' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400']">
               {{ formatCurrency(category.total) }}
             </span>
           </div>
@@ -185,11 +185,11 @@
     </div>
 
     <!-- Transactions Table -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden">
-      <div class="p-6 border-b border-gray-800">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-800">
         <div class="flex items-center justify-between gap-4">
-          <h3 class="text-lg font-semibold text-white">Transações</h3>
-          <span class="text-sm text-gray-400">{{ displayTransactions.length }} registros</span>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Transações</h3>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ displayTransactions.length }} registros</span>
         </div>
         <div class="mt-4 flex flex-wrap gap-2">
           <button
@@ -199,8 +199,8 @@
             :class="[
               'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
               transactionCategoryTab === tab.key
-                ? 'bg-purple-600 text-white border-purple-500'
-                : 'bg-gray-800/60 text-gray-300 border-gray-700 hover:border-purple-500/60'
+                ? 'bg-blue-600 dark:bg-purple-600 text-white border-blue-500 dark:border-purple-500'
+                : 'bg-gray-100 dark:bg-gray-800/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:border-blue-500 dark:hover:border-purple-500/60'
             ]"
           >
             {{ tab.label }}
@@ -210,43 +210,43 @@
       
       <div v-if="loading" class="p-6 space-y-4">
         <div v-for="i in 5" :key="i" class="animate-pulse">
-          <div class="h-16 bg-gray-800/50 rounded-lg"></div>
+          <div class="h-16 bg-gray-200 dark:bg-gray-800/50 rounded-lg"></div>
         </div>
       </div>
       
       <div v-else-if="displayTransactions.length === 0" class="text-center py-16">
-        <BanknotesIcon class="w-16 h-16 mx-auto text-gray-600 mb-4" />
-        <p class="text-lg font-medium text-white mb-2">Nenhuma transação encontrada</p>
-        <p class="text-sm text-gray-400">Adicione uma nova transação para começar</p>
+        <BanknotesIcon class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+        <p class="text-lg font-medium text-gray-900 dark:text-white mb-2">Nenhuma transação encontrada</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Adicione uma nova transação para começar</p>
       </div>
       
       <div v-else class="overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-gray-800/30 border-b border-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700">
             <tr>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Data</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Descrição</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Categoria</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Tipo</th>
-              <th class="text-right py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Valor</th>
-              <th class="text-right py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Ações</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Data</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Descrição</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Categoria</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Tipo</th>
+              <th class="text-right py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Valor</th>
+              <th class="text-right py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
             <tr
               v-for="transaction in displayTransactions"
               :key="transaction.id"
-              class="hover:bg-gray-800/30 transition-colors duration-150"
+              class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors duration-150"
             >
-              <td class="py-4 px-6 text-sm text-gray-300">
+              <td class="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">
                 {{ formatDate(transaction.date) }}
               </td>
               <td class="py-4 px-6">
-                <p class="text-sm font-medium text-white">{{ transaction.description }}</p>
-                <p v-if="transaction.description" class="text-xs text-gray-400 mt-1">{{ transaction.description }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ transaction.description }}</p>
+                <p v-if="transaction.description" class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ transaction.description }}</p>
               </td>
               <td class="py-4 px-6">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-gray-800 text-gray-300">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
                   {{ transaction.category }}
                 </span>
               </td>
@@ -254,14 +254,14 @@
                 <span :class="[
                   'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                   transaction.type === 'RECEITA' 
-                    ? 'bg-green-900/50 text-green-400 border border-green-800' 
-                    : 'bg-red-900/50 text-red-400 border border-red-800'
+                    ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800' 
+                    : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
                 ]">
                   {{ transaction.type === 'RECEITA' ? 'Receita' : 'Despesa' }}
                 </span>
               </td>
               <td class="py-4 px-6 text-right">
-                <span :class="['text-sm font-bold', transaction.type === 'RECEITA' ? 'text-green-400' : 'text-red-400']">
+                <span :class="['text-sm font-bold', transaction.type === 'RECEITA' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400']">
                   {{ transaction.type === 'RECEITA' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
                 </span>
               </td>
@@ -269,14 +269,14 @@
                 <div class="flex items-center justify-end space-x-1">
                   <button
                     @click="editTransaction(transaction)"
-                    class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                    class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                     title="Editar"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="confirmDelete(transaction)"
-                    class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                    class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                     title="Excluir"
                   >
                     <TrashIcon class="w-4 h-4" />

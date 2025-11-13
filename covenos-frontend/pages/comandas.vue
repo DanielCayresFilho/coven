@@ -1,61 +1,61 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 p-4">
+  <div class="space-y-6">
     <!-- Header Section -->
-    <div class="max-w-7xl mx-auto mb-8">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div>
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-3xl font-bold text-white mb-2">Comandas</h1>
-            <p class="text-gray-400">Gerencie comandas de serviços e produtos utilizados</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Comandas</h1>
+            <p class="text-gray-600 dark:text-gray-400">Gerencie comandas de serviços e produtos utilizados</p>
           </div>
         </div>
 
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div class="bg-gradient-to-br from-green-600/20 to-emerald-600/20 border border-green-600/30 rounded-xl p-4">
+          <div class="bg-green-50 dark:bg-green-600/20 border border-green-200 dark:border-green-600/30 rounded-xl p-4">
             <div class="flex items-center">
-              <div class="p-2 bg-green-600/20 rounded-lg">
-                <CheckCircleIcon class="w-5 h-5 text-green-400" />
+              <div class="p-2 bg-green-100 dark:bg-green-600/20 rounded-lg">
+                <CheckCircleIcon class="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div class="ml-3">
-                <p class="text-sm text-green-400 font-medium">Comandas Abertas</p>
-                <p class="text-xl font-bold text-white">{{ openCommandsCount }}</p>
+                <p class="text-sm text-green-600 dark:text-green-400 font-medium">Comandas Abertas</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ openCommandsCount }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-blue-600/30 rounded-xl p-4">
+          <div class="bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-600/30 rounded-xl p-4">
             <div class="flex items-center">
-              <div class="p-2 bg-blue-600/20 rounded-lg">
-                <ClockIcon class="w-5 h-5 text-blue-400" />
+              <div class="p-2 bg-blue-100 dark:bg-blue-600/20 rounded-lg">
+                <ClockIcon class="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div class="ml-3">
-                <p class="text-sm text-blue-400 font-medium">Comandas Finalizadas</p>
-                <p class="text-xl font-bold text-white">{{ closedCommandsCount }}</p>
+                <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Comandas Finalizadas</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ closedCommandsCount }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border border-purple-600/30 rounded-xl p-4">
+          <div class="bg-purple-50 dark:bg-purple-600/20 border border-purple-200 dark:border-purple-600/30 rounded-xl p-4">
             <div class="flex items-center">
-              <div class="p-2 bg-purple-600/20 rounded-lg">
-                <CurrencyDollarIcon class="w-5 h-5 text-purple-400" />
+              <div class="p-2 bg-purple-100 dark:bg-purple-600/20 rounded-lg">
+                <CurrencyDollarIcon class="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div class="ml-3">
-                <p class="text-sm text-purple-400 font-medium">Receita Hoje</p>
-                <p class="text-xl font-bold text-white">{{ formatCurrency(todayRevenue) }}</p>
+                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Receita Hoje</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(todayRevenue) }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-yellow-600/20 to-orange-600/20 border border-yellow-600/30 rounded-xl p-4">
+          <div class="bg-yellow-50 dark:bg-yellow-600/20 border border-yellow-200 dark:border-yellow-600/30 rounded-xl p-4">
             <div class="flex items-center">
-              <div class="p-2 bg-yellow-600/20 rounded-lg">
-                <CubeIcon class="w-5 h-5 text-yellow-400" />
+              <div class="p-2 bg-yellow-100 dark:bg-yellow-600/20 rounded-lg">
+                <CubeIcon class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div class="ml-3">
-                <p class="text-sm text-yellow-400 font-medium">Produtos Usados</p>
-                <p class="text-xl font-bold text-white">{{ totalProductsUsed }}</p>
+                <p class="text-sm text-yellow-600 dark:text-yellow-400 font-medium">Produtos Usados</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ totalProductsUsed }}</p>
               </div>
             </div>
           </div>
@@ -64,22 +64,22 @@
     </div>
 
     <!-- Filters -->
-    <div class="max-w-7xl mx-auto mb-6">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4">
+    <div>
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
         <div class="flex flex-wrap gap-4">
           <div class="flex-1 min-w-64">
             <input
               v-model="clientFilter"
               type="text"
               placeholder="Buscar por cliente..."
-              class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+              class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
             />
           </div>
           
           <div class="min-w-40">
             <select 
               v-model="statusFilter" 
-              class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors"
+              class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
             >
               <option value="ABERTA">Abertas</option>
               <option value="FINALIZADA">Finalizadas</option>
@@ -90,7 +90,7 @@
           <div class="min-w-40">
             <select 
               v-model="hairdresserFilter" 
-              class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors"
+              class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
             >
               <option value="">Todos os profissionais</option>
               <option v-for="hairdresser in hairdressers" :key="hairdresser.id" :value="hairdresser.id">
@@ -103,7 +103,7 @@
             <input
               v-model="dateFilter"
               type="date"
-              class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors"
+              class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
             />
           </div>
         </div>
@@ -111,34 +111,34 @@
     </div>
 
     <!-- Commands List -->
-    <div class="max-w-7xl mx-auto">
+    <div>
       <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p class="text-gray-400">Carregando comandas...</p>
+        <div class="animate-spin w-8 h-8 border-2 border-blue-500 dark:border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+        <p class="text-gray-600 dark:text-gray-400">Carregando comandas...</p>
       </div>
 
       <div v-else-if="filteredCommands.length === 0" class="text-center py-12">
-        <div class="text-6xl text-gray-600 mb-4">📋</div>
-        <h3 class="text-xl font-medium text-gray-300 mb-2">Nenhuma comanda encontrada</h3>
-        <p class="text-gray-500">Não há comandas que correspondam aos filtros selecionados.</p>
+        <div class="text-6xl text-gray-400 dark:text-gray-600 mb-4">📋</div>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-gray-300 mb-2">Nenhuma comanda encontrada</h3>
+        <p class="text-gray-600 dark:text-gray-500">Não há comandas que correspondam aos filtros selecionados.</p>
       </div>
 
       <div v-else class="space-y-4">
         <div
           v-for="command in filteredCommands"
           :key="command.id"
-          class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-200 group cursor-pointer"
+          class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-blue-500 dark:hover:border-purple-500/50 transition-all duration-200 group cursor-pointer shadow-sm"
           @click="viewCommand(command)"
         >
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <div class="flex items-center gap-3 mb-3">
-                <div class="p-2 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-lg">
-                  <UserIcon class="w-5 h-5 text-purple-400" />
+                <div class="p-2 bg-blue-100 dark:bg-purple-600/20 rounded-lg">
+                  <UserIcon class="w-5 h-5 text-blue-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-white">{{ command.client?.name }}</h3>
-                  <p class="text-sm text-gray-400">{{ command.user?.name }}</p>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ command.client?.name }}</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ command.user?.name }}</p>
                 </div>
                 <span 
                   class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -149,20 +149,20 @@
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                <div class="flex items-center text-gray-300">
-                  <CalendarIcon class="w-4 h-4 mr-2" />
+                <div class="flex items-center text-gray-700 dark:text-gray-300">
+                  <CalendarIcon class="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
                   {{ formatDate(command.date) }}
                 </div>
-                <div class="flex items-center text-gray-300">
-                  <ClockIcon class="w-4 h-4 mr-2" />
+                <div class="flex items-center text-gray-700 dark:text-gray-300">
+                  <ClockIcon class="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
                   {{ formatTime(command.startTime) }}
                 </div>
-                <div class="flex items-center text-gray-300">
-                  <SparklesIcon class="w-4 h-4 mr-2" />
+                <div class="flex items-center text-gray-700 dark:text-gray-300">
+                  <SparklesIcon class="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
                   {{ command.procedures?.length || 0 }} procedimento(s)
                 </div>
-                <div class="flex items-center text-gray-300">
-                  <CubeIcon class="w-4 h-4 mr-2" />
+                <div class="flex items-center text-gray-700 dark:text-gray-300">
+                  <CubeIcon class="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
                   {{ command.productUsages?.length || 0 }} produto(s)
                 </div>
               </div>
@@ -170,20 +170,20 @@
             
             <div class="flex items-center space-x-4">
               <div class="text-right">
-                <p class="text-xl font-bold text-white">{{ formatCurrency(command.totalPrice || 0) }}</p>
-                <p v-if="command.paymentMethod" class="text-xs text-gray-400 mt-1">{{ command.paymentMethod }}</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(command.totalPrice || 0) }}</p>
+                <p v-if="command.paymentMethod" class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ command.paymentMethod }}</p>
               </div>
               <div class="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
                 <button
                   @click.stop="editCommand(command)"
-                  class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                  class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                 >
                   <PencilIcon class="w-4 h-4" />
                 </button>
                 <button
                   v-if="(command.comandaClosedAt || command.status === 'CONCLUIDO') && command.status !== 'CANCELADO'"
                   @click.stop="rescheduleCommand(command)"
-                  class="p-2 text-gray-400 hover:text-green-400 hover:bg-green-900/20 rounded-lg transition-all duration-200"
+                  class="p-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-lg transition-all duration-200"
                   title="Reagendar cliente"
                 >
                   <CalendarIcon class="w-4 h-4" />
@@ -701,9 +701,9 @@ const getStatusLabel = (command) => {
 const getStatusBadgeClass = (command) => {
   // For old commands without comandaClosedAt, use appointment status
   if (command.comandaClosedAt || command.status === 'CONCLUIDO') {
-    return 'bg-green-900/30 text-green-300 border border-green-600/30'
+    return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-600/30'
   }
-  return 'bg-yellow-900/30 text-yellow-300 border border-yellow-600/30'
+  return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-600/30'
 }
 
 // Utility functions

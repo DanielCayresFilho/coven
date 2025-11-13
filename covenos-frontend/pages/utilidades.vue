@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Lembretes</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie seus lembretes personalizados</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Lembretes</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie seus lembretes personalizados</p>
       </div>
     </div>
 
@@ -12,21 +12,21 @@
     <div class="max-w-4xl">
       
       <!-- Container de Lembretes -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl">
-        <div class="p-6 border-b border-gray-800">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-800">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
-              <div class="p-2 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-lg">
-                <BellIcon class="w-5 h-5 text-white" />
+              <div class="p-2 bg-yellow-100 dark:bg-gradient-to-br dark:from-yellow-600 dark:to-orange-600 rounded-lg">
+                <BellIcon class="w-5 h-5 text-yellow-600 dark:text-white" />
               </div>
               <div>
-                <h2 class="text-xl font-semibold text-white">Lembretes</h2>
-                <p class="text-sm text-gray-400">Gerencie lembretes personalizados</p>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Lembretes</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Gerencie lembretes personalizados</p>
               </div>
             </div>
             <button 
               @click="showCreateReminderModal = true"
-              class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg font-medium hover:from-yellow-700 hover:to-orange-700 transition-all duration-200 shadow-lg shadow-yellow-500/25"
+              class="inline-flex items-center px-3 py-2 bg-yellow-500 dark:bg-gradient-to-r dark:from-yellow-600 dark:to-orange-600 text-white rounded-lg font-medium hover:bg-yellow-600 dark:hover:from-yellow-700 dark:hover:to-orange-700 transition-all duration-200 shadow-md"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Novo Lembrete
@@ -35,10 +35,10 @@
         </div>
 
         <!-- Filtros de Lembretes -->
-        <div class="p-4 border-b border-gray-800 bg-gray-800/30">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <select v-model="reminderFilters.status" class="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500 transition-colors">
+              <select v-model="reminderFilters.status" class="w-full px-3 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors">
                 <option value="active">Ativos</option>
                 <option value="inactive">Inativos</option>
                 <option value="all">Todos</option>
@@ -48,14 +48,14 @@
               <input
                 v-model="reminderFilters.startDate"
                 type="date"
-                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500 transition-colors"
+                class="w-full px-3 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors"
               />
             </div>
             <div>
               <input
                 v-model="reminderFilters.endDate"
                 type="date"
-                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-500 transition-colors"
+                class="w-full px-3 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors"
               />
             </div>
           </div>
@@ -65,35 +65,35 @@
         <div class="max-h-96 overflow-y-auto">
           <div v-if="loadingReminders" class="p-6">
             <div class="animate-pulse space-y-3">
-              <div v-for="i in 3" :key="i" class="bg-gray-800/50 h-16 rounded-lg"></div>
+              <div v-for="i in 3" :key="i" class="bg-gray-200 dark:bg-gray-800/50 h-16 rounded-lg"></div>
             </div>
           </div>
           
           <div v-else-if="filteredReminders.length === 0" class="p-6 text-center">
-            <BellIcon class="w-12 h-12 mx-auto text-gray-600 mb-3" />
-            <p class="text-gray-400">Nenhum lembrete encontrado</p>
-            <p class="text-sm text-gray-500 mt-1">Crie um novo lembrete para começar</p>
+            <BellIcon class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-3" />
+            <p class="text-gray-600 dark:text-gray-400">Nenhum lembrete encontrado</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Crie um novo lembrete para começar</p>
           </div>
           
           <div v-else class="p-4 space-y-3">
             <div
               v-for="reminder in filteredReminders"
               :key="reminder.id"
-              class="flex items-start space-x-4 p-4 bg-gray-800/30 border border-gray-700 rounded-lg hover:border-gray-600 transition-all duration-200"
+              class="flex items-start space-x-4 p-4 bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200"
             >
               <div class="flex-shrink-0 mt-1">
                 <div :class="[
                   'w-3 h-3 rounded-full',
-                  reminder.isActive ? 'bg-yellow-500' : 'bg-gray-500'
+                  reminder.isActive ? 'bg-yellow-500 dark:bg-yellow-400' : 'bg-gray-400 dark:bg-gray-500'
                 ]"></div>
               </div>
               
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between">
                   <div>
-                    <h4 class="text-white font-medium">{{ reminder.title }}</h4>
-                    <p v-if="reminder.description" class="text-sm text-gray-400 mt-1">{{ reminder.description }}</p>
-                    <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                    <h4 class="text-gray-900 dark:text-white font-medium">{{ reminder.title }}</h4>
+                    <p v-if="reminder.description" class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ reminder.description }}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-500">
                       <span class="flex items-center">
                         <CalendarIcon class="w-3 h-3 mr-1" />
                         {{ formatDate(reminder.date) }}
@@ -114,20 +114,20 @@
                   <div class="flex items-center space-x-2 flex-shrink-0">
                     <button
                       @click="editReminder(reminder)"
-                      class="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors"
+                      class="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                     >
                       <PencilIcon class="w-4 h-4" />
                     </button>
                     <button
                       v-if="reminder.isActive"
                       @click="completeReminder(reminder.id)"
-                      class="p-1 text-gray-400 hover:text-green-400 hover:bg-green-900/20 rounded transition-colors"
+                      class="p-1 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
                     >
                       <CheckIcon class="w-4 h-4" />
                     </button>
                     <button
                       @click="deleteReminder(reminder.id)"
-                      class="p-1 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"
+                      class="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                     >
                       <TrashIcon class="w-4 h-4" />
                     </button>
@@ -159,18 +159,18 @@
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <div class="bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-full max-w-md">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-md">
               <!-- Modal Header -->
-              <div class="flex items-center justify-between p-6 border-b border-gray-800">
+              <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                 <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-lg">
+                  <div class="p-2 bg-yellow-500 dark:bg-gradient-to-br dark:from-yellow-600 dark:to-orange-600 rounded-lg">
                     <BellIcon class="w-5 h-5 text-white" />
                   </div>
-                  <h3 class="text-xl font-semibold text-white">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     {{ editingReminder ? 'Editar Lembrete' : 'Novo Lembrete' }}
                   </h3>
                 </div>
-                <button @click="closeReminderModal" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                <button @click="closeReminderModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                   <XMarkIcon class="w-5 h-5" />
                 </button>
               </div>
@@ -178,19 +178,19 @@
               <!-- Modal Body -->
               <form @submit.prevent="saveReminder" class="p-6 space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Título *</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Título *</label>
                   <input
                     v-model="reminderForm.title"
                     type="text"
                     required
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-yellow-500 transition-colors"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors"
                     placeholder="Título do lembrete"
                   />
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
-                  <select v-model="reminderForm.type" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-yellow-500 transition-colors">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo</label>
+                  <select v-model="reminderForm.type" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors">
                     <option value="MANUAL">Manual</option>
                     <option value="ANIVERSARIO">Aniversário</option>
                     <option value="AGENDAMENTO">Agendamento</option>
@@ -200,8 +200,8 @@
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">Prioridade</label>
-                  <select v-model="reminderForm.priority" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-yellow-500 transition-colors">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prioridade</label>
+                  <select v-model="reminderForm.priority" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-yellow-500 dark:focus:border-yellow-500 transition-colors">
                     <option value="POUCO_URGENTE">Pouco Urgente</option>
                     <option value="URGENTE">Urgente</option>
                     <option value="IMEDIATO">Imediato</option>

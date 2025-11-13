@@ -272,12 +272,12 @@
       <!-- Time Grid -->
       <div class="overflow-auto max-h-[800px]">
         <div class="relative" style="min-height: calc(12 * 90px);">
-          <!-- Hour Lines -->
+          <!-- Hour Lines with Appointments -->
           <div
             v-for="hour in timeSlots"
             :key="hour"
-            class="grid grid-cols-8 gap-0 border-b border-gray-200 dark:border-gray-700"
-            :style="`height: ${HOUR_HEIGHT}px; position: relative;`"
+            class="grid grid-cols-8 gap-0 border-b border-gray-200 dark:border-gray-700 relative"
+            :style="`height: ${HOUR_HEIGHT}px;`"
           >
             <!-- Time Label -->
             <div class="flex items-center justify-center border-r border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 sticky left-0 z-10">
@@ -295,75 +295,75 @@
             >
               <!-- Half-hour line -->
               <div class="absolute top-1/2 left-0 right-0 border-t border-gray-200/50 dark:border-gray-800/30 pointer-events-none"></div>
-            </div>
-          </div>
-
-          <!-- Appointments Overlay - Corrigido para alinhar com o grid -->
-          <div class="absolute top-0 left-0 right-0 pointer-events-none" :style="`height: calc(${timeSlots.length} * ${HOUR_HEIGHT}px);`">
-            <div
-              v-for="appointment in weekAppointments"
-              :key="appointment.id"
-              @click.stop="handleAppointmentClick(appointment)"
-              class="absolute rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl cursor-pointer pointer-events-auto group z-20"
-              :style="getAppointmentStyle(appointment)"
-              :class="getAppointmentClass(appointment.status)"
-            >
-              <!-- Blocked time slot content -->
-              <div v-if="appointment.status === 'BLOQUEADO'" class="p-2 h-full flex flex-col justify-center items-center">
-                <div class="text-center">
-                  <div class="text-lg mb-1">🔒</div>
-                  <div class="text-xs font-medium text-white opacity-90">BLOQUEADO</div>
-                  <div v-if="appointment.observations" class="text-xs text-gray-300 opacity-75 mt-1 truncate">
-                    {{ appointment.observations }}
-                  </div>
-                  <div class="text-xs text-gray-400 opacity-60 mt-1">
-                    {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
-                  </div>
-                </div>
-              </div>
               
-              <!-- Normal appointment content - Melhorado com mais espaço -->
-              <div v-else class="p-3 h-full flex flex-col justify-between overflow-hidden">
-                <div class="space-y-2 flex-1">
-                  <div class="flex items-center justify-between">
-                    <div class="text-sm font-bold text-white truncate group-hover:scale-105 transition-transform flex-1">
-                      {{ appointment.client?.name }}
-                    </div>
-                    <div v-if="appointment.totalPrice" class="text-xs font-semibold text-white/90 ml-2 whitespace-nowrap">
-                      {{ formatCurrency(appointment.totalPrice) }}
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <div class="w-2 h-2 rounded-full bg-white/80 flex-shrink-0"></div>
-                    <div class="text-xs text-white/90 truncate">
-                      {{ appointment.user?.name || 'Sem profissional' }}
-                    </div>
-                  </div>
-                  <div v-if="appointment.procedures?.[0]?.procedure?.name" class="flex items-center space-x-2">
-                    <div class="w-2 h-2 rounded-full bg-white/60 flex-shrink-0"></div>
-                    <div class="text-xs text-white/80 truncate">
-                      {{ appointment.procedures[0].procedure.name }}
-                      <span v-if="appointment.procedures.length > 1" class="text-white/60">
-                        +{{ appointment.procedures.length - 1 }}
-                      </span>
+              <!-- Appointments for this specific hour slot -->
+              <div class="absolute inset-0 pointer-events-none">
+                <div
+                  v-for="appointment in getAppointmentsForSlot(day.date, hour)"
+                  :key="appointment.id"
+                  @click.stop="handleAppointmentClick(appointment)"
+                  class="absolute rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl cursor-pointer pointer-events-auto group z-20"
+                  :style="getAppointmentStyleForSlot(appointment, day.date, hour)"
+                  :class="getAppointmentClass(appointment.status)"
+                >
+                  <!-- Blocked time slot content -->
+                  <div v-if="appointment.status === 'BLOQUEADO'" class="p-2 h-full flex flex-col justify-center items-center">
+                    <div class="text-center">
+                      <div class="text-lg mb-1">🔒</div>
+                      <div class="text-xs font-medium text-white opacity-90">BLOQUEADO</div>
+                      <div v-if="appointment.observations" class="text-xs text-gray-300 opacity-75 mt-1 truncate">
+                        {{ appointment.observations }}
+                      </div>
+                      <div class="text-xs text-gray-400 opacity-60 mt-1">
+                        {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div class="space-y-1.5 pt-2 border-t border-white/20">
-                  <div class="text-xs font-medium text-white/90">
-                    {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <span 
-                      v-if="appointment.status !== 'AGENDADO'"
-                      class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/20 text-white"
-                    >
-                      {{ getStatusLabel(appointment.status) }}
-                    </span>
-                    <span v-else class="text-xs text-white/70">Agendado</span>
-                    <div v-if="appointment.paymentMethod" class="text-xs text-white/70">
-                      💳 {{ appointment.paymentMethod }}
+                  
+                  <!-- Normal appointment content - Melhorado com mais espaço -->
+                  <div v-else class="p-3 h-full flex flex-col justify-between overflow-hidden">
+                    <div class="space-y-2 flex-1">
+                      <div class="flex items-center justify-between">
+                        <div class="text-sm font-bold text-white truncate group-hover:scale-105 transition-transform flex-1">
+                          {{ appointment.client?.name }}
+                        </div>
+                        <div v-if="appointment.totalPrice" class="text-xs font-semibold text-white/90 ml-2 whitespace-nowrap">
+                          {{ formatCurrency(appointment.totalPrice) }}
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-white/80 flex-shrink-0"></div>
+                        <div class="text-xs text-white/90 truncate">
+                          {{ appointment.user?.name || 'Sem profissional' }}
+                        </div>
+                      </div>
+                      <div v-if="appointment.procedures?.[0]?.procedure?.name" class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-white/60 flex-shrink-0"></div>
+                        <div class="text-xs text-white/80 truncate">
+                          {{ appointment.procedures[0].procedure.name }}
+                          <span v-if="appointment.procedures.length > 1" class="text-white/60">
+                            +{{ appointment.procedures.length - 1 }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="space-y-1.5 pt-2 border-t border-white/20">
+                      <div class="text-xs font-medium text-white/90">
+                        {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span 
+                          v-if="appointment.status !== 'AGENDADO'"
+                          class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/20 text-white"
+                        >
+                          {{ getStatusLabel(appointment.status) }}
+                        </span>
+                        <span v-else class="text-xs text-white/70">Agendado</span>
+                        <div v-if="appointment.paymentMethod" class="text-xs text-white/70">
+                          💳 {{ appointment.paymentMethod }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -994,6 +994,66 @@ const formatTimeRange = (startTime, endTime) => {
   const start = formatTime(startTime)
   const end = endTime ? formatTime(endTime) : ''
   return end ? `${start} - ${end}` : start
+}
+
+// Função para obter agendamentos que passam por um slot específico
+const getAppointmentsForSlot = (date, hour) => {
+  return weekAppointments.value.filter(appointment => {
+    const startTime = new Date(appointment.startTime)
+    const appointmentDate = startTime.toISOString().split('T')[0]
+    const appointmentHour = startTime.getHours()
+    
+    // Verificar se o agendamento está neste dia
+    if (appointmentDate !== date) return false
+    
+    // Verificar se o agendamento começa nesta hora ou se passa por ela
+    const endTime = appointment.endTime ? new Date(appointment.endTime) : new Date(startTime.getTime() + (60 * 60 * 1000))
+    const endHour = endTime.getHours()
+    
+    return appointmentHour <= hour && endHour >= hour
+  })
+}
+
+// Função para calcular estilo do agendamento dentro de um slot específico
+const getAppointmentStyleForSlot = (appointment, date, hour) => {
+  const startTime = new Date(appointment.startTime)
+  const endTime = appointment.endTime ? new Date(appointment.endTime) : new Date(startTime.getTime() + (60 * 60 * 1000))
+  
+  const startHour = startTime.getHours()
+  const startMinute = startTime.getMinutes()
+  const endHour = endTime.getHours()
+  const endMinute = endTime.getMinutes()
+  
+  // Calcular posição dentro do slot (0-100% da altura do slot)
+  let topPercent = 0
+  let heightPercent = 100
+  
+  if (startHour === hour) {
+    // Agendamento começa neste slot
+    topPercent = (startMinute / 60) * 100
+    if (endHour === hour) {
+      // Agendamento termina neste slot
+      heightPercent = ((endMinute - startMinute) / 60) * 100
+    } else {
+      // Agendamento continua nos próximos slots
+      heightPercent = 100 - topPercent
+    }
+  } else {
+    // Agendamento começou em slot anterior, continua neste
+    if (endHour === hour) {
+      // Agendamento termina neste slot
+      heightPercent = (endMinute / 60) * 100
+    }
+    // Se não termina aqui, ocupa 100% do slot
+  }
+  
+  return {
+    top: `${topPercent}%`,
+    left: '2px',
+    right: '2px',
+    height: `${heightPercent}%`,
+    zIndex: 20
+  }
 }
 
 const getAppointmentStyle = (appointment) => {

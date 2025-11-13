@@ -3,81 +3,81 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Dashboard</h1>
-        <p class="text-sm text-gray-400 mt-1">Bem-vindo ao Coven Beauty</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo ao Coven Beauty</p>
       </div>
       <div class="mt-4 sm:mt-0">
-        <p class="text-sm text-gray-400">{{ currentDate }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">{{ currentDate }}</p>
       </div>
     </div>
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       <!-- Agendamentos Hoje -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Agendamentos Hoje</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ stats.todayAppointments }}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              <span :class="stats.appointmentsTrend >= 0 ? 'text-green-400' : 'text-red-400'">
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Agendamentos Hoje</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ stats.todayAppointments }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <span :class="stats.appointmentsTrend >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
                 {{ stats.appointmentsTrend >= 0 ? '+' : '' }}{{ stats.appointmentsTrend }}%
               </span>
               vs. ontem
             </p>
           </div>
-          <div class="p-3 bg-purple-500/10 rounded-xl">
-            <CalendarIcon class="w-6 h-6 text-purple-400" />
+          <div class="p-3 bg-blue-100 dark:bg-purple-500/10 rounded-xl">
+            <CalendarIcon class="w-6 h-6 text-blue-600 dark:text-purple-400" />
           </div>
         </div>
       </div>
 
       <!-- Receita Mensal -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Receita Mensal</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ formatCurrency(stats.monthlyRevenue) }}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              <span class="text-green-400">+{{ stats.revenueTrend }}%</span>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Receita Mensal</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ formatCurrency(stats.monthlyRevenue) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <span class="text-green-600 dark:text-green-400">+{{ stats.revenueTrend }}%</span>
               vs. mês anterior
             </p>
           </div>
-          <div class="p-3 bg-green-500/10 rounded-xl">
-            <CurrencyDollarIcon class="w-6 h-6 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <CurrencyDollarIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
       </div>
 
       <!-- Clientes Ativos -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Clientes Ativos</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ stats.activeClients }}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              <span class="text-blue-400">{{ stats.newClients }}</span>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Clientes Ativos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ stats.activeClients }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <span class="text-blue-600 dark:text-blue-400">{{ stats.newClients }}</span>
               novos este mês
             </p>
           </div>
-          <div class="p-3 bg-blue-500/10 rounded-xl">
-            <UsersIcon class="w-6 h-6 text-blue-400" />
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-xl">
+            <UsersIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </div>
 
       <!-- Produtos em Baixa -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Estoque Baixo</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ stats.lowStockProducts }}</p>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Estoque Baixo</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ stats.lowStockProducts }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
               produtos precisam reposição
             </p>
           </div>
-          <div class="p-3 bg-red-500/10 rounded-xl">
-            <ExclamationTriangleIcon class="w-6 h-6 text-red-400" />
+          <div class="p-3 bg-red-100 dark:bg-red-500/10 rounded-xl">
+            <ExclamationTriangleIcon class="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
         </div>
       </div>
@@ -86,20 +86,20 @@
     <!-- Goals & Reminders -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <!-- Goals -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-lg font-semibold text-white">Metas em andamento</h2>
-            <p class="text-sm text-gray-400">Acompanhe o progresso semanal e mensal</p>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Metas em andamento</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Acompanhe o progresso semanal e mensal</p>
           </div>
           <div class="flex items-center gap-3">
             <button
               @click="openGoalsModal"
-              class="px-3 py-1.5 text-xs font-medium text-white bg-purple-600/80 hover:bg-purple-600 rounded-lg transition-colors"
+              class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 dark:bg-purple-600/80 hover:bg-blue-700 dark:hover:bg-purple-600 rounded-lg transition-colors"
             >
               Editar metas
             </button>
-            <NuxtLink to="/financial" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+            <NuxtLink to="/financial" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
               Ver financeiro →
             </NuxtLink>
           </div>
@@ -107,11 +107,11 @@
 
         <div v-if="loadingGoals" class="space-y-3">
           <div v-for="i in 2" :key="`goal-skeleton-${i}`" class="animate-pulse">
-            <div class="bg-gray-800/40 h-24 rounded-lg"></div>
+            <div class="bg-gray-200 dark:bg-gray-800/40 h-24 rounded-lg"></div>
           </div>
         </div>
 
-        <div v-else-if="goalItems.length === 0" class="text-center py-8 text-sm text-gray-400">
+        <div v-else-if="goalItems.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
           Nenhuma meta configurada. Crie metas mensais e semanais no módulo financeiro para acompanhar seus resultados.
         </div>
 
@@ -119,22 +119,22 @@
           <div
             v-for="goal in goalItems"
             :key="goal.id"
-            class="p-4 bg-gray-800/40 rounded-lg border border-gray-700/40"
+            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40"
           >
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-sm font-semibold text-white">{{ goal.title }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ goal.subtitle }}</p>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ goal.title }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ goal.subtitle }}</p>
               </div>
-              <span class="text-sm font-semibold text-purple-300">{{ goal.progress }}%</span>
+              <span class="text-sm font-semibold text-blue-600 dark:text-purple-300">{{ goal.progress }}%</span>
             </div>
-            <div class="mt-3 h-2 w-full bg-gray-700 rounded-full overflow-hidden">
+            <div class="mt-3 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
-                class="h-2 rounded-full bg-gradient-to-r from-purple-500 via-purple-400 to-pink-400 transition-all duration-500"
+                class="h-2 rounded-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 dark:from-purple-500 dark:via-purple-400 dark:to-pink-400 transition-all duration-500"
                 :style="`width: ${goal.progress}%`"
               ></div>
             </div>
-            <div class="flex justify-between text-xs text-gray-400 mt-2">
+            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-2">
               <span>Realizado: {{ formatCurrency(goal.current) }}</span>
               <span>Meta: {{ formatCurrency(goal.target) }}</span>
             </div>
@@ -143,15 +143,15 @@
       </div>
 
       <!-- Reminders -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-lg font-semibold text-white">Lembretes</h2>
-            <p class="text-sm text-gray-400">Organize atividades importantes do salão</p>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Lembretes</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Organize atividades importantes do salão</p>
           </div>
           <button
             @click="openReminderModal"
-            class="inline-flex items-center space-x-2 text-sm text-purple-300 hover:text-white transition-colors"
+            class="inline-flex items-center space-x-2 text-sm text-blue-600 dark:text-purple-300 hover:text-blue-700 dark:hover:text-white transition-colors"
           >
             <PlusCircleIcon class="w-5 h-5" />
             <span>Novo lembrete</span>
@@ -160,11 +160,11 @@
 
         <div v-if="loadingReminders" class="space-y-3">
           <div v-for="i in 3" :key="`reminder-skeleton-${i}`" class="animate-pulse">
-            <div class="bg-gray-800/40 h-20 rounded-lg"></div>
+            <div class="bg-gray-200 dark:bg-gray-800/40 h-20 rounded-lg"></div>
           </div>
         </div>
 
-        <div v-else-if="remindersList.length === 0" class="text-center py-8 text-sm text-gray-400">
+        <div v-else-if="remindersList.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
           Nenhum lembrete ativo para os próximos 30 dias. Crie um lembrete para não esquecer de tarefas importantes.
         </div>
 
@@ -172,20 +172,20 @@
           <div
             v-for="reminder in remindersList"
             :key="reminder.id"
-            class="p-4 bg-gray-800/40 rounded-lg border border-gray-700/40 flex items-start justify-between space-x-4"
+            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 flex items-start justify-between space-x-4"
           >
             <div class="flex items-start space-x-3">
-              <div class="p-2 bg-purple-500/10 rounded-lg">
-                <BellIcon class="w-5 h-5 text-purple-300" />
+              <div class="p-2 bg-blue-100 dark:bg-purple-500/10 rounded-lg">
+                <BellIcon class="w-5 h-5 text-blue-600 dark:text-purple-300" />
               </div>
               <div>
-                <p class="text-sm font-semibold text-white">{{ reminder.title }}</p>
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ reminder.title }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   {{ formatReminderType(reminder.type) }} • {{ formatReminderPriority(reminder.priority) }}
                 </p>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
                   {{ formatDateTime(reminder.date) }}
-                  <span v-if="reminder.description" class="block text-[11px] text-gray-500 mt-1">
+                  <span v-if="reminder.description" class="block text-[11px] text-gray-500 dark:text-gray-500 mt-1">
                     {{ reminder.description }}
                   </span>
                 </p>
@@ -193,7 +193,7 @@
             </div>
             <button
               @click="completeReminder(reminder.id)"
-              class="text-xs px-3 py-1 bg-green-600/20 border border-green-500/40 rounded-md text-green-300 hover:bg-green-600/30 transition-colors"
+              class="text-xs px-3 py-1 bg-green-100 dark:bg-green-600/20 border border-green-300 dark:border-green-500/40 rounded-md text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors"
             >
               Concluir
             </button>
@@ -203,34 +203,34 @@
     </div>
 
     <!-- Active Comandas -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="text-lg font-semibold text-white">Comandas do Dia</h2>
-          <p class="text-sm text-gray-400">Comandas ativas para hoje</p>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Comandas do Dia</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Comandas ativas para hoje</p>
         </div>
-        <NuxtLink to="/appointments" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+        <NuxtLink to="/appointments" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
           Ver todas →
         </NuxtLink>
       </div>
 
       <div v-if="loadingComandas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="i in 3" :key="i" class="animate-pulse">
-          <div class="bg-gray-800/50 h-32 rounded-lg"></div>
+          <div class="bg-gray-200 dark:bg-gray-800/50 h-32 rounded-lg"></div>
         </div>
       </div>
 
       <div v-else-if="activeComandas.length === 0" class="text-center py-12">
-        <ClipboardDocumentCheckIcon class="w-12 h-12 mx-auto text-gray-600 mb-3" />
-        <p class="text-sm text-gray-400 mb-2">Nenhuma comanda ativa no momento</p>
-        <p class="text-xs text-gray-500">Comandas aparecerão aqui quando agendamentos forem confirmados</p>
+        <ClipboardDocumentCheckIcon class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-3" />
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Nenhuma comanda ativa no momento</p>
+        <p class="text-xs text-gray-500 dark:text-gray-500">Comandas aparecerão aqui quando agendamentos forem confirmados</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
           v-for="comanda in activeComandas"
           :key="comanda.id"
-          class="group p-4 bg-gray-800/30 hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer border-l-4"
+          class="group p-4 bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer border-l-4"
           :class="{
             'border-blue-500': comanda.status === 'AGENDADO',
             'border-yellow-500': comanda.status === 'CONFIRMADO',
@@ -239,20 +239,20 @@
         >
           <div class="flex items-start justify-between mb-3">
             <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
                 {{ comanda.client?.name?.charAt(0) || 'C' }}
               </div>
               <div>
-                <p class="text-sm font-medium text-white">{{ comanda.client?.name }}</p>
-                <p class="text-xs text-gray-400">{{ comanda.user?.name }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ comanda.client?.name }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400">{{ comanda.user?.name }}</p>
               </div>
             </div>
             <span 
               class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
               :class="{
-                'bg-blue-900/30 text-blue-400 border border-blue-800': comanda.status === 'AGENDADO',
-                'bg-yellow-900/30 text-yellow-400 border border-yellow-800': comanda.status === 'CONFIRMADO',
-                'bg-green-900/30 text-green-400 border border-green-800': comanda.status === 'CONCLUIDO',
+                'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-800': comanda.status === 'AGENDADO',
+                'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-800': comanda.status === 'CONFIRMADO',
+                'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800': comanda.status === 'CONCLUIDO',
               }"
             >
               {{ getStatusLabel(comanda.status) }}
@@ -261,16 +261,16 @@
 
           <div class="space-y-2 mb-3">
             <div class="flex justify-between text-xs">
-              <span class="text-gray-400">Horário:</span>
-              <span class="text-white">{{ formatTime(comanda.startTime) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Horário:</span>
+              <span class="text-gray-900 dark:text-white">{{ formatTime(comanda.startTime) }}</span>
             </div>
             <div class="flex justify-between text-xs">
-              <span class="text-gray-400">Valor:</span>
-              <span class="text-white">{{ formatCurrency(comanda.totalPrice || 0) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Valor:</span>
+              <span class="text-gray-900 dark:text-white">{{ formatCurrency(comanda.totalPrice || 0) }}</span>
             </div>
             <div v-if="comanda.partialPayment" class="flex justify-between text-xs">
-              <span class="text-gray-400">Entrada (50%):</span>
-              <span class="text-green-400">{{ formatCurrency(comanda.partialPayment) }}</span>
+              <span class="text-gray-600 dark:text-gray-400">Entrada (50%):</span>
+              <span class="text-green-600 dark:text-green-400">{{ formatCurrency(comanda.partialPayment) }}</span>
             </div>
           </div>
 
@@ -338,60 +338,60 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
-      <h2 class="text-lg font-semibold text-white mb-4">Ações Rápidas</h2>
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ações Rápidas</h2>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <NuxtLink to="/clients" class="quick-action-btn group">
-          <div class="p-3 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors mb-3">
-            <UserPlusIcon class="w-6 h-6 text-purple-400" />
+          <div class="p-3 bg-blue-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
+            <UserPlusIcon class="w-6 h-6 text-blue-600 dark:text-purple-400" />
           </div>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">Novo Cliente</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Cliente</span>
         </NuxtLink>
         
         <NuxtLink to="/appointments" class="quick-action-btn group">
-          <div class="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors mb-3">
-            <CalendarDaysIcon class="w-6 h-6 text-blue-400" />
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-500/20 transition-colors mb-3">
+            <CalendarDaysIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">Agendar</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Agendar</span>
         </NuxtLink>
         
         <NuxtLink to="/products" class="quick-action-btn group">
-          <div class="p-3 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors mb-3">
-            <CubeIcon class="w-6 h-6 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-500/20 transition-colors mb-3">
+            <CubeIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">Novo Produto</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Produto</span>
         </NuxtLink>
         
         <NuxtLink to="/financial" class="quick-action-btn group">
-          <div class="p-3 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors mb-3">
-            <BanknotesIcon class="w-6 h-6 text-yellow-400" />
+          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-lg group-hover:bg-yellow-200 dark:group-hover:bg-yellow-500/20 transition-colors mb-3">
+            <BanknotesIcon class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
           </div>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">Nova Transação</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Nova Transação</span>
         </NuxtLink>
       
         <NuxtLink to="/procedures" class="quick-action-btn group">
-          <div class="p-3 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors mb-3">
-            <CubeIcon class="w-6 h-6 text-green-200" />
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
+            <CubeIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">Novo Procedimento</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Procedimento</span>
         </NuxtLink>
       </div>
       
       <!-- Quick Stats for Comandas -->
-      <div class="mt-4 p-4 bg-gray-800/30 rounded-lg">
+      <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Comandas Ativas</p>
-            <p class="text-2xl font-bold text-white">{{ activeComandas.length }}</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Comandas Ativas</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ activeComandas.length }}</p>
           </div>
-          <div class="text-xs text-gray-500">
-            <div v-if="activeComandas.filter(c => c.status === 'AGENDADO').length > 0" class="text-blue-400">
+          <div class="text-xs text-gray-500 dark:text-gray-500">
+            <div v-if="activeComandas.filter(c => c.status === 'AGENDADO').length > 0" class="text-blue-600 dark:text-blue-400">
               {{ activeComandas.filter(c => c.status === 'AGENDADO').length }} agendados
             </div>
-            <div v-if="activeComandas.filter(c => c.status === 'CONFIRMADO').length > 0" class="text-yellow-400">
+            <div v-if="activeComandas.filter(c => c.status === 'CONFIRMADO').length > 0" class="text-yellow-600 dark:text-yellow-400">
               {{ activeComandas.filter(c => c.status === 'CONFIRMADO').length }} confirmados
             </div>
-            <div v-if="activeComandas.filter(c => c.status === 'CONCLUIDO').length > 0" class="text-green-400">
+            <div v-if="activeComandas.filter(c => c.status === 'CONCLUIDO').length > 0" class="text-green-600 dark:text-green-400">
               {{ activeComandas.filter(c => c.status === 'CONCLUIDO').length }} concluídos
             </div>
           </div>
@@ -402,44 +402,44 @@
     <!-- Recent Data Grid -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <!-- Recent Appointments -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-white">Próximos Agendamentos</h2>
-          <NuxtLink to="/appointments" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Próximos Agendamentos</h2>
+          <NuxtLink to="/appointments" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
             Ver todos →
           </NuxtLink>
         </div>
 
         <div v-if="loadingAppointments" class="space-y-3">
           <div v-for="i in 4" :key="i" class="animate-pulse">
-            <div class="bg-gray-800/50 h-16 rounded-lg"></div>
+            <div class="bg-gray-200 dark:bg-gray-800/50 h-16 rounded-lg"></div>
           </div>
         </div>
 
         <div v-else-if="recentAppointments.length === 0" class="text-center py-12">
-          <CalendarIcon class="w-12 h-12 mx-auto text-gray-600 mb-3" />
-          <p class="text-sm text-gray-400">Nenhum agendamento para hoje</p>
+          <CalendarIcon class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-3" />
+          <p class="text-sm text-gray-600 dark:text-gray-400">Nenhum agendamento para hoje</p>
         </div>
 
         <div v-else class="space-y-3">
           <div
             v-for="appointment in recentAppointments"
             :key="appointment.id"
-            class="group p-4 bg-gray-800/30 hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer"
+            class="group p-4 bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer"
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center text-white font-medium">
                   {{ appointment.client?.name?.charAt(0) || 'C' }}
                 </div>
                 <div>
-                  <p class="text-sm font-medium text-white">{{ appointment.client?.name }}</p>
-                  <p class="text-xs text-gray-400">{{ appointment.service }}</p>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ appointment.client?.name }}</p>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">{{ appointment.service }}</p>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-sm font-medium text-white">{{ formatTime(appointment.startTime) }}</p>
-                <p class="text-xs text-gray-400">{{ formatCurrency(appointment.totalPrice || 0) }}</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ formatTime(appointment.startTime) }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400">{{ formatCurrency(appointment.totalPrice || 0) }}</p>
               </div>
             </div>
           </div>
@@ -447,54 +447,54 @@
       </div>
 
       <!-- Low Stock Products -->
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-white">Produtos em Baixa</h2>
-          <NuxtLink to="/products" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Produtos em Baixa</h2>
+          <NuxtLink to="/products" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
             Ver todos →
           </NuxtLink>
         </div>
 
         <div v-if="loadingProducts" class="space-y-3">
           <div v-for="i in 4" :key="i" class="animate-pulse">
-            <div class="bg-gray-800/50 h-14 rounded-lg"></div>
+            <div class="bg-gray-200 dark:bg-gray-800/50 h-14 rounded-lg"></div>
           </div>
         </div>
 
         <div v-else-if="lowStockProducts.length === 0" class="text-center py-12">
-          <CheckCircleIcon class="w-12 h-12 mx-auto text-green-500 mb-3" />
-          <p class="text-sm text-gray-400">Todos os produtos estão em estoque</p>
+          <CheckCircleIcon class="w-12 h-12 mx-auto text-green-500 dark:text-green-400 mb-3" />
+          <p class="text-sm text-gray-600 dark:text-gray-400">Todos os produtos estão em estoque</p>
         </div>
 
         <div v-else class="space-y-3">
           <div
             v-for="product in lowStockProducts"
             :key="product.id"
-            class="group p-4 bg-gray-800/30 hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer"
+            class="group p-4 bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 cursor-pointer"
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-white group-hover:text-purple-400 transition-colors">
+                <p class="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-purple-400 transition-colors">
                   {{ product.name }}
                 </p>
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Categoria: {{ product.category }}
                 </p>
               </div>
               <div class="flex items-center space-x-3">
                 <div class="text-right">
-                  <p class="text-sm font-medium text-white">{{ product.stock }}</p>
-                  <p class="text-xs text-gray-400">{{ product.unit }}</p>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ product.stock }}</p>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">{{ product.unit }}</p>
                 </div>
-                <div class="px-2 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-                  <span class="text-xs font-medium text-red-400">Baixo</span>
+                <div class="px-2 py-1 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/20 rounded-full">
+                  <span class="text-xs font-medium text-red-700 dark:text-red-400">Baixo</span>
                 </div>
               </div>
             </div>
             <div class="mt-2">
-              <div class="w-full bg-gray-700 rounded-full h-1.5">
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                 <div 
-                  class="bg-red-500 h-1.5 rounded-full transition-all duration-300"
+                  class="bg-red-500 dark:bg-red-400 h-1.5 rounded-full transition-all duration-300"
                   :style="`width: ${(product.stock / (product.minStock * 2)) * 100}%`"
                 ></div>
               </div>
@@ -505,64 +505,64 @@
     </div>
 
     <!-- Activity Chart -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
-      <h2 class="text-lg font-semibold text-white mb-4">Atividade Semanal</h2>
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Atividade Semanal</h2>
       <div class="h-64 flex items-end justify-between space-x-2">
         <div v-for="(day, index) in weekActivity" :key="index" class="flex-1 flex flex-col items-center">
-          <div class="w-full bg-gray-800 rounded-t flex-1 relative overflow-hidden">
+          <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-t flex-1 relative overflow-hidden">
             <div 
-              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-500 to-purple-400 transition-all duration-500"
+              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-500 to-cyan-400 dark:from-purple-500 dark:to-purple-400 transition-all duration-500"
               :style="`height: ${day.percentage}%`"
             ></div>
           </div>
-          <p class="text-xs text-gray-400 mt-2">{{ day.label }}</p>
-          <p class="text-[11px] text-gray-500">{{ day.count }} agend.</p>
-          <p class="text-[11px] text-gray-500">{{ formatCurrency(day.value) }}</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">{{ day.label }}</p>
+          <p class="text-[11px] text-gray-500 dark:text-gray-500">{{ day.count }} agend.</p>
+          <p class="text-[11px] text-gray-500 dark:text-gray-500">{{ formatCurrency(day.value) }}</p>
         </div>
       </div>
     </div>
 
     <!-- Modal de Metas -->
-    <div v-if="showGoalsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div class="bg-gray-900 rounded-2xl border border-gray-700/60 w-full max-w-lg overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60">
+    <div v-if="showGoalsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-lg overflow-hidden shadow-xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
           <div>
-            <h2 class="text-xl font-semibold text-white">Atualizar metas</h2>
-            <p class="text-xs text-gray-400 mt-1">Defina as metas financeiras semanais e mensais.</p>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Atualizar metas</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Defina as metas financeiras semanais e mensais.</p>
           </div>
-          <button @click="closeGoalsModal" class="text-gray-400 hover:text-white transition-colors">
+          <button @click="closeGoalsModal" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <XMarkIcon class="w-6 h-6" />
           </button>
         </div>
 
         <form @submit.prevent="saveGoals" class="px-6 py-6 space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1.5">Meta semanal</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Meta semanal</label>
             <div class="relative">
               <input
                 v-model.number="goalsForm.weeklyTarget"
                 type="number"
                 min="0"
                 step="10"
-                class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                class="w-full px-4 py-2.5 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 transition-colors"
                 placeholder="Valor em reais"
               />
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">R$</span>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-500">R$</span>
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1.5">Meta mensal</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Meta mensal</label>
             <div class="relative">
               <input
                 v-model.number="goalsForm.monthlyTarget"
                 type="number"
                 min="0"
                 step="10"
-                class="w-full px-4 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                class="w-full px-4 py-2.5 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 transition-colors"
                 placeholder="Valor em reais"
               />
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">R$</span>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-500">R$</span>
             </div>
           </div>
 
@@ -570,14 +570,14 @@
             <button
               type="button"
               @click="closeGoalsModal"
-              class="px-4 py-2 rounded-lg border border-gray-700 text-sm text-gray-300 hover:text-white hover:border-gray-500 transition-colors"
+              class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-500 transition-colors bg-white dark:bg-gray-800/50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               :disabled="isSavingGoals"
-              class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-medium shadow-lg shadow-purple-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              class="px-5 py-2 rounded-lg bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white text-sm font-medium shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {{ isSavingGoals ? 'Salvando...' : 'Salvar metas' }}
             </button>
@@ -586,55 +586,55 @@
       </div>
     </div>
 
-    <div v-if="showReminderModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div class="bg-gray-900 rounded-2xl border border-gray-700/60 w-full max-w-lg overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60">
+    <div v-if="showReminderModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-lg overflow-hidden shadow-xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800">
           <div>
-            <h2 class="text-xl font-semibold text-white">Novo lembrete</h2>
-            <p class="text-xs text-gray-400 mt-1">O lembrete será exibido aqui no dashboard e em utilidades</p>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Novo lembrete</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">O lembrete será exibido aqui no dashboard e em utilidades</p>
           </div>
-          <button @click="closeReminderModalInternal" class="text-gray-400 hover:text-white transition-colors">
+          <button @click="closeReminderModalInternal" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <XMarkIcon class="w-6 h-6" />
           </button>
         </div>
 
         <form @submit.prevent="saveReminder" class="px-6 py-6 space-y-5">
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1.5">Título</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Título</label>
             <input
               v-model="reminderForm.title"
               type="text"
               placeholder="Ex: Confirmar pedido de produtos"
-              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+              class="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition-all"
               required
             >
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1.5">Descrição</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Descrição</label>
             <textarea
               v-model="reminderForm.description"
               rows="3"
               placeholder="Anote detalhes importantes sobre esse lembrete"
-              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all resize-none"
+              class="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition-all resize-none"
             ></textarea>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1.5">Data e hora</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Data e hora</label>
               <input
                 v-model="reminderForm.date"
                 type="datetime-local"
-                class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition-all"
                 required
               >
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-300 mb-1.5">Prioridade</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Prioridade</label>
               <select
                 v-model="reminderForm.priority"
-                class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition-all"
               >
                 <option v-for="option in reminderPriorities" :key="option.value" :value="option.value">
                   {{ option.label }}
@@ -644,10 +644,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-1.5">Tipo</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Tipo</label>
             <select
               v-model="reminderForm.type"
-              class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700/60 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+              class="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-blue-500 dark:focus:ring-purple-500 focus:outline-none transition-all"
             >
               <option v-for="option in reminderTypes" :key="option.value" :value="option.value">
                 {{ option.label }}
@@ -659,13 +659,13 @@
             <button
               type="button"
               @click="closeReminderModalInternal"
-              class="px-5 py-2.5 bg-gray-700/80 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              class="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all"
+              class="px-6 py-2.5 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white rounded-lg font-medium transition-all"
             >
               Salvar lembrete
             </button>
