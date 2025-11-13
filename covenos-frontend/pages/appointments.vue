@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Agendamentos</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie os agendamentos do salão</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Agendamentos</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie os agendamentos do salão</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/25">
+      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
         <PlusIcon class="w-5 h-5 mr-2" />
         Novo Agendamento
       </button>
@@ -14,79 +14,79 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Hoje</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ todayAppointments }}</p>
-            <p class="text-xs text-gray-500 mt-1">agendamentos</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Hoje</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ todayAppointments }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">agendamentos</p>
           </div>
-          <div class="p-3 bg-blue-500/10 rounded-xl">
-            <CalendarIcon class="w-6 h-6 text-blue-400" />
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-xl">
+            <CalendarIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Confirmados</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ confirmedAppointments }}</p>
-            <p class="text-xs text-gray-500 mt-1">em andamento</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Confirmados</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ confirmedAppointments }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">em andamento</p>
           </div>
-          <div class="p-3 bg-green-500/10 rounded-xl">
-            <CheckCircleIcon class="w-6 h-6 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <CheckCircleIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Pendentes</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ pendingAppointments }}</p>
-            <p class="text-xs text-gray-500 mt-1">aguardando</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pendentes</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ pendingAppointments }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">aguardando</p>
           </div>
-          <div class="p-3 bg-yellow-500/10 rounded-xl">
-            <ClockIcon class="w-6 h-6 text-yellow-400" />
+          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-xl">
+            <ClockIcon class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all duration-300">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-400">Receita Hoje</p>
-            <p class="text-2xl font-bold text-white mt-2">{{ formatCurrency(todayRevenue) }}</p>
-            <p class="text-xs text-gray-500 mt-1">faturamento</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Receita Hoje</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ formatCurrency(todayRevenue) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">faturamento</p>
           </div>
-          <div class="p-3 bg-purple-500/10 rounded-xl">
-            <CurrencyDollarIcon class="w-6 h-6 text-purple-400" />
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl">
+            <CurrencyDollarIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
         </div>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-white">Filtros</h3>
-        <button @click="clearFilters" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Filtros</h3>
+        <button @click="clearFilters" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
           Limpar filtros
         </button>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Data</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data</label>
           <input
             v-model="dateFilter"
             type="date"
-            class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Status</label>
-          <select v-model="statusFilter" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+          <select v-model="statusFilter" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
             <option value="">Todos</option>
             <option value="AGENDADO">Agendado</option>
             <option value="CONCLUIDO">Concluído</option>
@@ -95,17 +95,17 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Cliente</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cliente</label>
           <input
             v-model="clientFilter"
             type="text"
             placeholder="Buscar cliente..."
-            class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Profissional</label>
-          <select v-model="hairdresserFilter" class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profissional</label>
+          <select v-model="hairdresserFilter" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
             <option value="">Todos</option>
             <option v-for="user in hairdressers" :key="user.id" :value="user.id">
               {{ user.name }}
@@ -117,14 +117,14 @@
 
     <!-- View Toggle -->
     <div class="flex justify-between items-center">
-      <div class="flex bg-gray-900/50 backdrop-blur border border-gray-800 rounded-lg p-1">
+      <div class="flex bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-lg p-1 shadow-sm">
         <button
           @click="viewMode = 'list'"
           :class="[
             'px-4 py-2 rounded-md font-medium transition-all duration-200',
             viewMode === 'list' 
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25' 
-              : 'text-gray-400 hover:text-white'
+              ? 'bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white shadow-md' 
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           ]"
         >
           <ListBulletIcon  class="w-5 h-5 inline-block mr-2" />
@@ -135,8 +135,8 @@
           :class="[
             'px-4 py-2 rounded-md font-medium transition-all duration-200',
             viewMode === 'calendar' 
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25' 
-              : 'text-gray-400 hover:text-white'
+              ? 'bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white shadow-md' 
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
           ]"
         >
           <CalendarDaysIcon class="w-5 h-5 inline-block mr-2" />
@@ -145,13 +145,13 @@
       </div>
       
       <div v-if="viewMode === 'calendar'" class="flex items-center space-x-3">
-        <button @click="previousWeek" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200">
+        <button @click="previousWeek" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
           <ChevronLeftIcon class="w-5 h-5" />
         </button>
-        <span class="text-white font-medium px-4">
+        <span class="text-gray-900 dark:text-white font-medium px-4">
           {{ formatWeekRange(currentWeekStart) }}
         </span>
-        <button @click="nextWeek" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200">
+        <button @click="nextWeek" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
           <ChevronRightIcon class="w-5 h-5" />
         </button>
       </div>
@@ -175,20 +175,20 @@
         <div
           v-for="appointment in filteredAppointments"
           :key="appointment.id"
-          class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5 hover:border-gray-700 transition-all duration-300 cursor-pointer group"
+          class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-5 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 cursor-pointer group shadow-sm"
           @click="editAppointment(appointment)"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <div class="relative">
-                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium">
+                <div class="w-12 h-12 bg-blue-600 dark:bg-gradient-to-br dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center text-white font-medium">
                   {{ appointment.client?.name?.charAt(0) || 'C' }}
                 </div>
-                <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900" :class="getStatusColor(appointment.status)"></div>
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-900" :class="getStatusColor(appointment.status)"></div>
               </div>
               <div class="flex-1">
                 <div class="flex items-center space-x-3 mb-1">
-                  <h3 class="text-lg font-semibold text-white">{{ appointment.client?.name }}</h3>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ appointment.client?.name }}</h3>
                   <span :class="[
                     'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                     getStatusBadgeClass(appointment.status)
@@ -196,7 +196,7 @@
                     {{ getStatusText(appointment.status) }}
                   </span>
                 </div>
-                <div class="flex items-center space-x-4 text-sm text-gray-400">
+                <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                   <span class="flex items-center">
                     <ClockIcon class="w-4 h-4 mr-1" />
                     {{ formatDateTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}
@@ -218,19 +218,19 @@
             
             <div class="flex items-center space-x-4">
               <div class="text-right">
-                <p class="text-xl font-bold text-white">{{ formatCurrency(appointment.totalPrice || 0) }}</p>
-                <p v-if="appointment.paymentMethod" class="text-xs text-gray-400 mt-1">{{ appointment.paymentMethod }}</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(appointment.totalPrice || 0) }}</p>
+                <p v-if="appointment.paymentMethod" class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ appointment.paymentMethod }}</p>
               </div>
               <div class="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
                 <button
                   @click.stop="editAppointment(appointment)"
-                  class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                  class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                 >
                   <PencilIcon class="w-4 h-4" />
                 </button>
                 <button
                   @click.stop="confirmDelete(appointment)"
-                  class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                  class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                 >
                   <TrashIcon class="w-4 h-4" />
                 </button>
@@ -242,26 +242,26 @@
     </div>
 
     <!-- Weekly Calendar View - iPhone Style -->
-    <div v-if="viewMode === 'calendar'" class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden">
+    <div v-if="viewMode === 'calendar'" class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-lg">
       <!-- Week Header with Days and Dates -->
-      <div class="bg-gray-800/50 border-b border-gray-700">
+      <div class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
         <div class="grid grid-cols-8 gap-0">
           <!-- Time Column Header -->
-          <div class="p-4 border-r border-gray-700">
-            <div class="text-xs text-gray-400 font-medium">Horário</div>
+          <div class="p-4 border-r border-gray-200 dark:border-gray-700">
+            <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">Horário</div>
           </div>
           
           <!-- Day Headers -->
           <div
             v-for="day in weekDays"
             :key="day.date"
-            class="p-4 text-center border-r border-gray-700 last:border-r-0"
-            :class="{ 'bg-purple-900/20': day.isToday }"
+            class="p-4 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+            :class="{ 'bg-blue-50 dark:bg-purple-900/20': day.isToday }"
           >
-            <div class="text-xs font-medium text-gray-400 mb-1">{{ day.dayName }}</div>
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{{ day.dayName }}</div>
             <div 
               class="text-lg font-bold"
-              :class="day.isToday ? 'text-purple-400' : 'text-white'"
+              :class="day.isToday ? 'text-blue-600 dark:text-purple-400' : 'text-gray-900 dark:text-white'"
             >
               {{ day.dayNumber }}
             </div>
@@ -280,21 +280,21 @@
             :style="`height: ${HOUR_HEIGHT}px`"
           >
             <!-- Time Label -->
-            <div class="flex items-center justify-center border-r border-gray-700 bg-gray-800/30">
-              <span class="text-sm text-gray-400 font-medium">{{ formatHour(hour) }}</span>
+            <div class="flex items-center justify-center border-r border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+              <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ formatHour(hour) }}</span>
             </div>
             
             <!-- Day Columns -->
             <div
               v-for="day in weekDays"
               :key="`${day.date}-${hour}`"
-              class="border-r border-gray-700/30 last:border-r-0 relative cursor-pointer hover:bg-purple-900/10 transition-colors"
-              :class="{ 'bg-purple-900/5': day.isToday }"
+              class="border-r border-gray-200/50 dark:border-gray-700/30 last:border-r-0 relative cursor-pointer hover:bg-blue-50/50 dark:hover:bg-purple-900/10 transition-colors"
+              :class="{ 'bg-blue-50/30 dark:bg-purple-900/5': day.isToday }"
               @click="handleTimeSlotClick(day.date, hour)"
               :title="`Clique para agendar ou bloquear às ${formatHour(hour)} de ${day.dayNumber}/${day.fullDate.getMonth() + 1}`"
             >
               <!-- Half-hour line -->
-              <div class="absolute top-1/2 left-0 right-0 border-t border-gray-800/30 pointer-events-none"></div>
+              <div class="absolute top-1/2 left-0 right-0 border-t border-gray-200/50 dark:border-gray-800/30 pointer-events-none"></div>
             </div>
           </div>
 
@@ -322,25 +322,25 @@
                 </div>
               </div>
               
-              <!-- Normal appointment content - Melhorado -->
-              <div v-else class="p-2.5 h-full flex flex-col justify-between overflow-hidden">
-                <div class="space-y-1.5 flex-1">
+              <!-- Normal appointment content - Melhorado com mais espaço -->
+              <div v-else class="p-3 h-full flex flex-col justify-between overflow-hidden">
+                <div class="space-y-2 flex-1">
                   <div class="flex items-center justify-between">
-                    <div class="text-xs font-bold text-white truncate group-hover:scale-105 transition-transform flex-1">
+                    <div class="text-sm font-bold text-white truncate group-hover:scale-105 transition-transform flex-1">
                       {{ appointment.client?.name }}
                     </div>
-                    <div v-if="appointment.totalPrice" class="text-xs font-semibold text-white/90 ml-2">
+                    <div v-if="appointment.totalPrice" class="text-xs font-semibold text-white/90 ml-2 whitespace-nowrap">
                       {{ formatCurrency(appointment.totalPrice) }}
                     </div>
                   </div>
                   <div class="flex items-center space-x-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/80"></div>
+                    <div class="w-2 h-2 rounded-full bg-white/80 flex-shrink-0"></div>
                     <div class="text-xs text-white/90 truncate">
                       {{ appointment.user?.name || 'Sem profissional' }}
                     </div>
                   </div>
                   <div v-if="appointment.procedures?.[0]?.procedure?.name" class="flex items-center space-x-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-white/60"></div>
+                    <div class="w-2 h-2 rounded-full bg-white/60 flex-shrink-0"></div>
                     <div class="text-xs text-white/80 truncate">
                       {{ appointment.procedures[0].procedure.name }}
                       <span v-if="appointment.procedures.length > 1" class="text-white/60">
@@ -350,14 +350,14 @@
                   </div>
                 </div>
                 
-                <div class="space-y-1 pt-1 border-t border-white/20">
+                <div class="space-y-1.5 pt-2 border-t border-white/20">
                   <div class="text-xs font-medium text-white/90">
                     {{ formatTimeRange(appointment.startTime, appointment.endTime) }}
                   </div>
                   <div class="flex items-center justify-between">
                     <span 
                       v-if="appointment.status !== 'AGENDADO'"
-                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold bg-white/20 text-white"
+                      class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-white/20 text-white"
                     >
                       {{ getStatusLabel(appointment.status) }}
                     </span>
@@ -788,7 +788,7 @@ const hairdresserFilter = ref('')
 const currentWeekStart = ref(new Date())
 
 // Constants for calendar
-const HOUR_HEIGHT = 60 // Height of each hour in pixels
+const HOUR_HEIGHT = 90 // Height of each hour in pixels (aumentado para mais espaço)
 const START_HOUR = 8 // 8:00
 const END_HOUR = 20 // 20:00 (8:00 PM)
 
@@ -1050,7 +1050,7 @@ const getAppointmentStyle = (appointment) => {
     durationInHours = ((endTime.getHours() + 24) - startHour) + (endMinute - startMinute) / 60
   }
   
-  const height = Math.max(durationInHours * HOUR_HEIGHT, 40) // Altura mínima de 40px
+  const height = Math.max(durationInHours * HOUR_HEIGHT, 60) // Altura mínima de 60px (aumentado)
   
   // Posição da coluna
   const columnWidth = 100 / 8 // 8 colunas (1 hora + 7 dias)
@@ -1090,17 +1090,17 @@ const getAppointmentClass = (status) => {
 const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'AGENDADO':
-      return 'bg-blue-900/50 text-blue-400 border border-blue-800'
+      return 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-800'
     case 'CONFIRMADO':
-      return 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
+      return 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-800'
     case 'CONCLUIDO':
-      return 'bg-purple-900/50 text-purple-400 border border-purple-800'
+      return 'bg-green-100 dark:bg-purple-900/50 text-green-700 dark:text-purple-400 border border-green-300 dark:border-purple-800'
     case 'CANCELADO':
-      return 'bg-red-900/50 text-red-400 border border-red-800'
+      return 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
     case 'BLOQUEADO':
-      return 'bg-gray-900/50 text-gray-400 border border-gray-800'
+      return 'bg-gray-100 dark:bg-gray-900/50 text-gray-700 dark:text-gray-400 border border-gray-300 dark:border-gray-800'
     default:
-      return 'bg-blue-900/50 text-blue-400 border border-blue-800'
+      return 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-800'
   }
 }
 
@@ -1337,7 +1337,7 @@ const getStatusColor = (status) => {
   const colors = {
     AGENDADO: 'bg-blue-500',
     CONFIRMADO: 'bg-yellow-500',
-    CONCLUIDO: 'bg-purple-500',
+    CONCLUIDO: 'bg-green-500',
     CANCELADO: 'bg-red-500',
   }
   return colors[status] || 'bg-blue-500'
