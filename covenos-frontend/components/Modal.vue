@@ -15,8 +15,8 @@
               <component :is="icon" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div v-if="title || subtitle" class="min-w-0 flex-1">
-              <h3 class="text-lg sm:text-xl font-semibold text-white truncate">{{ title }}</h3>
-              <p v-if="subtitle" class="text-xs sm:text-sm text-gray-400 line-clamp-2">{{ subtitle }}</p>
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{{ title }}</h3>
+              <p v-if="subtitle" class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ subtitle }}</p>
             </div>
             <slot name="header"></slot>
           </div>
@@ -24,7 +24,7 @@
           <button 
             v-if="closable"
             @click="$emit('close')" 
-            class="p-1.5 sm:p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl transition-all duration-200 flex-shrink-0 ml-2"
+            class="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 flex-shrink-0 ml-2"
           >
             <XMarkIcon class="w-5 h-5 sm:w-6 sm:h-6" />
           </button>

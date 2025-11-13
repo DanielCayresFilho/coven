@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-white">Clientes</h1>
-        <p class="text-sm text-gray-400 mt-1">Gerencie sua base de clientes</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Clientes</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie sua base de clientes</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/25">
+      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
         <UserPlusIcon class="w-5 h-5 mr-2" />
         Novo Cliente
       </button>
@@ -14,48 +14,54 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-400">Total de Clientes</p>
-            <p class="text-2xl font-bold text-white mt-1">{{ clients.length }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Total de Clientes</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ clients.length }}</p>
           </div>
-          <UsersIcon class="w-8 h-8 text-purple-400" />
+          <div class="p-3 bg-blue-100 dark:bg-purple-500/10 rounded-xl">
+            <UsersIcon class="w-6 h-6 text-blue-600 dark:text-purple-400" />
+          </div>
         </div>
       </div>
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-400">Clientes Ativos</p>
-            <p class="text-2xl font-bold text-white mt-1">{{ clients.filter(c => c.active).length }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Clientes Ativos</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ clients.filter(c => c.active).length }}</p>
           </div>
-          <CheckCircleIcon class="w-8 h-8 text-green-400" />
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-xl">
+            <CheckCircleIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
+          </div>
         </div>
       </div>
-      <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4">
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-400">Novos este Mês</p>
-            <p class="text-2xl font-bold text-white mt-1">{{ getNewClientsThisMonth() }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Novos este Mês</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ getNewClientsThisMonth() }}</p>
           </div>
-          <UserPlusIcon class="w-8 h-8 text-blue-400" />
+          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-xl">
+            <UserPlusIcon class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Search and Filters -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
       <div class="flex flex-col md:flex-row gap-4">
         <div class="flex-1 relative">
-          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchTerm"
             type="text"
             placeholder="Buscar por nome, telefone ou email..."
-            class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
           />
         </div>
-        <select v-model="statusFilter" class="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+        <select v-model="statusFilter" class="px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
           <option value="">Todos os status</option>
           <option value="true">Ativos</option>
           <option value="false">Inativos</option>
@@ -64,57 +70,57 @@
     </div>
 
     <!-- Clients Table -->
-    <div class="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden">
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
       <div v-if="loading" class="p-6 space-y-4">
         <div v-for="i in 5" :key="i" class="animate-pulse">
-          <div class="h-16 bg-gray-800/50 rounded-lg"></div>
+          <div class="h-16 bg-gray-200 dark:bg-gray-800/50 rounded-lg"></div>
         </div>
       </div>
       
       <div v-else-if="filteredClients.length === 0" class="text-center py-16">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-800 rounded-full mb-4">
-          <UsersIcon class="w-8 h-8 text-gray-600" />
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
+          <UsersIcon class="w-8 h-8 text-gray-400 dark:text-gray-600" />
         </div>
-        <p class="text-lg font-medium text-white mb-2">Nenhum cliente encontrado</p>
-        <p class="text-sm text-gray-400">Adicione um novo cliente para começar</p>
+        <p class="text-lg font-medium text-gray-900 dark:text-white mb-2">Nenhum cliente encontrado</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Adicione um novo cliente para começar</p>
       </div>
       
       <div v-else class="overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-gray-800/30 border-b border-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700">
             <tr>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Cliente</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Contato</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-              <th class="text-left py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Último Atendimento</th>
-              <th class="text-right py-4 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Ações</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Cliente</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Contato</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Último Atendimento</th>
+              <th class="text-right py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
             <tr
               v-for="client in filteredClients"
               :key="client.id"
-              class="hover:bg-gray-800/30 transition-colors duration-150"
+              class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors duration-150"
             >
               <td class="py-4 px-6">
                 <div class="flex items-center">
-                  <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
+                  <div class="w-10 h-10 bg-blue-600 dark:bg-gradient-to-br dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center text-white font-medium mr-3">
                     {{ client.name.charAt(0).toUpperCase() }}
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-white">{{ client.name }}</p>
-                    <p v-if="client.observations" class="text-xs text-gray-400 mt-0.5">{{ client.observations }}</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ client.name }}</p>
+                    <p v-if="client.observations" class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ client.observations }}</p>
                   </div>
                 </div>
               </td>
               <td class="py-4 px-6">
                 <div class="space-y-1">
-                  <p class="text-sm text-gray-300 flex items-center">
-                    <PhoneIcon class="w-4 h-4 mr-1 text-gray-500" />
+                  <p class="text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                    <PhoneIcon class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" />
                     {{ client.phone }}
                   </p>
-                  <p v-if="client.email" class="text-sm text-gray-300 flex items-center">
-                    <EnvelopeIcon class="w-4 h-4 mr-1 text-gray-500" />
+                  <p v-if="client.email" class="text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                    <EnvelopeIcon class="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" />
                     {{ client.email }}
                   </p>
                 </div>
@@ -123,21 +129,21 @@
                 <span :class="[
                   'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                   client.active 
-                    ? 'bg-green-900/50 text-green-400 border border-green-800' 
-                    : 'bg-red-900/50 text-red-400 border border-red-800'
+                    ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800' 
+                    : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800'
                 ]">
                   <span :class="[
                     'w-1.5 h-1.5 rounded-full mr-1.5',
-                    client.active ? 'bg-green-400' : 'bg-red-400'
+                    client.active ? 'bg-green-500 dark:bg-green-400' : 'bg-red-500 dark:bg-red-400'
                   ]"></span>
                   {{ client.active ? 'Ativo' : 'Inativo' }}
                 </span>
               </td>
               <td class="py-4 px-6">
-                <p v-if="client.lastAppointment" class="text-sm text-gray-300">
+                <p v-if="client.lastAppointment" class="text-sm text-gray-700 dark:text-gray-300">
                   {{ formatDate(client.lastAppointment) }}
                 </p>
-                <p v-else class="text-sm text-gray-500 italic">
+                <p v-else class="text-sm text-gray-500 dark:text-gray-500 italic">
                   Nunca agendou
                 </p>
               </td>
@@ -145,14 +151,14 @@
                 <div class="flex items-center justify-end space-x-2">
                   <button
                     @click="editClient(client)"
-                    class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+                    class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
                     title="Editar cliente"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="confirmDelete(client)"
-                    class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                    class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
                     title="Excluir cliente"
                   >
                     <TrashIcon class="w-4 h-4" />
@@ -184,18 +190,18 @@
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
           >
-            <div class="bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-full max-w-lg">
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-lg">
               <!-- Modal Header -->
-              <div class="flex items-center justify-between p-6 border-b border-gray-800">
+              <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                 <div class="flex items-center space-x-3">
-                  <div class="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                  <div class="p-2 bg-blue-600 dark:bg-gradient-to-br dark:from-purple-600 dark:to-pink-600 rounded-lg">
                     <UserPlusIcon class="w-5 h-5 text-white" />
                   </div>
-                  <h3 class="text-xl font-semibold text-white">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     {{ editingClient ? 'Editar Cliente' : 'Novo Cliente' }}
                   </h3>
                 </div>
-                <button @click="closeModal" class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                <button @click="closeModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                   <XMarkIcon class="w-5 h-5" />
                 </button>
               </div>
@@ -203,63 +209,63 @@
               <!-- Modal Body -->
               <form @submit.prevent="saveClient" class="p-6 space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nome completo *
                   </label>
                   <input
                     v-model="clientForm.name"
                     type="text"
                     required
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                     placeholder="Digite o nome do cliente"
                   />
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Telefone *
                     </label>
                     <input
                       v-model="clientForm.phone"
                       type="tel"
                       required
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="(11) 99999-9999"
                     />
                   </div>
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email
                     </label>
                     <input
                       v-model="clientForm.email"
                       type="email"
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                       placeholder="cliente@email.com"
                     />
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Data de Nascimento
                     </label>
                     <input
                       v-model="clientForm.birthDate"
                       type="date"
-                      class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Observações
                   </label>
                   <textarea
                     v-model="clientForm.observations"
                     rows="3"
-                    class="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors resize-none"
                     placeholder="Anotações sobre o cliente..."
                   ></textarea>
                 </div>
@@ -269,13 +275,13 @@
                   <button 
                     type="button" 
                     @click="closeModal" 
-                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-colors"
                   >
                     Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="saving"
                   >
                     <span v-if="saving" class="flex items-center">

@@ -271,16 +271,16 @@
 
       <!-- Time Grid -->
       <div class="overflow-auto max-h-[800px]">
-        <div class="relative">
+        <div class="relative" style="min-height: calc(12 * 90px);">
           <!-- Hour Lines -->
           <div
             v-for="hour in timeSlots"
             :key="hour"
-            class="grid grid-cols-8 gap-0 border-b border-gray-800/50"
-            :style="`height: ${HOUR_HEIGHT}px`"
+            class="grid grid-cols-8 gap-0 border-b border-gray-200 dark:border-gray-700"
+            :style="`height: ${HOUR_HEIGHT}px; position: relative;`"
           >
             <!-- Time Label -->
-            <div class="flex items-center justify-center border-r border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+            <div class="flex items-center justify-center border-r border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 sticky left-0 z-10">
               <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ formatHour(hour) }}</span>
             </div>
             
@@ -298,13 +298,13 @@
             </div>
           </div>
 
-          <!-- Appointments Overlay -->
-          <div class="absolute inset-0 pointer-events-none">
+          <!-- Appointments Overlay - Corrigido para alinhar com o grid -->
+          <div class="absolute top-0 left-0 right-0 pointer-events-none" :style="`height: calc(${timeSlots.length} * ${HOUR_HEIGHT}px);`">
             <div
               v-for="appointment in weekAppointments"
               :key="appointment.id"
-              @click="handleAppointmentClick(appointment)"
-              class="absolute rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl cursor-pointer pointer-events-auto group"
+              @click.stop="handleAppointmentClick(appointment)"
+              class="absolute rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl cursor-pointer pointer-events-auto group z-20"
               :style="getAppointmentStyle(appointment)"
               :class="getAppointmentClass(appointment.status)"
             >
@@ -1052,19 +1052,23 @@ const getAppointmentStyle = (appointment) => {
   
   const height = Math.max(durationInHours * HOUR_HEIGHT, 60) // Altura mínima de 60px (aumentado)
   
-  // Posição da coluna
-  const columnWidth = 100 / 8 // 8 colunas (1 hora + 7 dias)
-  const leftPercent = (dayIndex + 1) * columnWidth
-  const widthPercent = columnWidth - 0.5 // Margem pequena para separação visual
+  // Posição da coluna - corrigido para alinhar corretamente
+  // A primeira coluna (índice 0) é a coluna de horários, então os dias começam no índice 1
+  const totalColumns = 8 // 1 coluna de horários + 7 dias
+  const timeColumnWidth = 12.5 // 12.5% para a coluna de horários
+  const dayColumnWidth = (100 - timeColumnWidth) / 7 // Dividir o restante entre 7 dias
+  
+  const leftPercent = timeColumnWidth + (dayIndex * dayColumnWidth)
+  const widthPercent = dayColumnWidth - 1 // Margem pequena para separação visual
   
   return {
     top: `${topOffset}px`,
     left: `${leftPercent}%`,
     width: `${widthPercent}%`,
     height: `${height}px`,
-    zIndex: 10,
-    marginLeft: '2px',
-    marginRight: '2px'
+    zIndex: 20,
+    marginLeft: '4px',
+    marginRight: '4px'
   }
 }
 
