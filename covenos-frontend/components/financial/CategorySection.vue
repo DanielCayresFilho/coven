@@ -1,120 +1,158 @@
 <template>
-  <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+  <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center space-x-3">
-        <div :class="[
-          'p-3 rounded-xl',
-          colorClasses[color].bg,
-          colorClasses[color].icon
-        ]">
-          <component :is="icon" class="w-6 h-6" />
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
-          <p class="text-xs text-gray-600 dark:text-gray-400">{{ description }}</p>
-        </div>
-      </div>
-      <span :class="[
-        'px-3 py-1 rounded-full text-xs font-medium',
-        colorClasses[color].badge
-      ]">
-        {{ categories.length }}
-      </span>
-    </div>
-
-    <!-- Form de criação -->
-    <form @submit.prevent="handleCreate" class="mb-4">
-      <div class="flex gap-2">
-        <input
-          v-model="newCategoryName"
-          type="text"
-          :placeholder="`Nova categoria (ex: Água)`"
-          :disabled="saving"
-          class="flex-1 px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors disabled:opacity-50"
-          required
-        />
-        <button
-          type="submit"
-          :disabled="saving || !newCategoryName.trim()"
-          :class="[
-            'px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed',
-            colorClasses[color].button
-          ]"
-        >
-          <span v-if="saving" class="flex items-center">
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Salvando...
-          </span>
-          <span v-else>Adicionar</span>
-        </button>
-      </div>
-    </form>
-
-    <!-- Lista de categorias -->
-    <div v-if="loading" class="space-y-2">
-      <div v-for="i in 3" :key="i" class="animate-pulse">
-        <div class="h-12 bg-gray-200 dark:bg-gray-800/50 rounded-lg"></div>
-      </div>
-    </div>
-
-    <div v-else-if="categories.length === 0" class="text-center py-8">
-      <p class="text-sm text-gray-600 dark:text-gray-400">Nenhuma categoria cadastrada</p>
-      <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Adicione uma categoria acima</p>
-    </div>
-
-    <div v-else class="space-y-2 max-h-96 overflow-y-auto">
-      <div
-        v-for="category in categories"
-        :key="category.id"
-        class="group flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
-      >
-        <div class="flex items-center space-x-3 flex-1 min-w-0">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
           <div :class="[
-            'w-2 h-2 rounded-full flex-shrink-0',
-            colorClasses[color].dot
-          ]"></div>
-          <span v-if="!editingId || editingId !== category.id" class="text-sm font-medium text-gray-900 dark:text-white truncate">
-            {{ category.name }}
-          </span>
-          <input
-            v-else
-            v-model="editingName"
-            @blur="handleUpdate(category.id)"
-            @keyup.enter="handleUpdate(category.id)"
-            @keyup.esc="cancelEdit"
-            type="text"
-            class="flex-1 px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500"
-            @click.stop
-          />
+            'p-2 rounded-lg',
+            colorClasses[color].bg,
+            colorClasses[color].icon
+          ]">
+            <component :is="icon" class="w-5 h-5" />
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
+            <p class="text-xs text-gray-600 dark:text-gray-400">{{ description }}</p>
+          </div>
         </div>
-        <div class="flex items-center space-x-2 flex-shrink-0">
-          <button
-            v-if="!editingId || editingId !== category.id"
-            @click="startEdit(category)"
-            class="p-1.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20 rounded transition-colors"
-            title="Editar"
-          >
-            <PencilIcon class="w-4 h-4" />
-          </button>
-          <button
-            @click="handleDelete(category.id)"
-            class="p-1.5 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-            title="Excluir"
-          >
-            <TrashIcon class="w-4 h-4" />
-          </button>
-        </div>
+        <span :class="[
+          'px-3 py-1 rounded-full text-xs font-medium',
+          colorClasses[color].badge
+        ]">
+          {{ categories.length }} {{ categories.length === 1 ? 'categoria' : 'categorias' }}
+        </span>
       </div>
+    </div>
+
+    <!-- Tabela estilo planilha -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700">
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider w-12">
+              #
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+              Nome da Categoria
+            </th>
+            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider w-24">
+              Ações
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+          <!-- Loading State -->
+          <tr v-if="loading">
+            <td colspan="3" class="px-4 py-8 text-center">
+              <div class="flex flex-col items-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-purple-600 mb-2"></div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Carregando...</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Linha para adicionar nova categoria -->
+          <tr class="bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20">
+            <td class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
+              <PlusIcon class="w-5 h-5 mx-auto" />
+            </td>
+            <td class="px-4 py-3">
+              <form @submit.prevent="handleCreate" class="flex gap-2">
+                <input
+                  v-model="newCategoryName"
+                  type="text"
+                  :placeholder="`Digite o nome da categoria...`"
+                  :disabled="saving"
+                  class="flex-1 px-3 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
+                  required
+                />
+                <button
+                  type="submit"
+                  :disabled="saving || !newCategoryName.trim()"
+                  :class="[
+                    'px-4 py-2 rounded text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap',
+                    colorClasses[color].button
+                  ]"
+                >
+                  <span v-if="saving" class="flex items-center">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Salvando...
+                  </span>
+                  <span v-else class="flex items-center">
+                    <PlusIcon class="w-4 h-4 mr-1" />
+                    Adicionar
+                  </span>
+                </button>
+              </form>
+            </td>
+            <td class="px-4 py-3"></td>
+          </tr>
+
+          <!-- Lista de categorias existentes -->
+          <tr
+            v-for="(category, index) in categories"
+            :key="category.id"
+            class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
+          >
+            <td class="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">
+              {{ index + 1 }}
+            </td>
+            <td class="px-4 py-3">
+              <span v-if="!editingId || editingId !== category.id" class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ category.name }}
+              </span>
+              <input
+                v-else
+                v-model="editingName"
+                @blur="handleUpdate(category.id)"
+                @keyup.enter="handleUpdate(category.id)"
+                @keyup.esc="cancelEdit"
+                type="text"
+                class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
+                @click.stop
+                autofocus
+              />
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center justify-center space-x-2">
+                <button
+                  v-if="!editingId || editingId !== category.id"
+                  @click="startEdit(category)"
+                  class="p-1.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20 rounded transition-colors"
+                  title="Editar"
+                >
+                  <PencilIcon class="w-4 h-4" />
+                </button>
+                <button
+                  @click="handleDelete(category.id)"
+                  class="p-1.5 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                  title="Excluir"
+                >
+                  <TrashIcon class="w-4 h-4" />
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Mensagem quando não há categorias -->
+          <tr v-if="!loading && categories.length === 0">
+            <td colspan="3" class="px-4 py-8 text-center">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Nenhuma categoria cadastrada</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Use a linha acima para adicionar uma categoria</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script setup>
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   title: String,
