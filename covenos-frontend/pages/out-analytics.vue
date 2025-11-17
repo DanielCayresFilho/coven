@@ -596,7 +596,7 @@ const saveOut = async () => {
     const url = editingOut.value ? `/out-analytics/${editingOut.value.id}` : '/out-analytics'
     
     // Montar o payload baseado no tipo de categoria
-    const payload: any = {
+    const payload = {
       date: outForm.date,
       description: outForm.description,
       amount: outForm.amount
