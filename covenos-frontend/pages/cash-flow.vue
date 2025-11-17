@@ -476,7 +476,7 @@ const loadCashFlow = async () => {
   }
 }
 
-const saveConfig = async (month: number, field: 'initialBalance' | 'prolabore', value: number) => {
+const saveConfig = async (month, field, value) => {
   try {
     const { $api } = useNuxtApp()
     
