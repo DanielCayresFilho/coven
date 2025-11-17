@@ -1,15 +1,15 @@
 <template>
-  <div class="space-y-8">
+  <div class="space-y-8 pb-8">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Categorias Financeiras</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie as categorias do sistema financeiro</p>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Categorias Financeiras</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Gerencie as categorias do sistema financeiro</p>
       </div>
     </div>
 
-    <!-- Grid com 4 seções -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Grid com 4 seções bem separadas -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Entrada de Dinheiro -->
       <CategorySection
         title="Entrada de Dinheiro"
@@ -76,6 +76,7 @@ import {
   CalendarIcon,
   BanknotesIcon
 } from '@heroicons/vue/24/outline'
+import CategorySection from '~/components/financial/CategorySection.vue'
 
 definePageMeta({
   layout: 'default',
@@ -112,10 +113,13 @@ const loadEntryMoney = async () => {
   loading.entryMoney = true
   try {
     const { $api } = useNuxtApp()
-    entryMoneyCategories.value = await $api('/financial-categories/entry-money')
+    const data = await $api('/financial-categories/entry-money')
+    entryMoneyCategories.value = Array.isArray(data) ? data : []
+    console.log('Categorias de entrada carregadas:', entryMoneyCategories.value.length)
   } catch (error) {
     console.error('Erro ao carregar categorias de entrada:', error)
     entryMoneyCategories.value = []
+    useToast().error('Erro ao carregar categorias de entrada')
   } finally {
     loading.entryMoney = false
   }
@@ -173,10 +177,13 @@ const loadCostVariable = async () => {
   loading.costVariable = true
   try {
     const { $api } = useNuxtApp()
-    costVariableCategories.value = await $api('/financial-categories/cost-variable')
+    const data = await $api('/financial-categories/cost-variable')
+    costVariableCategories.value = Array.isArray(data) ? data : []
+    console.log('Categorias de custos variáveis carregadas:', costVariableCategories.value.length)
   } catch (error) {
     console.error('Erro ao carregar categorias de custos variáveis:', error)
     costVariableCategories.value = []
+    useToast().error('Erro ao carregar categorias de custos variáveis')
   } finally {
     loading.costVariable = false
   }
@@ -234,10 +241,13 @@ const loadFixesAccounts = async () => {
   loading.fixesAccounts = true
   try {
     const { $api } = useNuxtApp()
-    fixesAccountsCategories.value = await $api('/financial-categories/fixes-accounts')
+    const data = await $api('/financial-categories/fixes-accounts')
+    fixesAccountsCategories.value = Array.isArray(data) ? data : []
+    console.log('Categorias de contas fixas carregadas:', fixesAccountsCategories.value.length)
   } catch (error) {
     console.error('Erro ao carregar categorias de contas fixas:', error)
     fixesAccountsCategories.value = []
+    useToast().error('Erro ao carregar categorias de contas fixas')
   } finally {
     loading.fixesAccounts = false
   }
@@ -295,10 +305,13 @@ const loadInvestments = async () => {
   loading.investments = true
   try {
     const { $api } = useNuxtApp()
-    investmentsCategories.value = await $api('/financial-categories/investments')
+    const data = await $api('/financial-categories/investments')
+    investmentsCategories.value = Array.isArray(data) ? data : []
+    console.log('Categorias de investimentos carregadas:', investmentsCategories.value.length)
   } catch (error) {
     console.error('Erro ao carregar categorias de investimentos:', error)
     investmentsCategories.value = []
+    useToast().error('Erro ao carregar categorias de investimentos')
   } finally {
     loading.investments = false
   }
