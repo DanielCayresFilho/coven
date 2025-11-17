@@ -260,51 +260,6 @@ async function main() {
 
   console.log('Produtos vinculados aos procedimentos');
 
-  // Criar algumas transações financeiras de exemplo
-  const financialTransactions = [
-    {
-      type: 'RECEITA' as const,
-      category: 'Serviços',
-      description: 'Pagamento de corte - Ana Silva',
-      amount: 80.00,
-      date: new Date('2025-01-01'),
-      isPaid: true,
-    },
-    {
-      type: 'DESPESA' as const,
-      category: 'Produtos',
-      description: 'Compra de shampoos',
-      amount: 150.00,
-      date: new Date('2025-01-02'),
-      isPaid: true,
-    },
-    {
-      type: 'RECEITA' as const,
-      category: 'Produtos',
-      description: 'Venda de óleo capilar',
-      amount: 35.00,
-      date: new Date('2025-01-03'),
-      isPaid: true,
-    },
-  ];
-
-  for (const transaction of financialTransactions) {
-    const existing = await prisma.financialTransaction.findFirst({
-      where: { 
-        description: transaction.description,
-        amount: transaction.amount 
-      }
-    });
-    
-    if (!existing) {
-      await prisma.financialTransaction.create({
-        data: transaction,
-      });
-    }
-  }
-
-  console.log('Transações financeiras de exemplo criadas');
-
   console.log('🎉 Seed concluído com sucesso!');
 }
 
