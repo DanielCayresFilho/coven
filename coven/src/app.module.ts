@@ -10,7 +10,13 @@ import { ClientsModule } from './clients/clients.module';
 import { ProceduresModule } from './procedures/procedures.module';
 import { ProductsModule } from './products/products.module';
 import { AppointmentsModule } from './appointments/appointments.module';
-import { FinancialModule } from './financial/financial.module';
+import { EntryMoneyModule } from './financial-categories/entry-money/entry-money.module';
+import { CostVariableModule } from './financial-categories/cost-variable/cost-variable.module';
+import { FixesAccountsModule } from './financial-categories/fixes-accounts/fixes-accounts.module';
+import { InvestmentsModule } from './financial-categories/investments/investments.module';
+import { EntryAnalyticsModule } from './entry-analytics/entry-analytics.module';
+import { OutAnalyticsModule } from './out-analytics/out-analytics.module';
+import { CashFlowModule } from './cash-flow/cash-flow.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { GoalsModule } from './goals/goals.module';
 import { FixedExpensesModule } from './fixed-expenses/fixed-expenses.module';
@@ -28,7 +34,13 @@ import { FixedExpensesModule } from './fixed-expenses/fixed-expenses.module';
     ProceduresModule,
     ProductsModule,
     AppointmentsModule,
-    FinancialModule,
+    EntryMoneyModule,
+    CostVariableModule,
+    FixesAccountsModule,
+    InvestmentsModule,
+    EntryAnalyticsModule,
+    OutAnalyticsModule,
+    CashFlowModule,
     RemindersModule,
     GoalsModule,
     FixedExpensesModule,

@@ -166,20 +166,98 @@ model ProductUsage {
   @@map("product_usages")
 }
 
-model FinancialTransaction {
-  id          String          @id @default(uuid())
-  type        TransactionType
-  category    String
-  description String
-  amount      Decimal         @db.Decimal(10, 2)
-  date        DateTime
-  isPaid      Boolean         @default(false)
-  dueDate     DateTime?
-  recurrent   Boolean         @default(false)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+// Categorias Financeiras
+model EntryMoneyCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entryAnalytics EntryAnalytic[]
 
-  @@map("financial_transactions")
+  @@map("entry_money_categories")
+}
+
+model CostVariableCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  outAnalytics OutAnalytic[]
+
+  @@map("cost_variable_categories")
+}
+
+model FixesAccountsCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  outAnalytics OutAnalytic[]
+
+  @@map("fixes_accounts_categories")
+}
+
+model InvestmentsCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  outAnalytics OutAnalytic[]
+
+  @@map("investments_categories")
+}
+
+// Entradas Analíticas
+model EntryAnalytic {
+  id              String   @id @default(uuid())
+  date            DateTime
+  entryMoneyCategoryId String
+  description     String?
+  amount          Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  entryMoneyCategory EntryMoneyCategory @relation(fields: [entryMoneyCategoryId], references: [id])
+
+  @@index([entryMoneyCategoryId])
+  @@map("entry_analytics")
+}
+
+// Saídas Analíticas
+model OutAnalytic {
+  id                    String   @id @default(uuid())
+  date                  DateTime
+  description           String?
+  amount                Decimal  @db.Decimal(10, 2)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relacionamentos opcionais com as categorias de saída
+  costVariableCategoryId String?
+  fixesAccountsCategoryId String?
+  investmentsCategoryId   String?
+  
+  costVariableCategory   CostVariableCategory? @relation(fields: [costVariableCategoryId], references: [id])
+  fixesAccountsCategory  FixesAccountsCategory? @relation(fields: [fixesAccountsCategoryId], references: [id])
+  investmentsCategory    InvestmentsCategory? @relation(fields: [investmentsCategoryId], references: [id])
+
+  @@index([costVariableCategoryId])
+  @@index([fixesAccountsCategoryId])
+  @@index([investmentsCategoryId])
+  @@map("out_analytics")
+}
+
+// Configurações do Fluxo de Caixa (Saldo Inicial e Pró-labore por mês/ano)
+model CashFlowConfig {
+  id            String   @id @default(uuid())
+  year          Int
+  month         Int      // 1-12 (Janeiro a Dezembro)
+  initialBalance Decimal @db.Decimal(10, 2) // Saldo inicial do mês
+  prolabore     Decimal? @db.Decimal(10, 2) // Pró-labore do mês
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([year, month])
+  @@map("cash_flow_configs")
 }
 
 model Reminder {

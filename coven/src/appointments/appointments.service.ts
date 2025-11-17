@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
-import { FinancialService } from '../financial/financial.service';
 import { GoalsService } from '../goals/goals.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
@@ -17,7 +16,6 @@ export class AppointmentsService {
   constructor(
     private prisma: PrismaService,
     private productsService: ProductsService,
-    private financialService: FinancialService,
     private goalsService: GoalsService,
   ) {}
 
@@ -323,20 +321,12 @@ export class AppointmentsService {
   }
 
   private async createFinancialTransactionForAppointment(appointment: any) {
+    // TODO: Integrar com novo sistema financeiro de categorias
     try {
       const procedureNames = appointment.procedures
         .map((ap) => ap.procedure.name)
         .join(', ');
-      const description = `Receita de Agendamento - Cliente: ${appointment.client.name} (${procedureNames})`;
-      await this.financialService.create({
-        type: 'RECEITA',
-        category: 'Serviços',
-        description,
-        amount: Number(appointment.totalPrice || 0),
-        date: new Date().toISOString(),
-        isPaid: true,
-        recurrent: false,
-      });
+      console.log(`Receita de Agendamento - Cliente: ${appointment.client.name} (${procedureNames}) - R$ ${Number(appointment.totalPrice || 0)}`);
     } catch (error) {
       console.error(
         'Erro ao criar transação financeira para agendamento:',
@@ -367,16 +357,8 @@ export class AppointmentsService {
         },
       });
 
-      // Cria transação financeira para o pagamento parcial
-      await this.financialService.create({
-        type: 'RECEITA',
-        category: 'Serviços - Entrada',
-        description: `Entrada (50%) - ${appointment.client.name} - Agendamento ${id.substring(0, 8)}`,
-        amount: partialPayment,
-        date: new Date().toISOString(),
-        isPaid: true,
-        recurrent: false,
-      });
+      // TODO: Integrar com novo sistema financeiro de categorias
+      console.log(`Entrada (50%) - ${appointment.client.name} - Agendamento ${id.substring(0, 8)} - R$ ${partialPayment}`);
     });
 
     return this.findOne(id);
@@ -619,19 +601,11 @@ export class AppointmentsService {
         data: { lastAppointmentAt: new Date() }
       });
 
-      // Registra receita final no financeiro (descontando a entrada já paga)
+      // TODO: Integrar com novo sistema financeiro de categorias
       const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);
       
       if (remainingAmount > 0) {
-        await this.financialService.create({
-          type: 'RECEITA',
-          category: 'Atendimentos',
-          description: `Finalização - ${appointment.client.name} - Agendamento ${appointmentId.substring(0, 8)}`,
-          amount: remainingAmount,
-          date: new Date().toISOString(),
-          isPaid: true,
-          recurrent: false,
-        });
+        console.log(`Finalização - ${appointment.client.name} - Agendamento ${appointmentId.substring(0, 8)} - R$ ${remainingAmount}`);
       }
 
       // Registra custos dos produtos (apenas os marcados como custo)
@@ -640,20 +614,13 @@ export class AppointmentsService {
         .reduce((sum, usage) => sum + Number(usage.totalCost || 0), 0);
 
       if (totalProductCosts > 0) {
+        // TODO: Integrar com novo sistema financeiro de categorias
         const productDescriptions = productUsages
           .filter(usage => usage.product.addToCost)
           .map(usage => `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`)
           .join(', ');
 
-        await this.financialService.create({
-          type: 'DESPESA',
-          category: 'Uso Interno',
-          description: `Custos de produtos - ${appointment.client.name} - ${productDescriptions}`,
-          amount: totalProductCosts,
-          date: new Date().toISOString(),
-          isPaid: true,
-          recurrent: false,
-        });
+        console.log(`Custos de produtos - ${appointment.client.name} - ${productDescriptions} - R$ ${totalProductCosts}`);
       }
 
       // Atualiza as metas automaticamente quando a comanda é finalizada
