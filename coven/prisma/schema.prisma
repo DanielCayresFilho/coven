@@ -128,7 +128,7 @@ model Appointment {
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
   procedures      AppointmentProcedure[]
-  productUsages   ProductUsage[] // Produtos utilizados na comanda
+  productUsages   ProductUsage[]
   client          Client                 @relation(fields: [clientId], references: [id])
   user            User                   @relation(fields: [userId], references: [id])
 

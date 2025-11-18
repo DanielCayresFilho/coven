@@ -34,35 +34,68 @@ export class ClientsService {
   }
 
   async findAll() {
-    const clients = await this.prisma.client.findMany({
-      where: { active: true },
-      include: {
-        appointments: {
-          where: {
-            status: { not: 'CANCELADO' }
-          },
-          orderBy: { date: 'desc' },
-          take: 1,
-          select: {
-            date: true,
-            startTime: true
-          }
-        }
-      },
-      orderBy: { name: 'asc' },
-    });
+    try {
+      const clients = await this.prisma.client.findMany({
+        where: { active: true },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          birthDate: true,
+          address: true,
+          observations: true,
+          active: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { name: 'asc' },
+      });
 
-    // Adiciona o último atendimento (data mais recente)
-    return clients.map(client => {
-      const lastAppointment = client.appointments && client.appointments.length > 0
-        ? client.appointments[0].date || client.appointments[0].startTime
-        : null;
+      // Se não houver clientes, retorna vazio
+      if (clients.length === 0) {
+        return [];
+      }
+
+      // Buscar último atendimento para cada cliente usando uma query mais simples
+      const clientIds = clients.map(c => c.id);
       
-      return {
+      // Buscar todos os últimos atendimentos em uma única query usando raw SQL ou findMany
+      const appointments = await this.prisma.appointment.findMany({
+        where: {
+          clientId: { in: clientIds },
+          status: { not: 'CANCELADO' }
+        },
+        select: {
+          clientId: true,
+          date: true,
+          startTime: true,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+      });
+
+      // Agrupar por clientId e pegar o primeiro (mais recente) de cada
+      const lastAppointmentMap = new Map<string, Date | null>();
+      const seenClients = new Set<string>();
+      
+      for (const apt of appointments) {
+        if (!seenClients.has(apt.clientId)) {
+          lastAppointmentMap.set(apt.clientId, apt.date || apt.startTime);
+          seenClients.add(apt.clientId);
+        }
+      }
+
+      // Adicionar último atendimento a cada cliente
+      return clients.map(client => ({
         ...client,
-        lastAppointment
-      };
-    });
+        lastAppointment: lastAppointmentMap.get(client.id) || null
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar clientes:', error);
+      throw error;
+    }
   }
 
   async findOne(id: string) {
