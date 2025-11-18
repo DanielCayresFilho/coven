@@ -88,7 +88,20 @@ export class AppointmentsService {
       return tx.appointment.findUnique({
         where: { id: appointment.id },
         include: {
-          client: true,
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              birthDate: true,
+              address: true,
+              observations: true,
+              active: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
           user: true,
           procedures: { include: { procedure: true } },
         },
@@ -189,7 +202,20 @@ export class AppointmentsService {
       return tx.appointment.findUnique({
         where: { id },
         include: {
-          client: true,
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              birthDate: true,
+              address: true,
+              observations: true,
+              active: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
           user: true,
           procedures: { include: { procedure: true } },
         },
@@ -241,7 +267,20 @@ export class AppointmentsService {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id },
       include: {
-        client: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            birthDate: true,
+            address: true,
+            observations: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         user: { select: { id: true, name: true, email: true } },
         procedures: {
           include: {
@@ -386,7 +425,20 @@ export class AppointmentsService {
         comandaOpenedAt: new Date()
       },
       include: {
-        client: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            birthDate: true,
+            address: true,
+            observations: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         user: true,
         procedures: { include: { procedure: true } },
         productUsages: { include: { product: true } }
