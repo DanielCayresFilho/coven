@@ -34,6 +34,9 @@ export class AppointmentsService {
       throw new BadRequestException('userId é obrigatório para criar um agendamento.');
     }
 
+    // Garante que userId é uma string (TypeScript type narrowing após validação)
+    const validatedUserId = userId as string;
+
     // 1. Busca e valida os procedimentos
     const procedures = await this.prisma.procedure.findMany({
       where: { id: { in: procedureIds }, active: true },
@@ -57,14 +60,14 @@ export class AppointmentsService {
     const endTime = new Date(startTime.getTime() + totalDuration * 60000);
 
     // 3. Valida conflito de horário
-    await this.validateTimeConflict(userId, startTime, endTime);
+    await this.validateTimeConflict(validatedUserId, startTime, endTime);
 
     // 4. Cria o agendamento e seus procedimentos em uma transação
     return this.prisma.$transaction(async (tx) => {
       const appointment = await tx.appointment.create({
         data: {
           clientId: createAppointmentDto.clientId,
-          userId: createAppointmentDto.userId,
+          userId: validatedUserId,
           date: new Date(date),
           startTime,
           endTime,
