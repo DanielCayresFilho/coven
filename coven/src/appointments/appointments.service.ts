@@ -29,6 +29,11 @@ export class AppointmentsService {
       clientId,
     } = createAppointmentDto;
 
+    // Valida que userId foi fornecido (obrigatório no schema)
+    if (!userId) {
+      throw new BadRequestException('userId é obrigatório para criar um agendamento.');
+    }
+
     // 1. Busca e valida os procedimentos
     const procedures = await this.prisma.procedure.findMany({
       where: { id: { in: procedureIds }, active: true },
@@ -596,10 +601,12 @@ export class AppointmentsService {
       });
 
       // Atualiza o último atendimento do cliente
-      await tx.client.update({
-        where: { id: appointment.clientId },
-        data: { lastAppointmentAt: new Date() }
-      });
+      // Nota: lastAppointmentAt não existe no banco ainda, então não atualizamos
+      // TODO: Adicionar coluna lastAppointmentAt ao banco ou calcular dinamicamente
+      // await tx.client.update({
+      //   where: { id: appointment.clientId },
+      //   data: { lastAppointmentAt: new Date() }
+      // });
 
       // TODO: Integrar com novo sistema financeiro de categorias
       const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);

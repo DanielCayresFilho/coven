@@ -17,8 +17,8 @@ export class CreateAppointmentDto {
   clientId: string;
 
   @IsString()
-  @IsNotEmpty()
-  userId: string;
+  @IsOptional()
+  userId?: string;
 
   @IsDateString()
   date: string;

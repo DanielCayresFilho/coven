@@ -35,6 +35,13 @@ export const useToast = () => {
   const warning = (message, duration) => addToast(message, 'warning', duration)
   const info = (message, duration) => addToast(message, 'info', duration)
 
+  // Método add para compatibilidade com uso: useToast().add({ type, title, description })
+  const add = (options) => {
+    const { type = 'info', title, description, duration = 5000 } = options
+    const message = description || title || 'Notificação'
+    return addToast(message, type, duration)
+  }
+
   return {
     toasts: readonly(toasts),
     addToast,
@@ -42,6 +49,7 @@ export const useToast = () => {
     success,
     error,
     warning,
-    info
+    info,
+    add
   }
 }
