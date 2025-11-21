@@ -715,7 +715,21 @@ const saveAppointment = async () => {
 
   try {
     const { $api } = useNuxtApp()
-    const startDateTime = `${appointmentForm.date}T${appointmentForm.startTime}:00`
+    
+    // Cria a data/hora considerando o timezone local
+    // Formato: YYYY-MM-DDTHH:mm (sem timezone, será tratado como local)
+    const [year, month, day] = appointmentForm.date.split('-')
+    const [hours, minutes] = appointmentForm.startTime.split(':')
+    
+    // Cria Date no timezone local
+    const startTimeLocal = new Date(
+      parseInt(year),
+      parseInt(month) - 1, // mês é 0-indexed
+      parseInt(day),
+      parseInt(hours),
+      parseInt(minutes),
+      0
+    )
     
     const selectedProcedures = procedures.value.filter(proc => 
       appointmentForm.procedureIds.includes(proc.id)
@@ -724,16 +738,18 @@ const saveAppointment = async () => {
       sum + (proc.duration || 60), 0
     )
     
-    const startTime = new Date(startDateTime)
-    const endTime = new Date(startTime.getTime() + (totalDuration * 60 * 1000))
-    const endDateTime = endTime.toISOString()
+    const endTimeLocal = new Date(startTimeLocal.getTime() + (totalDuration * 60 * 1000))
+    
+    // Envia como ISO string (com timezone) para o backend
+    const startTimeISO = startTimeLocal.toISOString()
+    const endTimeISO = endTimeLocal.toISOString()
 
     const payload = {
       clientId: appointmentForm.clientId,
       userId: appointmentForm.userId || undefined,
       date: appointmentForm.date,
-      startTime: startDateTime,
-      endTime: endDateTime,
+      startTime: startTimeISO,
+      endTime: endTimeISO,
       procedureIds: appointmentForm.procedureIds,
       discount: appointmentForm.discount ? parseFloat(appointmentForm.discount) : undefined,
       observations: appointmentForm.observations || undefined,
