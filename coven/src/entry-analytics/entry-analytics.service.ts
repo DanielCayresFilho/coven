@@ -20,15 +20,35 @@ export class EntryAnalyticsService {
       throw new NotFoundException('Categoria de entrada não encontrada');
     }
 
+    // Verificar se o cliente existe (se fornecido)
+    if (createDto.clientId) {
+      const client = await this.prisma.client.findUnique({
+        where: { id: createDto.clientId },
+      });
+
+      if (!client) {
+        throw new NotFoundException('Cliente não encontrado');
+      }
+    }
+
     return this.prisma.entryAnalytic.create({
       data: {
         date: new Date(createDto.date),
         entryMoneyCategoryId: createDto.entryMoneyCategoryId,
+        clientId: createDto.clientId,
         description: createDto.description,
         amount: createDto.amount,
       },
       include: {
         entryMoneyCategory: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
   }
@@ -51,6 +71,14 @@ export class EntryAnalyticsService {
       where,
       include: {
         entryMoneyCategory: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
       orderBy: { date: 'desc' },
     });
@@ -61,6 +89,14 @@ export class EntryAnalyticsService {
       where: { id },
       include: {
         entryMoneyCategory: true,
+        client: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
 
@@ -91,6 +127,19 @@ export class EntryAnalyticsService {
       }
 
       data.entryMoneyCategoryId = updateDto.entryMoneyCategoryId;
+    }
+
+    if (updateDto.clientId !== undefined) {
+      if (updateDto.clientId) {
+        const client = await this.prisma.client.findUnique({
+          where: { id: updateDto.clientId },
+        });
+
+        if (!client) {
+          throw new NotFoundException('Cliente não encontrado');
+        }
+      }
+      data.clientId = updateDto.clientId;
     }
 
     if (updateDto.description !== undefined) {

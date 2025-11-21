@@ -12,25 +12,49 @@ export class ClientsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createClientDto: CreateClientDto) {
-    if (createClientDto.email) {
-      const existingClient = await this.prisma.client.findUnique({
-        where: { email: createClientDto.email },
-      });
+    try {
+      if (createClientDto.email) {
+        const existingClient = await this.prisma.client.findUnique({
+          where: { email: createClientDto.email },
+        });
 
-      if (existingClient) {
-        throw new ConflictException('Email já cadastrado');
+        if (existingClient) {
+          throw new ConflictException('Email já cadastrado');
+        }
       }
-    }
-    const data: any = {
-      ...createClientDto,
-      birthDate: createClientDto.birthDate
-        ? new Date(createClientDto.birthDate)
-        : undefined,
-    };
+      
+      // Prepara os dados removendo campos undefined
+      const data: any = {
+        name: createClientDto.name,
+      };
 
-    return this.prisma.client.create({
-      data,
-    });
+      if (createClientDto.email) {
+        data.email = createClientDto.email;
+      }
+
+      if (createClientDto.phone) {
+        data.phone = createClientDto.phone;
+      }
+
+      if (createClientDto.birthDate) {
+        data.birthDate = new Date(createClientDto.birthDate);
+      }
+
+      if (createClientDto.address) {
+        data.address = createClientDto.address;
+      }
+
+      if (createClientDto.observations) {
+        data.observations = createClientDto.observations;
+      }
+
+      return await this.prisma.client.create({
+        data,
+      });
+    } catch (error) {
+      console.error('Erro ao criar cliente:', error);
+      throw error;
+    }
   }
 
   async findAll() {

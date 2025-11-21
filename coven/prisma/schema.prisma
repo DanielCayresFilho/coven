@@ -38,6 +38,7 @@ model Client {
   updatedAt         DateTime      @updatedAt
   appointments      Appointment[]
   reminders         Reminder[]
+  entryAnalytics    EntryAnalytic[]
 
   @@map("clients")
 }
@@ -212,13 +213,16 @@ model EntryAnalytic {
   id              String   @id @default(uuid())
   date            DateTime
   entryMoneyCategoryId String
+  clientId        String? // Cliente que fez o procedimento
   description     String?
   amount          Decimal  @db.Decimal(10, 2)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   entryMoneyCategory EntryMoneyCategory @relation(fields: [entryMoneyCategoryId], references: [id])
+  client          Client? @relation(fields: [clientId], references: [id])
 
   @@index([entryMoneyCategoryId])
+  @@index([clientId])
   @@map("entry_analytics")
 }
 

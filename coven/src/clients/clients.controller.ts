@@ -7,8 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
+import { ClientsReportsService } from './clients-reports.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -16,11 +18,19 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller('clients')
 @UseGuards(JwtAuthGuard)
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly clientsReportsService: ClientsReportsService,
+  ) {}
 
   @Post()
-  create(@Body() createClientDto: CreateClientDto) {
-    return this.clientsService.create(createClientDto);
+  async create(@Body() createClientDto: CreateClientDto) {
+    try {
+      return await this.clientsService.create(createClientDto);
+    } catch (error) {
+      console.error('Erro no controller ao criar cliente:', error);
+      throw error;
+    }
   }
 
   @Get()
@@ -46,5 +56,16 @@ export class ClientsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.clientsService.remove(id);
+  }
+
+  @Get('reports/top')
+  getTopClients(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    return this.clientsReportsService.getTopClients(limitNum);
+  }
+
+  @Get('reports/:id')
+  getClientDetails(@Param('id') id: string) {
+    return this.clientsReportsService.getClientDetails(id);
   }
 }

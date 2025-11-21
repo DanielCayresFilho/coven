@@ -8,9 +8,14 @@ export class ProceduresService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProcedureDto: CreateProcedureDto) {
-    return this.prisma.procedure.create({
+    const procedure = await this.prisma.procedure.create({
       data: createProcedureDto,
     });
+
+    // Sincronizar com EntryMoneyCategory
+    await this.syncProcedureToEntryMoneyCategory(procedure.id, procedure.name);
+
+    return procedure;
   }
 
   async findAll() {
@@ -59,12 +64,19 @@ export class ProceduresService {
   }
 
   async update(id: string, updateProcedureDto: UpdateProcedureDto) {
-    await this.findOne(id);
+    const procedure = await this.findOne(id);
 
-    return this.prisma.procedure.update({
+    const updated = await this.prisma.procedure.update({
       where: { id },
       data: updateProcedureDto,
     });
+
+    // Sincronizar com EntryMoneyCategory se o nome mudou
+    if (updateProcedureDto.name && updateProcedureDto.name !== procedure.name) {
+      await this.syncProcedureToEntryMoneyCategory(updated.id, updated.name);
+    }
+
+    return updated;
   }
 
   async remove(id: string) {
@@ -103,5 +115,33 @@ export class ProceduresService {
         },
       },
     });
+  }
+
+  // Sincroniza um procedimento com EntryMoneyCategory
+  private async syncProcedureToEntryMoneyCategory(procedureId: string, procedureName: string) {
+    // Verifica se já existe uma categoria com esse nome
+    const existing = await this.prisma.entryMoneyCategory.findUnique({
+      where: { name: procedureName },
+    });
+
+    if (!existing) {
+      // Cria a categoria se não existir
+      await this.prisma.entryMoneyCategory.create({
+        data: { name: procedureName },
+      });
+    }
+  }
+
+  // Sincroniza todos os procedimentos ativos com EntryMoneyCategory
+  async syncAllProceduresToEntryMoney() {
+    const procedures = await this.prisma.procedure.findMany({
+      where: { active: true },
+    });
+
+    for (const procedure of procedures) {
+      await this.syncProcedureToEntryMoneyCategory(procedure.id, procedure.name);
+    }
+
+    return { synced: procedures.length };
   }
 }

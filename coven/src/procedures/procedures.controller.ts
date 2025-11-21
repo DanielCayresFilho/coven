@@ -65,4 +65,9 @@ export class ProceduresController {
   ) {
     return this.proceduresService.removeProduct(id, productId);
   }
+
+  @Post('sync-to-entry-money')
+  syncAllProceduresToEntryMoney() {
+    return this.proceduresService.syncAllProceduresToEntryMoney();
+  }
 }

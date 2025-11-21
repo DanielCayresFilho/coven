@@ -11,6 +11,10 @@ export class CreateEntryAnalyticDto {
 
   @IsString()
   @IsOptional()
+  clientId?: string;
+
+  @IsString()
+  @IsOptional()
   description?: string;
 
   @IsNumber()

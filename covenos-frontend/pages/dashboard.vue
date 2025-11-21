@@ -6,7 +6,14 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo ao Coven Beauty</p>
       </div>
-      <div class="mt-4 sm:mt-0">
+      <div class="mt-4 sm:mt-0 flex items-center gap-4">
+        <button
+          @click="toggleValuesVisibility"
+          class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center gap-2"
+        >
+          <component :is="hideValues ? EyeIcon : EyeSlashIcon" class="w-5 h-5" />
+          {{ hideValues ? 'Mostrar Valores' : 'Esconder Valores' }}
+        </button>
         <p class="text-sm text-gray-600 dark:text-gray-400">{{ currentDate }}</p>
       </div>
     </div>
@@ -37,7 +44,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Receita Mensal</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ formatCurrency(stats.monthlyRevenue) }}</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ hideValues ? '••••••' : formatCurrency(stats.monthlyRevenue) }}</p>
             <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
               <span class="text-green-600 dark:text-green-400">+{{ stats.revenueTrend }}%</span>
               vs. mês anterior
@@ -1062,7 +1069,9 @@ import {
   ClipboardDocumentCheckIcon,
   BellIcon,
   PlusCircleIcon,
-  XMarkIcon
+  XMarkIcon,
+  EyeIcon,
+  EyeSlashIcon
 } from '@heroicons/vue/24/outline'
 
 // Page meta
@@ -1094,6 +1103,12 @@ const stats = reactive({
   newClients: 0,
   lowStockProducts: 0
 })
+
+const hideValues = ref(false)
+
+const toggleValuesVisibility = () => {
+  hideValues.value = !hideValues.value
+}
 
 const appointments = ref([])
 const clients = ref([])
