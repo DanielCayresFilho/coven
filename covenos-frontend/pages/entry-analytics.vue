@@ -106,6 +106,7 @@
             <tr>
               <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Data</th>
               <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Categoria</th>
+              <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Cliente</th>
               <th class="text-left py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Descrição</th>
               <th class="text-right py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Valor</th>
               <th class="text-right py-4 px-6 text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Ações</th>
@@ -124,6 +125,9 @@
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-800">
                   {{ entry.entryMoneyCategory?.name }}
                 </span>
+              </td>
+              <td class="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">
+                {{ entry.client?.name || '-' }}
               </td>
               <td class="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">
                 {{ entry.description || '-' }}
@@ -207,6 +211,19 @@
                     <option value="">Selecione uma categoria</option>
                     <option v-for="category in categories" :key="category.id" :value="category.id">
                       {{ category.name }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cliente (opcional)</label>
+                  <select
+                    v-model="entryForm.clientId"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
+                  >
+                    <option value="">Nenhum cliente</option>
+                    <option v-for="client in clients" :key="client.id" :value="client.id">
+                      {{ client.name }}
                     </option>
                   </select>
                 </div>
@@ -348,6 +365,7 @@ useSeoMeta({
 // Estado
 const entries = ref([])
 const categories = ref([])
+const clients = ref([])
 const loading = ref(true)
 const saving = ref(false)
 const deleting = ref(false)
@@ -365,6 +383,7 @@ const entryToDelete = ref(null)
 const entryForm = reactive({
   date: new Date().toISOString().split('T')[0],
   entryMoneyCategoryId: '',
+  clientId: '',
   description: '',
   amount: 0
 })
@@ -450,10 +469,21 @@ const loadCategories = async () => {
   }
 }
 
+const loadClients = async () => {
+  try {
+    const { $api } = useNuxtApp()
+    clients.value = await $api('/clients')
+  } catch (error) {
+    console.error('Erro ao carregar clientes:', error)
+    clients.value = []
+  }
+}
+
 const resetForm = () => {
   Object.assign(entryForm, {
     date: new Date().toISOString().split('T')[0],
     entryMoneyCategoryId: '',
+    clientId: '',
     description: '',
     amount: 0
   })
@@ -464,6 +494,7 @@ const editEntry = (entry) => {
   Object.assign(entryForm, {
     date: entry.date.split('T')[0],
     entryMoneyCategoryId: entry.entryMoneyCategoryId,
+    clientId: entry.clientId || '',
     description: entry.description || '',
     amount: Number(entry.amount)
   })
@@ -485,9 +516,14 @@ const saveEntry = async () => {
     const method = editingEntry.value ? 'PATCH' : 'POST'
     const url = editingEntry.value ? `/entry-analytics/${editingEntry.value.id}` : '/entry-analytics'
     
+    const payload = {
+      ...entryForm,
+      clientId: entryForm.clientId || undefined
+    }
+    
     await $api(url, {
       method,
-      body: entryForm
+      body: payload
     })
     
     await loadEntries()
@@ -528,7 +564,7 @@ const deleteEntry = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([loadEntries(), loadCategories()])
+  await Promise.all([loadEntries(), loadCategories(), loadClients()])
 })
 </script>
 
