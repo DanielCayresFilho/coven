@@ -188,13 +188,13 @@
               </svg>
               <span>Usuários</span>
             </NuxtLink>
+            
+            <!-- Theme Toggle -->
+            <ColorModeButton />
           </div>
           
           <!-- Right side actions -->
           <div class="flex items-center space-x-3 ml-auto">
-            <!-- Theme Toggle -->
-            <ColorModeButton />
-            
             <!-- Notifications -->
             <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

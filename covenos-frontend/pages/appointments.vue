@@ -619,8 +619,7 @@ const saveBlock = async () => {
           method: 'POST',
           body: {
             name: 'BLOQUEADO',
-            phone: '00000000000',
-            active: true
+            phone: '00000000000'
           }
         })
         blockedClientId = newClient.id
