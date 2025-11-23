@@ -203,13 +203,22 @@
                 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
+                  <div class="relative">
+                    <input
+                      v-model="categorySearchTerm"
+                      type="text"
+                      placeholder="Pesquisar categoria..."
+                      class="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
+                    />
+                    <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                  </div>
                   <select
                     v-model="entryForm.entryMoneyCategoryId"
                     required
-                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
+                    class="w-full mt-2 px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
                   >
                     <option value="">Selecione uma categoria</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                    <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
                       {{ category.name }}
                     </option>
                   </select>
@@ -217,12 +226,21 @@
                 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cliente (opcional)</label>
+                  <div class="relative">
+                    <input
+                      v-model="clientSearchTerm"
+                      type="text"
+                      placeholder="Pesquisar cliente..."
+                      class="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
+                    />
+                    <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                  </div>
                   <select
                     v-model="entryForm.clientId"
-                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
+                    class="w-full mt-2 px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-green-500 dark:focus:border-green-500 transition-colors"
                   >
                     <option value="">Nenhum cliente</option>
-                    <option v-for="client in clients" :key="client.id" :value="client.id">
+                    <option v-for="client in filteredClients" :key="client.id" :value="client.id">
                       {{ client.name }}
                     </option>
                   </select>
@@ -349,7 +367,8 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/vue/24/outline'
 
 definePageMeta({
@@ -379,6 +398,8 @@ const filters = reactive({
 const showCreateModal = ref(false)
 const editingEntry = ref(null)
 const entryToDelete = ref(null)
+const categorySearchTerm = ref('')
+const clientSearchTerm = ref('')
 
 const entryForm = reactive({
   date: new Date().toISOString().split('T')[0],
@@ -428,6 +449,22 @@ const monthlyAmount = computed(() => {
       return entryDate.getMonth() === thisMonth && entryDate.getFullYear() === thisYear
     })
     .reduce((sum, entry) => sum + Number(entry.amount), 0)
+})
+
+const filteredCategories = computed(() => {
+  if (!categorySearchTerm.value.trim()) {
+    return categories.value
+  }
+  const term = categorySearchTerm.value.toLowerCase().trim()
+  return categories.value.filter(cat => cat.name.toLowerCase().includes(term))
+})
+
+const filteredClients = computed(() => {
+  if (!clientSearchTerm.value.trim()) {
+    return clients.value
+  }
+  const term = clientSearchTerm.value.toLowerCase().trim()
+  return clients.value.filter(client => client.name.toLowerCase().includes(term))
 })
 
 // Métodos
@@ -504,6 +541,8 @@ const editEntry = (entry) => {
 const closeModal = () => {
   showCreateModal.value = false
   editingEntry.value = null
+  categorySearchTerm.value = ''
+  clientSearchTerm.value = ''
   resetForm()
 }
 

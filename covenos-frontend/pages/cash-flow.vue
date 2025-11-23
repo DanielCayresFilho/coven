@@ -79,9 +79,15 @@
             </tr>
 
             <!-- Entradas de Dinheiro -->
-            <tr class="bg-green-50 dark:bg-green-900/10">
+            <tr class="bg-green-50 dark:bg-green-900/10 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors" @click="collapsedSections.entries = !collapsedSections.entries">
               <td class="sticky left-0 z-10 bg-green-50 dark:bg-green-900/10 border-r border-gray-200 dark:border-gray-700 px-4 py-2 font-semibold text-green-700 dark:text-green-400">
-                ENTRADAS DE DINHEIRO
+                <div class="flex items-center">
+                  <component :is="collapsedSections.entries ? ChevronRightIcon : ChevronDownIcon" class="w-4 h-4 mr-2" />
+                  ENTRADAS DE DINHEIRO
+                  <span class="ml-2 text-xs font-normal opacity-75">
+                    ({{ cashFlowData.categories.entries.length }} categorias)
+                  </span>
+                </div>
               </td>
               <td
                 v-for="(month, index) in months"
@@ -99,6 +105,7 @@
             <tr
               v-for="category in cashFlowData.categories.entries"
               :key="`entry-${category.id}`"
+              v-show="!collapsedSections.entries"
               class="hover:bg-gray-50 dark:hover:bg-gray-800/30"
             >
               <td class="sticky left-0 z-10 bg-white dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-8 text-sm text-gray-700 dark:text-gray-300">
@@ -117,9 +124,12 @@
             </tr>
 
             <!-- Saídas de Dinheiro -->
-            <tr class="bg-red-50 dark:bg-red-900/10">
+            <tr class="bg-red-50 dark:bg-red-900/10 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors" @click="collapsedSections.outs = !collapsedSections.outs">
               <td class="sticky left-0 z-10 bg-red-50 dark:bg-red-900/10 border-r border-gray-200 dark:border-gray-700 px-4 py-2 font-semibold text-red-700 dark:text-red-400">
-                SAÍDAS DE DINHEIRO
+                <div class="flex items-center">
+                  <component :is="collapsedSections.outs ? ChevronRightIcon : ChevronDownIcon" class="w-4 h-4 mr-2" />
+                  SAÍDAS DE DINHEIRO
+                </div>
               </td>
               <td
                 v-for="(month, index) in months"
@@ -134,9 +144,15 @@
             </tr>
 
             <!-- Custos Variáveis -->
-            <tr class="bg-orange-50 dark:bg-orange-900/10">
+            <tr class="bg-orange-50 dark:bg-orange-900/10 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/20 transition-colors" @click="collapsedSections.costVariable = !collapsedSections.costVariable">
               <td class="sticky left-0 z-10 bg-orange-50 dark:bg-orange-900/10 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-4 font-semibold text-orange-700 dark:text-orange-400">
-                Custos Variáveis
+                <div class="flex items-center">
+                  <component :is="collapsedSections.costVariable ? ChevronRightIcon : ChevronDownIcon" class="w-4 h-4 mr-2" />
+                  Custos Variáveis
+                  <span class="ml-2 text-xs font-normal opacity-75">
+                    ({{ cashFlowData.categories.outs.costVariable.length }} categorias)
+                  </span>
+                </div>
               </td>
               <td
                 v-for="(month, index) in months"
@@ -154,6 +170,7 @@
             <tr
               v-for="category in cashFlowData.categories.outs.costVariable"
               :key="`cost-${category.id}`"
+              v-show="!collapsedSections.costVariable && !collapsedSections.outs"
               class="hover:bg-gray-50 dark:hover:bg-gray-800/30"
             >
               <td class="sticky left-0 z-10 bg-white dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-12 text-sm text-gray-700 dark:text-gray-300">
@@ -172,9 +189,15 @@
             </tr>
 
             <!-- Contas Fixas -->
-            <tr class="bg-blue-50 dark:bg-blue-900/10">
+            <tr class="bg-blue-50 dark:bg-blue-900/10 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors" @click="collapsedSections.fixesAccounts = !collapsedSections.fixesAccounts">
               <td class="sticky left-0 z-10 bg-blue-50 dark:bg-blue-900/10 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-4 font-semibold text-blue-700 dark:text-blue-400">
-                Contas Fixas
+                <div class="flex items-center">
+                  <component :is="collapsedSections.fixesAccounts ? ChevronRightIcon : ChevronDownIcon" class="w-4 h-4 mr-2" />
+                  Contas Fixas
+                  <span class="ml-2 text-xs font-normal opacity-75">
+                    ({{ cashFlowData.categories.outs.fixesAccounts.length }} categorias)
+                  </span>
+                </div>
               </td>
               <td
                 v-for="(month, index) in months"
@@ -192,6 +215,7 @@
             <tr
               v-for="category in cashFlowData.categories.outs.fixesAccounts"
               :key="`fixes-${category.id}`"
+              v-show="!collapsedSections.fixesAccounts && !collapsedSections.outs"
               class="hover:bg-gray-50 dark:hover:bg-gray-800/30"
             >
               <td class="sticky left-0 z-10 bg-white dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-12 text-sm text-gray-700 dark:text-gray-300">
@@ -210,9 +234,15 @@
             </tr>
 
             <!-- Investimentos -->
-            <tr class="bg-purple-50 dark:bg-purple-900/10">
+            <tr class="bg-purple-50 dark:bg-purple-900/10 cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors" @click="collapsedSections.investments = !collapsedSections.investments">
               <td class="sticky left-0 z-10 bg-purple-50 dark:bg-purple-900/10 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-4 font-semibold text-purple-700 dark:text-purple-400">
-                Investimentos
+                <div class="flex items-center">
+                  <component :is="collapsedSections.investments ? ChevronRightIcon : ChevronDownIcon" class="w-4 h-4 mr-2" />
+                  Investimentos
+                  <span class="ml-2 text-xs font-normal opacity-75">
+                    ({{ cashFlowData.categories.outs.investments.length }} categorias)
+                  </span>
+                </div>
               </td>
               <td
                 v-for="(month, index) in months"
@@ -230,6 +260,7 @@
             <tr
               v-for="category in cashFlowData.categories.outs.investments"
               :key="`invest-${category.id}`"
+              v-show="!collapsedSections.investments && !collapsedSections.outs"
               class="hover:bg-gray-50 dark:hover:bg-gray-800/30"
             >
               <td class="sticky left-0 z-10 bg-white dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700 px-4 py-2 pl-12 text-sm text-gray-700 dark:text-gray-300">
@@ -334,7 +365,8 @@
 </template>
 
 <script setup>
-import { ArrowPathIcon } from '@heroicons/vue/24/outline'
+import { ArrowPathIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
+import { reactive } from 'vue'
 
 definePageMeta({
   layout: 'default',
@@ -349,6 +381,15 @@ useSeoMeta({
 // Estado
 const loading = ref(true)
 const selectedYear = ref(new Date().getFullYear())
+
+// Estados de colapso das seções
+const collapsedSections = reactive({
+  entries: false,
+  outs: false,
+  costVariable: false,
+  fixesAccounts: false,
+  investments: false
+})
 const cashFlowData = ref({
   year: new Date().getFullYear(),
   months: [],

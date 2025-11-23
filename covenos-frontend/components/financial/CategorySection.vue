@@ -2,7 +2,7 @@
   <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
     <!-- Header -->
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mb-3">
         <div class="flex items-center space-x-3">
           <div :class="[
             'p-2 rounded-lg',
@@ -16,17 +16,40 @@
             <p class="text-xs text-gray-600 dark:text-gray-400">{{ description }}</p>
           </div>
         </div>
-        <span :class="[
-          'px-3 py-1 rounded-full text-xs font-medium',
-          colorClasses[color].badge
-        ]">
-          {{ categories.length }} {{ categories.length === 1 ? 'categoria' : 'categorias' }}
-        </span>
+        <div class="flex items-center space-x-3">
+          <span :class="[
+            'px-3 py-1 rounded-full text-xs font-medium',
+            colorClasses[color].badge
+          ]">
+            {{ filteredCategories.length }} {{ filteredCategories.length === 1 ? 'categoria' : 'categorias' }}
+          </span>
+          <button
+            @click="isCollapsed = !isCollapsed"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            :title="isCollapsed ? 'Mostrar categorias' : 'Ocultar categorias'"
+          >
+            <ChevronDownIcon v-if="!isCollapsed" class="w-5 h-5 transition-transform" />
+            <ChevronRightIcon v-else class="w-5 h-5 transition-transform" />
+          </button>
+        </div>
+      </div>
+      
+      <!-- Barra de pesquisa -->
+      <div v-if="!isCollapsed" class="mt-3">
+        <div class="relative">
+          <MagnifyingGlassIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" />
+          <input
+            v-model="searchTerm"
+            type="text"
+            placeholder="Pesquisar categorias..."
+            class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent transition-colors"
+          />
+        </div>
       </div>
     </div>
 
     <!-- Tabela estilo planilha -->
-    <div class="overflow-x-auto">
+    <div v-if="!isCollapsed" class="overflow-x-auto">
       <table class="w-full">
         <thead>
           <tr class="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700">
@@ -94,7 +117,7 @@
 
           <!-- Lista de categorias existentes -->
           <tr
-            v-for="(category, index) in categories"
+            v-for="(category, index) in filteredCategories"
             :key="category.id"
             class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
           >
@@ -139,10 +162,16 @@
           </tr>
 
           <!-- Mensagem quando não há categorias -->
-          <tr v-if="!loading && categories.length === 0">
+          <tr v-if="!loading && filteredCategories.length === 0 && categories.length === 0">
             <td colspan="3" class="px-4 py-8 text-center">
               <p class="text-sm text-gray-600 dark:text-gray-400">Nenhuma categoria cadastrada</p>
               <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Use a linha acima para adicionar uma categoria</p>
+            </td>
+          </tr>
+          <tr v-else-if="!loading && filteredCategories.length === 0 && categories.length > 0">
+            <td colspan="3" class="px-4 py-8 text-center">
+              <p class="text-sm text-gray-600 dark:text-gray-400">Nenhuma categoria encontrada</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Tente outro termo de pesquisa</p>
             </td>
           </tr>
         </tbody>
@@ -152,7 +181,8 @@
 </template>
 
 <script setup>
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, PlusIcon, ChevronDownIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   title: String,
@@ -176,6 +206,19 @@ const emit = defineEmits(['create', 'update', 'delete'])
 const newCategoryName = ref('')
 const editingId = ref(null)
 const editingName = ref('')
+const isCollapsed = ref(false)
+const searchTerm = ref('')
+
+const filteredCategories = computed(() => {
+  if (!searchTerm.value.trim()) {
+    return props.categories
+  }
+  
+  const term = searchTerm.value.toLowerCase().trim()
+  return props.categories.filter(category =>
+    category.name.toLowerCase().includes(term)
+  )
+})
 
 const colorClasses = {
   green: {

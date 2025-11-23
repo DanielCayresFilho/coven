@@ -390,9 +390,10 @@ const formatCurrency = (value) => {
 
 const getStatusColor = (status) => {
   const colors = {
-    AGENDADO: '#3b82f6',
-    CONFIRMADO: '#eab308',
-    CONCLUIDO: '#22c55e',
+    RETORNO: '#eab308', // Amarelo
+    AGENDADO: '#9333ea', // Roxo
+    CONFIRMADO: '#22c55e', // Verde
+    CONCLUIDO: '#3b82f6', // Azul
     CANCELADO: '#ef4444',
     BLOQUEADO: '#6b7280'
   }
