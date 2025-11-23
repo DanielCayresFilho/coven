@@ -34,6 +34,9 @@
             </div>
           </NuxtLink>
           
+          <!-- Theme Toggle (visible on all screens) -->
+          <ColorModeButton />
+          
           <!-- Desktop Navigation with Dropdowns -->
           <div class="hidden lg:flex items-center space-x-1">
             <NuxtLink to="/dashboard" class="nav-item">
@@ -188,9 +191,6 @@
               </svg>
               <span>Usuários</span>
             </NuxtLink>
-            
-            <!-- Theme Toggle -->
-            <ColorModeButton />
           </div>
           
           <!-- Right side actions -->
