@@ -682,26 +682,26 @@
     </div>
 
     <!-- Modal de Gerenciamento de Comanda - Design Moderno -->
-    <div v-if="showProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl border border-gray-700/50 w-full max-w-5xl max-h-[95vh] overflow-hidden">
+    <div v-if="showProductModal" class="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-5xl max-h-[95vh] overflow-hidden">
         
         <!-- Header -->
-        <div class="flex justify-between items-center p-6 border-b border-gray-700/50 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+        <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
           <div>
-            <h2 class="text-2xl font-bold text-white flex items-center">
-              <svg class="w-7 h-7 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+              <svg class="w-7 h-7 mr-3 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V7a2 2 0 012-2h2a2 2 0 012 2v2m0 0v8a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2"></path>
               </svg>
               Gerenciar Comanda
             </h2>
-            <p class="text-sm text-gray-300 mt-1 flex items-center">
-              <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 flex items-center">
+              <svg class="w-4 h-4 mr-1.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
               {{ selectedComanda?.client?.name }} • {{ formatDateTime(selectedComanda?.date) }}
             </p>
           </div>
-          <button @click="closeProductModal" class="text-gray-400 hover:text-white hover:bg-gray-700/50 p-2 rounded-lg transition-all">
+          <button @click="closeProductModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 p-2 rounded-lg transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -716,16 +716,16 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               <!-- Card Produto -->
-              <div class="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-800/30 rounded-xl p-6">
+              <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl p-6">
                 <div class="flex items-center mb-4">
-                  <div class="p-2 bg-blue-500/20 rounded-lg mr-3">
-                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg mr-3">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-lg font-semibold text-white">Adicionar Produto</h3>
-                    <p class="text-sm text-blue-300/70">Selecione produtos para a comanda</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Adicionar Produto</h3>
+                    <p class="text-sm text-gray-600 dark:text-blue-300/70">Selecione produtos para a comanda</p>
                   </div>
                 </div>
                 
@@ -740,7 +740,7 @@
                     v-model="productSearch" 
                     type="text" 
                     placeholder="Pesquisar produto..."
-                    class="w-full pl-10 pr-4 py-3 bg-gray-800/70 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
+                    class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
                   >
                 </div>
                 
@@ -748,7 +748,7 @@
                 <div class="space-y-3">
                   <select 
                     v-model="productForm.productId" 
-                    class="w-full p-3 bg-gray-800/70 border border-gray-600/50 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
+                    class="w-full p-3 bg-white dark:bg-gray-800/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
                   >
                     <option value="">Selecionar produto...</option>
                     <option v-for="product in filteredProducts" :key="product.id" :value="product.id">
@@ -756,24 +756,24 @@
                     </option>
                   </select>
                   
-                  <div v-if="selectedProduct" class="bg-gray-800/30 rounded-lg p-4 border border-gray-700/50">
+                  <div v-if="selectedProduct" class="bg-white dark:bg-gray-800/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700/50">
                     <div class="flex items-center justify-between mb-3">
                       <div>
-                        <p class="text-white font-medium">{{ selectedProduct.name }}</p>
-                        <p class="text-sm text-gray-400">Disponível: {{ getDisplayStock(selectedProduct) }}</p>
+                        <p class="text-gray-900 dark:text-white font-medium">{{ selectedProduct.name }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Disponível: {{ getDisplayStock(selectedProduct) }}</p>
                       </div>
                     </div>
                     
                     <div class="flex space-x-3">
                       <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Quantidade</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantidade</label>
                         <input 
                           v-model.number="productForm.quantity" 
                           type="number" 
                           :min="1"
                           :max="getMaxQuantity(selectedProduct)"
                           :step="getQuantityStep(selectedProduct)"
-                          class="w-full px-3 py-2 bg-gray-700/70 border border-gray-600/50 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
+                          class="w-full px-3 py-2 bg-white dark:bg-gray-700/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all"
                           :placeholder="`Máx: ${getMaxQuantity(selectedProduct)} ${getProductUnit(selectedProduct)}`"
                         >
                       </div>
@@ -781,7 +781,7 @@
                         <button 
                           @click="addQuickProduct" 
                           :disabled="!productForm.productId || !productForm.quantity"
-                          class="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:from-gray-600 disabled:to-gray-600 text-white rounded-lg font-medium transition-all transform hover:scale-105 disabled:hover:scale-100"
+                          class="px-6 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg font-medium transition-all transform hover:scale-105 disabled:hover:scale-100"
                         >
                           <svg class="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -795,16 +795,16 @@
               </div>
               
               <!-- Card Procedimento -->
-              <div class="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-800/30 rounded-xl p-6">
+              <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800/30 rounded-xl p-6">
                 <div class="flex items-center mb-4">
-                  <div class="p-2 bg-purple-500/20 rounded-lg mr-3">
-                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg mr-3">
+                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                     </svg>
                   </div>
                   <div>
-                    <h3 class="text-lg font-semibold text-white">Adicionar Procedimento</h3>
-                    <p class="text-sm text-purple-300/70">Adicione procedimentos extras</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Adicionar Procedimento</h3>
+                    <p class="text-sm text-gray-600 dark:text-purple-300/70">Adicione procedimentos extras</p>
                   </div>
                 </div>
                 
@@ -819,7 +819,7 @@
                     v-model="procedureSearch" 
                     type="text" 
                     placeholder="Pesquisar procedimento..."
-                    class="w-full pl-10 pr-4 py-3 bg-gray-800/70 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                    class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
                   >
                 </div>
                 
@@ -828,7 +828,7 @@
                   <select 
                     v-model="procedureForm.procedureId" 
                     @change="onProcedureSelect"
-                    class="w-full p-3 bg-gray-800/70 border border-gray-600/50 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                    class="w-full p-3 bg-white dark:bg-gray-800/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:border-purple-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
                   >
                     <option value="">Selecionar procedimento...</option>
                     <option v-for="procedure in filteredProcedures" :key="procedure.id" :value="procedure.id">
@@ -836,16 +836,16 @@
                     </option>
                   </select>
                   
-                  <div v-if="procedureForm.procedureId" class="bg-gray-800/30 rounded-lg p-4 border border-gray-700/50">
+                  <div v-if="procedureForm.procedureId" class="bg-white dark:bg-gray-800/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700/50">
                     <div class="flex space-x-3">
                       <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Preço</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preço</label>
                         <input 
                           v-model.number="procedureForm.price" 
                           type="number" 
                           min="0"
                           step="0.01"
-                          class="w-full px-3 py-2 bg-gray-700/70 border border-gray-600/50 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
+                          class="w-full px-3 py-2 bg-white dark:bg-gray-700/70 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:border-purple-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-500 focus:outline-none transition-all"
                           placeholder="Preço do procedimento"
                         >
                       </div>
@@ -853,7 +853,7 @@
                         <button 
                           @click="addQuickProcedure" 
                           :disabled="!procedureForm.procedureId || !procedureForm.price"
-                          class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 text-white rounded-lg font-medium transition-all transform hover:scale-105 disabled:hover:scale-100"
+                          class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg font-medium transition-all transform hover:scale-105 disabled:hover:scale-100"
                         >
                           <svg class="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -868,39 +868,39 @@
             </div>
             
             <!-- Lista de Itens para Salvar -->
-            <div v-if="quickItems.length > 0" class="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border border-amber-800/30 rounded-xl p-6">
+            <div v-if="quickItems.length > 0" class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30 rounded-xl p-6">
               <div class="flex items-center mb-4">
-                <div class="p-2 bg-amber-500/20 rounded-lg mr-3">
-                  <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 bg-amber-100 dark:bg-amber-500/20 rounded-lg mr-3">
+                  <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-white">Itens Aguardando ({{ quickItems.length }})</h3>
-                  <p class="text-sm text-amber-300/70">Clique em salvar para adicionar à comanda</p>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Itens Aguardando ({{ quickItems.length }})</h3>
+                  <p class="text-sm text-gray-600 dark:text-amber-300/70">Clique em salvar para adicionar à comanda</p>
                 </div>
               </div>
               
               <div class="space-y-2 mb-4">
                 <div v-for="(item, index) in quickItems" :key="index" 
-                     class="flex justify-between items-center bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-gray-700/30 hover:bg-gray-700/50 transition-all">
+                     class="flex justify-between items-center bg-white dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-gray-200 dark:border-gray-700/30 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
                   <div class="flex items-center">
-                    <div class="p-2 rounded-lg mr-3" :class="item.type === 'product' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'">
+                    <div class="p-2 rounded-lg mr-3" :class="item.type === 'product' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400'">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path v-if="item.type === 'product'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                         <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                       </svg>
                     </div>
                     <div>
-                      <span class="text-white font-medium">{{ item.name }}</span>
-                      <div class="text-sm text-gray-400">
+                      <span class="text-gray-900 dark:text-white font-medium">{{ item.name }}</span>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">
                         {{ item.type === 'product' ? `${item.quantity} ${item.unit}` : formatCurrency(item.price) }}
                       </div>
                     </div>
                   </div>
                   <button 
                     @click="removeQuickItem(index)"
-                    class="text-red-400 hover:text-red-300 hover:bg-red-900/20 p-2 rounded-lg transition-all"
+                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-all"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -923,31 +923,31 @@
             </div>
             
             <!-- Lista de Itens Já Salvos -->
-            <div v-if="existingItems.length > 0" class="bg-gradient-to-r from-green-900/20 to-emerald-900/20 border border-green-800/30 rounded-xl p-6">
+            <div v-if="existingItems.length > 0" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-xl p-6">
               <div class="flex items-center mb-4">
-                <div class="p-2 bg-green-500/20 rounded-lg mr-3">
-                  <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 bg-green-100 dark:bg-green-500/20 rounded-lg mr-3">
+                  <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-white">Itens na Comanda ({{ existingItems.length }})</h3>
-                  <p class="text-sm text-green-300/70">Itens já adicionados e salvos</p>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Itens na Comanda ({{ existingItems.length }})</h3>
+                  <p class="text-sm text-gray-600 dark:text-green-300/70">Itens já adicionados e salvos</p>
                 </div>
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div v-for="item in existingItems" :key="item.id" 
-                     class="flex justify-between items-center bg-green-800/20 backdrop-blur-sm p-3 rounded-lg border border-green-700/30">
+                     class="flex justify-between items-center bg-white dark:bg-green-800/20 backdrop-blur-sm p-3 rounded-lg border border-gray-200 dark:border-green-700/30">
                   <div class="flex items-center">
-                    <div class="p-1.5 bg-green-500/20 rounded-lg mr-3">
-                      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-1.5 bg-green-100 dark:bg-green-500/20 rounded-lg mr-3">
+                      <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                       </svg>
                     </div>
                     <div>
-                      <span class="text-green-200 font-medium text-sm">{{ item.name }}</span>
-                      <div class="text-xs text-green-400">{{ item.detail }}</div>
+                      <span class="text-gray-900 dark:text-green-200 font-medium text-sm">{{ item.name }}</span>
+                      <div class="text-xs text-gray-600 dark:text-green-400">{{ item.detail }}</div>
                     </div>
                   </div>
                 </div>
@@ -957,19 +957,19 @@
         </div>
         
         <!-- Footer -->
-        <div class="border-t border-gray-700/50 p-6 bg-gray-900/50">
+        <div class="border-t border-gray-200 dark:border-gray-700/50 p-6 bg-gray-50 dark:bg-gray-900/50">
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center">
-              <svg class="w-6 h-6 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 text-green-600 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
               </svg>
-              <span class="text-lg font-semibold text-gray-300">Total:</span>
+              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Total:</span>
             </div>
-            <span class="text-2xl font-bold text-white">{{ formatCurrency(selectedComanda?.totalPrice || 0) }}</span>
+            <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(selectedComanda?.totalPrice || 0) }}</span>
           </div>
           
           <div class="text-center">
-            <button @click="closeProductModal" class="px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold rounded-lg transition-all transform hover:scale-105">
+            <button @click="closeProductModal" class="px-8 py-3 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-800 text-white font-semibold rounded-lg transition-all transform hover:scale-105">
               <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -981,11 +981,11 @@
     </div>
 
     <!-- Modal de Finalização -->
-    <div v-if="showFinishModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-gray-900 rounded-xl p-6 w-full max-w-lg">
+    <div v-if="showFinishModal" class="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-lg border border-gray-200 dark:border-gray-800">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-white">Finalizar Comanda - {{ selectedComanda?.client?.name }}</h2>
-          <button @click="closeFinishModal" class="text-gray-400 hover:text-white">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Finalizar Comanda - {{ selectedComanda?.client?.name }}</h2>
+          <button @click="closeFinishModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -993,17 +993,17 @@
         </div>
         
         <div class="space-y-4">
-          <div class="bg-gray-800 p-4 rounded-lg">
-            <p class="text-sm text-gray-400">Valor Original:</p>
-            <p class="text-lg font-bold text-white">{{ formatCurrency(selectedComanda?.totalPrice || 0) }}</p>
-            <p v-if="selectedComanda?.partialPayment" class="text-sm text-green-400">
+          <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Valor Original:</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">{{ formatCurrency(selectedComanda?.totalPrice || 0) }}</p>
+            <p v-if="selectedComanda?.partialPayment" class="text-sm text-green-600 dark:text-green-400">
               Entrada paga: {{ formatCurrency(selectedComanda.partialPayment) }}
             </p>
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Forma de Pagamento</label>
-            <select v-model="finishForm.paymentMethod" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Forma de Pagamento</label>
+            <select v-model="finishForm.paymentMethod" class="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white">
               <option value="DINHEIRO">Dinheiro</option>
               <option value="PIX">PIX</option>
               <option value="CARTAO_DEBITO">Cartão Débito (Taxa 2,79%)</option>
@@ -1015,24 +1015,24 @@
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Desconto (R$)</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Desconto (R$)</label>
             <input 
               v-model.number="finishForm.discount" 
               type="number" 
               min="0"
               step="0.01"
-              class="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              class="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white"
               placeholder="0,00"
             >
           </div>
           
-          <div v-if="calculatedFinish" class="bg-gray-800 p-4 rounded-lg">
-            <p class="text-sm text-gray-400">Valor Final:</p>
-            <p class="text-lg font-bold text-green-400">{{ formatCurrency(calculatedFinish.finalAmount) }}</p>
-            <p v-if="calculatedFinish.taxAmount > 0" class="text-xs text-red-400">
+          <div v-if="calculatedFinish" class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Valor Final:</p>
+            <p class="text-lg font-bold text-green-600 dark:text-green-400">{{ formatCurrency(calculatedFinish.finalAmount) }}</p>
+            <p v-if="calculatedFinish.taxAmount > 0" class="text-xs text-red-600 dark:text-red-400">
               Taxa do cartão: -{{ formatCurrency(calculatedFinish.taxAmount) }}
             </p>
-            <p v-if="finishForm.discount > 0" class="text-xs text-yellow-400">
+            <p v-if="finishForm.discount > 0" class="text-xs text-yellow-600 dark:text-yellow-400">
               Desconto: -{{ formatCurrency(finishForm.discount) }}
             </p>
           </div>
@@ -1042,11 +1042,11 @@
           <button 
             @click="finishComanda" 
             :disabled="!finishForm.paymentMethod"
-            class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
+            class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white rounded-lg transition-colors"
           >
             Finalizar Comanda
           </button>
-          <button @click="closeFinishModal" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+          <button @click="closeFinishModal" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors">
             Cancelar
           </button>
         </div>

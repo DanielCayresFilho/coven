@@ -37,11 +37,15 @@ export class AppointmentsService {
     // Garante que userId é uma string (TypeScript type narrowing após validação)
     const validatedUserId = userId as string;
 
-    // 1. Busca e valida os procedimentos
-    const procedures = await this.prisma.procedure.findMany({
-      where: { id: { in: procedureIds }, active: true },
-    });
-    if (procedures.length !== procedureIds.length) {
+    // 1. Busca e valida os procedimentos (se fornecidos)
+    const procedureIdsArray = procedureIds || [];
+    const procedures = procedureIdsArray.length > 0
+      ? await this.prisma.procedure.findMany({
+          where: { id: { in: procedureIdsArray }, active: true },
+        })
+      : [];
+    
+    if (procedureIdsArray.length > 0 && procedures.length !== procedureIdsArray.length) {
       throw new BadRequestException(
         'Um ou mais procedimentos são inválidos ou inativos.',
       );
@@ -57,7 +61,10 @@ export class AppointmentsService {
       0,
     );
     const startTime = new Date(startTimeString);
-    const endTime = new Date(startTime.getTime() + totalDuration * 60000);
+    // Se não há procedimentos e não foi fornecido endTime, usa 1 hora como padrão
+    const endTime = createAppointmentDto.endTime
+      ? new Date(createAppointmentDto.endTime)
+      : new Date(startTime.getTime() + (totalDuration || 60) * 60000);
 
     // 3. Valida conflito de horário
     await this.validateTimeConflict(validatedUserId, startTime, endTime);
@@ -75,12 +82,12 @@ export class AppointmentsService {
           paymentMethod: createAppointmentDto.paymentMethod,
           discount: createAppointmentDto.discount,
           observations: createAppointmentDto.observations,
-          procedures: {
+          procedures: procedures.length > 0 ? {
             create: procedures.map((proc) => ({
               procedureId: proc.id,
               price: proc.price,
             })),
-          },
+          } : undefined,
         },
       });
 

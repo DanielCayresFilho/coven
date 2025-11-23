@@ -32,7 +32,8 @@ export class CreateAppointmentDto {
 
   @IsArray()
   @IsString({ each: true })
-  procedureIds: string[];
+  @IsOptional()
+  procedureIds?: string[];
 
   @IsEnum(AppointmentStatus)
   @IsOptional()

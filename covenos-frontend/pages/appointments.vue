@@ -6,10 +6,18 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Agendamentos</h1>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gerencie os agendamentos do salão</p>
       </div>
-      <button @click="showCreateModal = true" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
-        <PlusIcon class="w-5 h-5 mr-2" />
-        Novo Agendamento
-      </button>
+      <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+        <button @click="openBlockModal" class="inline-flex items-center px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-200 shadow-md">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+          </svg>
+          Bloquear Horário
+        </button>
+        <button @click="showCreateModal = true" class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gradient-to-r dark:from-purple-600 dark:to-pink-600 text-white rounded-lg font-medium hover:bg-blue-700 dark:hover:from-purple-700 dark:hover:to-pink-700 transition-all duration-200 shadow-md">
+          <PlusIcon class="w-5 h-5 mr-2" />
+          Novo Agendamento
+        </button>
+      </div>
     </div>
 
     <!-- Stats Cards -->
@@ -327,6 +335,114 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Block Time Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="showBlockModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Transition
+            enter-active-class="transition ease-out duration-200"
+            enter-from-class="opacity-0 scale-95"
+            enter-to-class="opacity-100 scale-100"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95"
+          >
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-md">
+              <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Bloquear Horário</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bloqueie um horário sem precisar selecionar cliente</p>
+                </div>
+                <button @click="closeBlockModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                  <XMarkIcon class="w-5 h-5" />
+                </button>
+              </div>
+
+              <form @submit.prevent="saveBlock" class="p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <CalendarIcon class="w-4 h-4" />
+                      Data *
+                    </label>
+                    <input
+                      v-model="blockForm.date"
+                      type="date"
+                      required
+                      class="form-input"
+                    />
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="form-label">
+                      <ClockIcon class="w-4 h-4" />
+                      Hora Início *
+                    </label>
+                    <input
+                      v-model="blockForm.startTime"
+                      type="time"
+                      required
+                      class="form-input"
+                    />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <ClockIcon class="w-4 h-4" />
+                    Hora Fim (opcional)
+                  </label>
+                  <input
+                    v-model="blockForm.endTime"
+                    type="time"
+                    class="form-input"
+                    placeholder="Deixe vazio para 1 hora"
+                  />
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <DocumentTextIcon class="w-4 h-4" />
+                    Observações
+                  </label>
+                  <textarea
+                    v-model="blockForm.observations"
+                    rows="2"
+                    class="form-input resize-none"
+                    placeholder="Motivo do bloqueio..."
+                  ></textarea>
+                </div>
+                
+                <div class="flex flex-col-reverse sm:flex-row justify-end space-y-reverse space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <button 
+                    type="button" 
+                    @click="closeBlockModal" 
+                    class="px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="px-6 py-3 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
+                    :disabled="saving"
+                  >
+                    {{ saving ? 'Bloqueando...' : 'Bloquear Horário' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -351,7 +467,7 @@ import {
   TagIcon,
   CalculatorIcon,
   DocumentTextIcon,
-  MagnifyingGlassIcon 
+  MagnifyingGlassIcon
 } from '@heroicons/vue/24/outline'
 
 // Estado
@@ -368,8 +484,16 @@ const hairdresserFilter = ref('')
 const procedureSearchTerm = ref('')
 
 const showCreateModal = ref(false)
+const showBlockModal = ref(false)
 const editingAppointment = ref(null)
 const fullCalendar = ref(null)
+
+const blockForm = reactive({
+  date: '',
+  startTime: '',
+  endTime: '',
+  observations: 'Horário bloqueado'
+})
 
 const appointmentForm = reactive({
   clientId: '',
@@ -443,6 +567,138 @@ const handleDateSelect = (selectInfo) => {
 
   editingAppointment.value = null
   showCreateModal.value = true
+}
+
+const openBlockModal = () => {
+  const now = new Date()
+  const today = now.toISOString().split('T')[0]
+  const hours = now.getHours().toString().padStart(2, '0')
+  const minutes = now.getMinutes().toString().padStart(2, '0')
+  const time = `${hours}:${minutes}`
+  
+  Object.assign(blockForm, {
+    date: today,
+    startTime: time,
+    endTime: '',
+    observations: 'Horário bloqueado'
+  })
+  showBlockModal.value = true
+}
+
+const closeBlockModal = () => {
+  showBlockModal.value = false
+  Object.assign(blockForm, {
+    date: '',
+    startTime: '',
+    endTime: '',
+    observations: 'Horário bloqueado'
+  })
+}
+
+const saveBlock = async () => {
+  if (!blockForm.date || !blockForm.startTime) {
+    useToast().add({ type: 'error', title: 'Data e hora inicial são obrigatórias' })
+    return
+  }
+
+  saving.value = true
+  try {
+    const { $api } = useNuxtApp()
+    
+    // Buscar ou criar cliente "BLOQUEADO"
+    let blockedClientId = null
+    try {
+      const clientsList = await $api('/clients')
+      const blockedClient = clientsList.find(c => c.name === 'BLOQUEADO' || c.name === 'Bloqueado')
+      
+      if (blockedClient) {
+        blockedClientId = blockedClient.id
+      } else {
+        // Criar cliente bloqueado se não existir
+        const newClient = await $api('/clients', {
+          method: 'POST',
+          body: {
+            name: 'BLOQUEADO',
+            active: true
+          }
+        })
+        blockedClientId = newClient.id
+      }
+    } catch (error) {
+      console.error('Erro ao buscar/criar cliente bloqueado:', error)
+      useToast().add({ type: 'error', title: 'Erro ao criar bloqueio' })
+      return
+    }
+
+    // Buscar primeiro usuário disponível para o bloqueio
+    let defaultUserId = null
+    try {
+      const usersList = await $api('/users')
+      const firstUser = usersList.find(u => u.active !== false) || usersList[0]
+      if (firstUser) {
+        defaultUserId = firstUser.id
+      } else {
+        throw new Error('Nenhum usuário disponível')
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário padrão:', error)
+      useToast().add({ type: 'error', title: 'Erro ao buscar usuário para bloqueio' })
+      return
+    }
+
+    // Calcular hora final
+    const [year, month, day] = blockForm.date.split('-')
+    const [startHours, startMinutes] = blockForm.startTime.split(':')
+    const startTimeLocal = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day),
+      parseInt(startHours),
+      parseInt(startMinutes),
+      0
+    )
+    
+    let endTimeLocal
+    if (blockForm.endTime) {
+      const [endHours, endMinutes] = blockForm.endTime.split(':')
+      endTimeLocal = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(endHours),
+        parseInt(endMinutes),
+        0
+      )
+    } else {
+      // Se não informou hora final, bloqueia por 1 hora
+      endTimeLocal = new Date(startTimeLocal.getTime() + (60 * 60 * 1000))
+    }
+    
+    const startTimeISO = startTimeLocal.toISOString()
+    const endTimeISO = endTimeLocal.toISOString()
+
+    const payload = {
+      clientId: blockedClientId,
+      userId: defaultUserId,
+      date: blockForm.date,
+      startTime: startTimeISO,
+      endTime: endTimeISO,
+      status: 'BLOQUEADO',
+      procedureIds: [], // Bloqueios não têm procedimentos
+      observations: blockForm.observations || 'Horário bloqueado'
+    }
+
+    await $api('/appointments', { method: 'POST', body: payload })
+    
+    await loadData()
+    closeBlockModal()
+    useToast().add({ type: 'success', title: 'Horário bloqueado com sucesso!' })
+  } catch (error) {
+    console.error('Erro ao bloquear horário:', error)
+    useToast().add({ type: 'error', title: 'Erro ao bloquear horário' })
+  } finally {
+    saving.value = false
+  }
 }
 
 const handleEventDrop = async (info) => {
