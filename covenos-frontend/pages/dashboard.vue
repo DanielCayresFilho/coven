@@ -1169,21 +1169,62 @@
                   </div>
                 </div>
 
-                <!-- Procedures (from original comanda) -->
-                <div v-if="comandaToReschedule?.procedures?.length">
+                <!-- Procedures Selection -->
+                <div>
                   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     <CubeIcon class="w-4 h-4 inline mr-1" />
                     Procedimentos
                   </label>
-                  <div class="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4 space-y-2 border border-gray-200 dark:border-gray-700">
+                  
+                  <!-- Selected Procedures -->
+                  <div v-if="rescheduleForm.procedureIds.length > 0" class="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4 space-y-2 border border-gray-200 dark:border-gray-700 mb-3">
                     <div
-                      v-for="procedure in comandaToReschedule.procedures"
-                      :key="procedure.id"
-                      class="flex items-center justify-between text-sm"
+                      v-for="procedureId in rescheduleForm.procedureIds"
+                      :key="procedureId"
+                      class="flex items-center justify-between text-sm bg-white dark:bg-gray-800 rounded-lg p-2"
                     >
-                      <span class="text-gray-700 dark:text-gray-300">{{ procedure.procedure?.name }}</span>
-                      <span class="text-gray-900 dark:text-white font-medium">{{ formatCurrency(procedure.price) }}</span>
+                      <span class="text-gray-700 dark:text-gray-300">
+                        {{ procedures.find(p => p.id === procedureId)?.name || 'Procedimento não encontrado' }}
+                      </span>
+                      <div class="flex items-center gap-2">
+                        <span class="text-gray-900 dark:text-white font-medium">
+                          {{ formatCurrency(procedures.find(p => p.id === procedureId)?.price || 0) }}
+                        </span>
+                        <button
+                          type="button"
+                          @click="removeProcedure(procedureId)"
+                          class="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                          title="Remover procedimento"
+                        >
+                          <XMarkIcon class="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
+                  </div>
+                  
+                  <!-- Add Procedure -->
+                  <div class="flex gap-2">
+                    <select
+                      v-model="selectedProcedureToAdd"
+                      class="flex-1 px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    >
+                      <option value="">Selecione um procedimento para adicionar</option>
+                      <option
+                        v-for="procedure in availableProcedures"
+                        :key="procedure.id"
+                        :value="procedure.id"
+                      >
+                        {{ procedure.name }} - {{ formatCurrency(procedure.price) }}
+                      </option>
+                    </select>
+                    <button
+                      type="button"
+                      @click="addProcedure"
+                      :disabled="!selectedProcedureToAdd"
+                      class="px-4 py-2 bg-blue-600 dark:bg-purple-600 hover:bg-blue-700 dark:hover:bg-purple-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+                    >
+                      <PlusCircleIcon class="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
 
@@ -2334,6 +2375,7 @@ const finishComanda = async () => {
 const showRescheduleModal = ref(false)
 const comandaToReschedule = ref(null)
 const hairdressers = ref([])
+const selectedProcedureToAdd = ref('')
 const rescheduleForm = reactive({
   clientId: '',
   userId: '',
@@ -2345,11 +2387,45 @@ const rescheduleForm = reactive({
   totalPrice: 0
 })
 
+// Computed para procedimentos disponíveis (não selecionados)
+const availableProcedures = computed(() => {
+  return procedures.value.filter(proc => 
+    proc.active !== false && !rescheduleForm.procedureIds.includes(proc.id)
+  )
+})
+
+// Computed para recalcular totalPrice quando procedureIds mudar
+watch(() => rescheduleForm.procedureIds, (newIds) => {
+  const selectedProcedures = procedures.value.filter(proc => 
+    newIds.includes(proc.id)
+  )
+  rescheduleForm.totalPrice = selectedProcedures.reduce((sum, proc) => 
+    sum + (Number(proc.price) || 0), 0
+  )
+}, { deep: true })
+
+const addProcedure = () => {
+  if (selectedProcedureToAdd.value && !rescheduleForm.procedureIds.includes(selectedProcedureToAdd.value)) {
+    rescheduleForm.procedureIds.push(selectedProcedureToAdd.value)
+    selectedProcedureToAdd.value = ''
+  }
+}
+
+const removeProcedure = (procedureId) => {
+  const index = rescheduleForm.procedureIds.indexOf(procedureId)
+  if (index > -1) {
+    rescheduleForm.procedureIds.splice(index, 1)
+  }
+}
+
 const rescheduleClient = async (comanda) => {
   comandaToReschedule.value = comanda
   
-  // Carregar detalhes completos da comanda
-  await loadComandaDetails(comanda.id)
+  // Carregar procedimentos e detalhes completos da comanda
+  await Promise.all([
+    loadProcedures(),
+    loadComandaDetails(comanda.id)
+  ])
   
   // Atualizar comandaToReschedule com os dados completos
   if (selectedComanda.value) {
@@ -2370,23 +2446,35 @@ const rescheduleClient = async (comanda) => {
   
   const suggestedEndTime = new Date(suggestedStartTime.getTime() + duration)
   
+  const initialProcedureIds = comandaToReschedule.value?.procedures?.map(p => p.procedureId) || comanda.procedures?.map(p => p.procedureId) || []
+  
   Object.assign(rescheduleForm, {
     clientId: comanda.clientId,
     userId: comanda.userId || '',
     date: suggestedDate.toISOString().split('T')[0],
     startTime: `${String(suggestedStartTime.getHours()).padStart(2, '0')}:${String(suggestedStartTime.getMinutes()).padStart(2, '0')}`,
     endTime: `${String(suggestedEndTime.getHours()).padStart(2, '0')}:${String(suggestedEndTime.getMinutes()).padStart(2, '0')}`,
-    procedureIds: comandaToReschedule.value?.procedures?.map(p => p.procedureId) || comanda.procedures?.map(p => p.procedureId) || [],
+    procedureIds: [...initialProcedureIds],
     observations: `Reagendamento da comanda de ${formatDateTime(comanda.date)}`,
-    totalPrice: comanda.totalPrice || 0
+    totalPrice: 0
   })
   
+  // Recalcular totalPrice inicial
+  const selectedProcedures = procedures.value.filter(proc => 
+    initialProcedureIds.includes(proc.id)
+  )
+  rescheduleForm.totalPrice = selectedProcedures.reduce((sum, proc) => 
+    sum + (Number(proc.price) || 0), 0
+  )
+  
+  selectedProcedureToAdd.value = ''
   showRescheduleModal.value = true
 }
 
 const closeRescheduleModal = () => {
   showRescheduleModal.value = false
   comandaToReschedule.value = null
+  selectedProcedureToAdd.value = ''
   Object.assign(rescheduleForm, {
     clientId: '',
     userId: '',
@@ -2454,7 +2542,7 @@ const confirmReschedule = async () => {
       endTime: endTimeISO,
       procedureIds: rescheduleForm.procedureIds,
       observations: rescheduleForm.observations || undefined,
-      status: 'AGENDADO'
+      status: 'RETORNO'
     }
 
     await $api('/appointments', {
