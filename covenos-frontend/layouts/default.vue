@@ -4,6 +4,16 @@
     <nav class="nav fixed top-0 left-0 right-0 z-50">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
+          <!-- Mobile menu button (left side) -->
+          <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <svg v-if="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+          
           <!-- Desktop Navigation with Dropdowns -->
           <div class="hidden lg:flex items-center space-x-1">
             <NuxtLink to="/dashboard" class="nav-item">
@@ -160,8 +170,8 @@
             </NuxtLink>
           </div>
           
-          <!-- Logo -->
-          <div class="flex items-center">
+          <!-- Logo and Title (right side) -->
+          <div class="flex items-center ml-auto">
             <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
               <div class="relative w-10 h-10">
                 <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
@@ -193,16 +203,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
               </svg>
               <span class="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full"></span>
-            </button>
-            
-            <!-- Mobile menu -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-              <svg v-if="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-              <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
             </button>
             
             <!-- Profile Menu -->
@@ -259,14 +259,14 @@
           </div>
         </div>
         
-        <!-- Mobile Navigation -->
+        <!-- Mobile Navigation (left side) -->
         <transition
           enter-active-class="transition ease-out duration-200"
-          enter-from-class="opacity-0 -translate-y-1"
-          enter-to-class="opacity-100 translate-y-0"
+          enter-from-class="opacity-0 -translate-x-1"
+          enter-to-class="opacity-100 translate-x-0"
           leave-active-class="transition ease-in duration-150"
-          leave-from-class="opacity-100 translate-y-0"
-          leave-to-class="opacity-0 -translate-y-1"
+          leave-from-class="opacity-100 translate-x-0"
+          leave-to-class="opacity-0 -translate-x-1"
         >
           <div v-if="mobileMenuOpen" class="lg:hidden border-t border-gray-200 dark:border-gray-800 py-3">
             <div class="space-y-1">
