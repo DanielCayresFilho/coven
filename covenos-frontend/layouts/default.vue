@@ -4,28 +4,6 @@
     <nav class="nav fixed top-0 left-0 right-0 z-50">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
-          <!-- Logo -->
-          <div class="flex items-center">
-            <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
-              <div class="relative w-10 h-10">
-                <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
-                <img 
-                  src="/logo-sem-fundo.png" 
-                  alt="Logo da Coven Beauty" 
-                  class="relative w-22 h-22 rounded-xl object-cover"
-                >
-              </div>
-              <div class="hidden sm:block">
-                <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  Coven Beauty
-                </h1>
-                <p class="text-xs text-gray-600 dark:text-gray-500 -mt-0.5">
-                  CRM
-                </p>
-              </div>
-            </NuxtLink>
-          </div>
-          
           <!-- Desktop Navigation with Dropdowns -->
           <div class="hidden lg:flex items-center space-x-1">
             <NuxtLink to="/dashboard" class="nav-item">
@@ -163,12 +141,6 @@
                     </svg>
                     <span>Fluxo de Caixa</span>
                   </NuxtLink>
-                  <NuxtLink to="/fixed-expenses" @click="financialMenuOpen = false" class="dropdown-item">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 11h18m-7 4h7m-18 0h6m-6 4h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>Despesas Fixas</span>
-                  </NuxtLink>
                 </div>
               </transition>
             </div>
@@ -185,6 +157,28 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M18 8a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
               <span>Usuários</span>
+            </NuxtLink>
+          </div>
+          
+          <!-- Logo -->
+          <div class="flex items-center">
+            <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
+              <div class="relative w-10 h-10">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
+                <img 
+                  src="/logo-sem-fundo.png" 
+                  alt="Logo da Coven Beauty" 
+                  class="relative w-22 h-22 rounded-xl object-cover"
+                >
+              </div>
+              <div class="hidden sm:block">
+                <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
+                  Coven Beauty
+                </h1>
+                <p class="text-xs text-gray-600 dark:text-gray-500 -mt-0.5">
+                  CRM
+                </p>
+              </div>
             </NuxtLink>
           </div>
           
@@ -347,12 +341,6 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
                 Fluxo de Caixa
-              </NuxtLink>
-              <NuxtLink to="/fixed-expenses" @click="mobileMenuOpen = false" class="mobile-nav-item">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 11h18m-7 4h7m-18 0h6m-6 4h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                Despesas Fixas
               </NuxtLink>
               <NuxtLink to="/utilidades" @click="mobileMenuOpen = false" class="mobile-nav-item">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -81,9 +81,10 @@
           <select v-model="statusFilter" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
             <option value="">Todos</option>
             <option value="AGENDADO">Agendado</option>
+            <option value="CONFIRMADO">Confirmado</option>
+            <option value="BLOQUEADO">Bloqueado</option>
             <option value="CONCLUIDO">Concluído</option>
             <option value="CANCELADO">Cancelado</option>
-            <option value="BLOQUEADO">Bloqueado</option>
           </select>
         </div>
         <div>
@@ -251,6 +252,7 @@
                   <select v-model="appointmentForm.status" class="form-input">
                     <option value="AGENDADO">Agendado</option>
                     <option value="CONFIRMADO">Confirmado</option>
+                    <option value="BLOQUEADO">Bloqueado</option>
                     <option value="CONCLUIDO">Concluído</option>
                     <option value="CANCELADO">Cancelado</option>
                   </select>
@@ -395,7 +397,7 @@ const getStatusColor = (status) => {
     CONFIRMADO: '#22c55e', // Verde
     CONCLUIDO: '#3b82f6', // Azul
     CANCELADO: '#ef4444',
-    BLOQUEADO: '#6b7280'
+    BLOQUEADO: '#6b7280' // Cinza
   }
   return colors[status] || '#3b82f6'
 }

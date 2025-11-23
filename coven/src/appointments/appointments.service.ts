@@ -531,8 +531,12 @@ export class AppointmentsService {
   async addProcedureToComanda(appointmentId: string, procedureId: string, customPrice?: number) {
     const appointment = await this.findOne(appointmentId);
     
-    if (appointment.status !== 'CONFIRMADO') {
-      throw new BadRequestException('Apenas agendamentos confirmados podem receber procedimentos adicionais');
+    if (appointment.status === 'CANCELADO' || appointment.status === 'CONCLUIDO') {
+      throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos cancelados ou concluídos');
+    }
+    
+    if (appointment.status === 'BLOQUEADO') {
+      throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos bloqueados');
     }
 
     const procedure = await this.prisma.procedure.findUnique({ where: { id: procedureId } });
