@@ -1,0 +1,3 @@
+-- Add RETORNO status to AppointmentStatus enum
+ALTER TABLE `appointments`
+  MODIFY COLUMN `status` ENUM('AGENDADO', 'CONFIRMADO', 'CONCLUIDO', 'CANCELADO', 'BLOQUEADO', 'RETORNO') NOT NULL DEFAULT 'AGENDADO';

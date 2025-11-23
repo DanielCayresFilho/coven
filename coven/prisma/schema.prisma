@@ -295,6 +295,7 @@ enum AppointmentStatus {
   CONCLUIDO
   CANCELADO
   BLOQUEADO
+  RETORNO
 }
 
 enum PaymentMethod {
