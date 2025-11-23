@@ -3,8 +3,8 @@
     <!-- Navigation -->
     <nav class="nav fixed top-0 left-0 right-0 z-50">
       <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-16">
-          <!-- Mobile menu button (left side) -->
+        <div class="flex items-center h-16 gap-4">
+          <!-- Mobile menu button -->
           <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <svg v-if="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -13,6 +13,26 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
+          
+          <!-- Logo and Title -->
+          <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
+            <div class="relative w-10 h-10">
+              <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
+              <img 
+                src="/logo-sem-fundo.png" 
+                alt="Logo da Coven Beauty" 
+                class="relative w-22 h-22 rounded-xl object-cover"
+              >
+            </div>
+            <div class="hidden sm:block">
+              <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Coven Beauty
+              </h1>
+              <p class="text-xs text-gray-600 dark:text-gray-500 -mt-0.5">
+                CRM
+              </p>
+            </div>
+          </NuxtLink>
           
           <!-- Desktop Navigation with Dropdowns -->
           <div class="hidden lg:flex items-center space-x-1">
@@ -170,30 +190,8 @@
             </NuxtLink>
           </div>
           
-          <!-- Logo and Title (right side) -->
-          <div class="flex items-center ml-auto">
-            <NuxtLink to="/dashboard" class="flex items-center space-x-3 group">
-              <div class="relative w-10 h-10">
-                <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
-                <img 
-                  src="/logo-sem-fundo.png" 
-                  alt="Logo da Coven Beauty" 
-                  class="relative w-22 h-22 rounded-xl object-cover"
-                >
-              </div>
-              <div class="hidden sm:block">
-                <h1 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  Coven Beauty
-                </h1>
-                <p class="text-xs text-gray-600 dark:text-gray-500 -mt-0.5">
-                  CRM
-                </p>
-              </div>
-            </NuxtLink>
-          </div>
-          
           <!-- Right side actions -->
-          <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-3 ml-auto">
             <!-- Theme Toggle -->
             <ColorModeButton />
             

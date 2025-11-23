@@ -1052,6 +1052,185 @@
         </div>
       </div>
     </div>
+
+    <!-- Reschedule Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="showRescheduleModal" class="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Transition
+            enter-active-class="transition ease-out duration-200"
+            enter-from-class="opacity-0 scale-95"
+            enter-to-class="opacity-100 scale-100"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95"
+          >
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <div class="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-6 z-10">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                      Reagendar - {{ comandaToReschedule?.client?.name || 'Cliente' }}
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Criar novo agendamento com cliente e procedimentos já preenchidos
+                    </p>
+                  </div>
+                  <button @click="closeRescheduleModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    <XMarkIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <form @submit.prevent="confirmReschedule" class="p-6 space-y-6">
+                <!-- Client Selection -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <UserIcon class="w-4 h-4 inline mr-1" />
+                    Cliente
+                  </label>
+                  <select 
+                    v-model="rescheduleForm.clientId"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    required
+                    disabled
+                  >
+                    <option value="">Selecione um cliente</option>
+                    <option v-for="client in clients" :key="client.id" :value="client.id">
+                      {{ client.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Professional Selection -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <UserIcon class="w-4 h-4 inline mr-1" />
+                    Profissional
+                  </label>
+                  <select 
+                    v-model="rescheduleForm.userId"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    required
+                  >
+                    <option value="">Selecione um profissional</option>
+                    <option v-for="hairdresser in hairdressers" :key="hairdresser.id" :value="hairdresser.id">
+                      {{ hairdresser.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <CalendarIcon class="w-4 h-4 inline mr-1" />
+                    Data
+                  </label>
+                  <input
+                    v-model="rescheduleForm.date"
+                    type="date"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    required
+                  />
+                </div>
+
+                <!-- Time Range -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <ClockIcon class="w-4 h-4 inline mr-1" />
+                      Início
+                    </label>
+                    <input
+                      v-model="rescheduleForm.startTime"
+                      type="time"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <ClockIcon class="w-4 h-4 inline mr-1" />
+                      Fim
+                    </label>
+                    <input
+                      v-model="rescheduleForm.endTime"
+                      type="time"
+                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Procedures (from original comanda) -->
+                <div v-if="comandaToReschedule?.procedures?.length">
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <CubeIcon class="w-4 h-4 inline mr-1" />
+                    Procedimentos
+                  </label>
+                  <div class="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4 space-y-2 border border-gray-200 dark:border-gray-700">
+                    <div
+                      v-for="procedure in comandaToReschedule.procedures"
+                      :key="procedure.id"
+                      class="flex items-center justify-between text-sm"
+                    >
+                      <span class="text-gray-700 dark:text-gray-300">{{ procedure.procedure?.name }}</span>
+                      <span class="text-gray-900 dark:text-white font-medium">{{ formatCurrency(procedure.price) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Observations -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <DocumentTextIcon class="w-4 h-4 inline mr-1" />
+                    Observações
+                  </label>
+                  <textarea
+                    v-model="rescheduleForm.observations"
+                    rows="3"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors resize-none"
+                    placeholder="Observações para o novo agendamento..."
+                  ></textarea>
+                </div>
+
+                <!-- Total Price Display -->
+                <div class="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-600 dark:text-gray-400">Total Estimado:</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(rescheduleForm.totalPrice) }}</span>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+                  <button
+                    type="button"
+                    @click="closeRescheduleModal"
+                    class="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-colors font-medium"
+                  >
+                    Reagendar Cliente
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -1071,7 +1250,10 @@ import {
   PlusCircleIcon,
   XMarkIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  UserIcon,
+  ClockIcon,
+  DocumentTextIcon
 } from '@heroicons/vue/24/outline'
 
 // Page meta
@@ -2149,9 +2331,176 @@ const finishComanda = async () => {
   }
 }
 
-const rescheduleClient = (comanda) => {
-  // Navigate to appointments page with client prefilled for new appointment
-  navigateTo(`/appointments?client=${comanda.clientId}&reschedule=${comanda.id}`)
+const showRescheduleModal = ref(false)
+const comandaToReschedule = ref(null)
+const hairdressers = ref([])
+const rescheduleForm = reactive({
+  clientId: '',
+  userId: '',
+  date: '',
+  startTime: '',
+  endTime: '',
+  procedureIds: [],
+  observations: '',
+  totalPrice: 0
+})
+
+const rescheduleClient = async (comanda) => {
+  comandaToReschedule.value = comanda
+  
+  // Carregar detalhes completos da comanda
+  await loadComandaDetails(comanda.id)
+  
+  // Atualizar comandaToReschedule com os dados completos
+  if (selectedComanda.value) {
+    comandaToReschedule.value = selectedComanda.value
+  }
+  
+  // Calcular data sugerida (30 dias a partir de hoje)
+  const suggestedDate = new Date()
+  suggestedDate.setDate(suggestedDate.getDate() + 30)
+  
+  // Calcular horário sugerido baseado no horário original
+  const originalStartTime = new Date(comanda.startTime)
+  const originalEndTime = new Date(comanda.endTime || comanda.startTime)
+  const duration = originalEndTime.getTime() - originalStartTime.getTime()
+  
+  const suggestedStartTime = new Date(suggestedDate)
+  suggestedStartTime.setHours(originalStartTime.getHours(), originalStartTime.getMinutes(), 0, 0)
+  
+  const suggestedEndTime = new Date(suggestedStartTime.getTime() + duration)
+  
+  Object.assign(rescheduleForm, {
+    clientId: comanda.clientId,
+    userId: comanda.userId || '',
+    date: suggestedDate.toISOString().split('T')[0],
+    startTime: `${String(suggestedStartTime.getHours()).padStart(2, '0')}:${String(suggestedStartTime.getMinutes()).padStart(2, '0')}`,
+    endTime: `${String(suggestedEndTime.getHours()).padStart(2, '0')}:${String(suggestedEndTime.getMinutes()).padStart(2, '0')}`,
+    procedureIds: comandaToReschedule.value?.procedures?.map(p => p.procedureId) || comanda.procedures?.map(p => p.procedureId) || [],
+    observations: `Reagendamento da comanda de ${formatDateTime(comanda.date)}`,
+    totalPrice: comanda.totalPrice || 0
+  })
+  
+  showRescheduleModal.value = true
+}
+
+const closeRescheduleModal = () => {
+  showRescheduleModal.value = false
+  comandaToReschedule.value = null
+  Object.assign(rescheduleForm, {
+    clientId: '',
+    userId: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    procedureIds: [],
+    observations: '',
+    totalPrice: 0
+  })
+}
+
+const confirmReschedule = async () => {
+  if (!rescheduleForm.clientId || !rescheduleForm.date || !rescheduleForm.startTime) {
+    console.error('Cliente, data e hora inicial são obrigatórios')
+    return
+  }
+
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+    
+    // Criar data/hora considerando timezone local
+    const [year, month, day] = rescheduleForm.date.split('-')
+    const [startHours, startMinutes] = rescheduleForm.startTime.split(':')
+    const startTimeLocal = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day),
+      parseInt(startHours),
+      parseInt(startMinutes),
+      0
+    )
+    
+    let endTimeLocal
+    if (rescheduleForm.endTime) {
+      const [endHours, endMinutes] = rescheduleForm.endTime.split(':')
+      endTimeLocal = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(endHours),
+        parseInt(endMinutes),
+        0
+      )
+    } else {
+      // Se não informou hora final, calcular baseado nos procedimentos
+      const selectedProcedures = procedures.value.filter(proc => 
+        rescheduleForm.procedureIds.includes(proc.id)
+      )
+      const totalDuration = selectedProcedures.reduce((sum, proc) => 
+        sum + (proc.duration || 60), 0
+      )
+      endTimeLocal = new Date(startTimeLocal.getTime() + (totalDuration * 60 * 1000))
+    }
+    
+    const startTimeISO = startTimeLocal.toISOString()
+    const endTimeISO = endTimeLocal.toISOString()
+
+    const newAppointment = {
+      clientId: rescheduleForm.clientId,
+      userId: rescheduleForm.userId || undefined,
+      date: rescheduleForm.date,
+      startTime: startTimeISO,
+      endTime: endTimeISO,
+      procedureIds: rescheduleForm.procedureIds,
+      observations: rescheduleForm.observations || undefined,
+      status: 'AGENDADO'
+    }
+
+    await $api('/appointments', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newAppointment)
+    })
+    
+    useToast().add({
+      type: 'success',
+      title: 'Reagendamento criado!',
+      description: `${comandaToReschedule.value?.client?.name || 'Cliente'} foi reagendado com sucesso.`
+    })
+    
+    closeRescheduleModal()
+    await loadDashboardData()
+  } catch (error) {
+    console.error('Erro ao reagendar:', error)
+    useToast().add({
+      type: 'error',
+      title: 'Erro no reagendamento',
+      description: 'Não foi possível criar o reagendamento. Tente novamente.'
+    })
+  }
+}
+
+const loadHairdressers = async () => {
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+    
+    const response = await $api('/users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      }
+    })
+    
+    hairdressers.value = (response || []).filter(user => user.role === 'CABELEIREIRO')
+  } catch (error) {
+    console.error('Erro ao carregar profissionais:', error)
+    hairdressers.value = []
+  }
 }
 
 // Função loadComandas removida - agora usamos apenas loadDashboardData
@@ -2355,8 +2704,8 @@ onMounted(async () => {
   // Carregar dados principais
   await loadDashboardData()
   
-  // Pré-carregar produtos e procedimentos para os modais
-  await Promise.all([loadProducts(), loadProcedures()])
+  // Pré-carregar produtos, procedimentos e profissionais para os modais
+  await Promise.all([loadProducts(), loadProcedures(), loadHairdressers()])
   
   // Atualizar a cada 5 minutos
   const interval = setInterval(() => {
