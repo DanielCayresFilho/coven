@@ -1210,7 +1210,7 @@
                     >
                       <option value="">Selecione um procedimento para adicionar</option>
                       <option
-                        v-for="procedure in availableProcedures"
+                        v-for="procedure in availableProceduresForReschedule"
                         :key="procedure.id"
                         :value="procedure.id"
                       >
@@ -2387,8 +2387,8 @@ const rescheduleForm = reactive({
   totalPrice: 0
 })
 
-// Computed para procedimentos disponíveis (não selecionados)
-const availableProcedures = computed(() => {
+// Computed para procedimentos disponíveis no modal de reagendar (não selecionados)
+const availableProceduresForReschedule = computed(() => {
   return procedures.value.filter(proc => 
     proc.active !== false && !rescheduleForm.procedureIds.includes(proc.id)
   )
