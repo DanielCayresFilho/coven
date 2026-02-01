@@ -17,7 +17,7 @@ export class AppointmentsService {
     private prisma: PrismaService,
     private productsService: ProductsService,
     private goalsService: GoalsService,
-  ) {}
+  ) { }
 
   // REESTRUTURADO: Lógica de criação otimizada e mais clara
   async create(createAppointmentDto: CreateAppointmentDto) {
@@ -29,22 +29,28 @@ export class AppointmentsService {
       clientId,
     } = createAppointmentDto;
 
-    // Valida que userId foi fornecido (obrigatório no schema)
-    if (!userId) {
-      throw new BadRequestException('userId é obrigatório para criar um agendamento.');
-    }
+    // 1. Busca e valida os procedimentos (se fornecidos)
+    // Se for BLOQUEADO, não precisa validação de procedimentos
+    const isBlock = createAppointmentDto.status === 'BLOQUEADO';
 
-    // Garante que userId é uma string (TypeScript type narrowing após validação)
+    // Valida userId (obrigatório para todos)
+    if (!userId) {
+      throw new BadRequestException('userId é obrigatório.');
+    }
     const validatedUserId = userId as string;
 
-    // 1. Busca e valida os procedimentos (se fornecidos)
+    // Valida clientId (obrigatório se NÃO for bloqueio)
+    if (!isBlock && !clientId) {
+      throw new BadRequestException('clientId é obrigatório para agendamentos.');
+    }
+
     const procedureIdsArray = procedureIds || [];
     const procedures = procedureIdsArray.length > 0
       ? await this.prisma.procedure.findMany({
-          where: { id: { in: procedureIdsArray }, active: true },
-        })
+        where: { id: { in: procedureIdsArray }, active: true },
+      })
       : [];
-    
+
     if (procedureIdsArray.length > 0 && procedures.length !== procedureIdsArray.length) {
       throw new BadRequestException(
         'Um ou mais procedimentos são inválidos ou inativos.',
@@ -73,11 +79,12 @@ export class AppointmentsService {
     return this.prisma.$transaction(async (tx) => {
       const appointment = await tx.appointment.create({
         data: {
-          clientId: createAppointmentDto.clientId,
+          clientId: clientId || undefined, // Pode ser null se for BLOQUEIO
           userId: validatedUserId,
           date: new Date(date),
           startTime,
           endTime,
+          status: createAppointmentDto.status, // Passa o status explicitamente (BLOQUEADO ou default)
           totalPrice,
           paymentMethod: createAppointmentDto.paymentMethod,
           discount: createAppointmentDto.discount,
@@ -329,7 +336,7 @@ export class AppointmentsService {
       where: {
         userId,
         date: new Date(date),
-        status: { in: ['AGENDADO', 'CONFIRMADO'] },
+        status: { in: ['AGENDADO', 'CONFIRMADO', 'BLOQUEADO'] },
         OR: [
           { startTime: { lte: start }, endTime: { gt: start } },
           { startTime: { lt: end }, endTime: { gte: end } },
@@ -348,7 +355,7 @@ export class AppointmentsService {
   ) {
     const where: any = {
       userId,
-      status: { in: ['AGENDADO', 'CONFIRMADO'] },
+      status: { in: ['AGENDADO', 'CONFIRMADO', 'BLOQUEADO'] },
       OR: [
         { startTime: { lte: startTime }, endTime: { gt: startTime } },
         { startTime: { lt: endTime }, endTime: { gte: endTime } },
@@ -393,19 +400,19 @@ export class AppointmentsService {
 
   async confirmAppointment(id: string) {
     const appointment = await this.findOne(id);
-    
+
     if (appointment.status !== 'AGENDADO') {
       throw new BadRequestException('Apenas agendamentos com status AGENDADO podem ser confirmados');
     }
 
     // Registra 50% do valor como receita parcial no financeiro
     const partialPayment = Number(appointment.totalPrice) * 0.5;
-    
+
     await this.prisma.$transaction(async (tx) => {
       // Atualiza o status para CONFIRMADO
       await tx.appointment.update({
         where: { id },
-        data: { 
+        data: {
           status: 'CONFIRMADO',
           partialPayment: partialPayment
         },
@@ -420,14 +427,14 @@ export class AppointmentsService {
 
   async openComanda(id: string) {
     const appointment = await this.findOne(id);
-    
+
     if (appointment.status !== 'CONFIRMADO') {
       throw new BadRequestException('Apenas agendamentos confirmados podem ter a comanda aberta');
     }
 
     return this.prisma.appointment.update({
       where: { id },
-      data: { 
+      data: {
         status: 'CONFIRMADO',
         comandaOpenedAt: new Date()
       },
@@ -455,7 +462,7 @@ export class AppointmentsService {
 
   async addProductToComanda(appointmentId: string, productId: string, quantity: number) {
     const appointment = await this.findOne(appointmentId);
-    
+
     if (!['AGENDADO', 'CONFIRMADO'].includes(appointment.status)) {
       throw new BadRequestException('Apenas agendamentos ativos podem receber produtos');
     }
@@ -537,11 +544,11 @@ export class AppointmentsService {
 
   async addProcedureToComanda(appointmentId: string, procedureId: string, customPrice?: number) {
     const appointment = await this.findOne(appointmentId);
-    
+
     if (appointment.status === 'CANCELADO' || appointment.status === 'CONCLUIDO') {
       throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos cancelados ou concluídos');
     }
-    
+
     if (appointment.status === 'BLOQUEADO') {
       throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos bloqueados');
     }
@@ -567,7 +574,7 @@ export class AppointmentsService {
 
     // Adiciona o procedimento ao agendamento
     const finalPrice = customPrice !== undefined ? customPrice : Number(procedure.price);
-    
+
     return this.prisma.$transaction(async (tx) => {
       // Cria a relação do procedimento
       const appointmentProcedure = await tx.appointmentProcedure.create({
@@ -584,7 +591,7 @@ export class AppointmentsService {
         throw new Error('Appointment not found');
       }
       const newTotalPrice = Number(currentAppointment.totalPrice || 0) + finalPrice;
-      
+
       await tx.appointment.update({
         where: { id: appointmentId },
         data: { totalPrice: newTotalPrice }
@@ -600,7 +607,7 @@ export class AppointmentsService {
     finalPrice?: number;
   }) {
     const appointment = await this.findOne(appointmentId);
-    
+
     if (appointment.status !== 'CONFIRMADO') {
       throw new BadRequestException('Apenas agendamentos confirmados podem ser finalizados');
     }
@@ -614,7 +621,7 @@ export class AppointmentsService {
     // Calcula taxas de cartão
     let cardTax = 0;
     let finalPrice = finishData.finalPrice || Number(appointment.totalPrice);
-    
+
     if (finishData.discount) {
       finalPrice -= finishData.discount;
     }
@@ -676,7 +683,7 @@ export class AppointmentsService {
 
       // TODO: Integrar com novo sistema financeiro de categorias
       const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);
-      
+
       if (remainingAmount > 0) {
         console.log(`Finalização - ${appointment.client.name} - Agendamento ${appointmentId.substring(0, 8)} - R$ ${remainingAmount}`);
       }

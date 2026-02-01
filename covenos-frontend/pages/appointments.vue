@@ -605,32 +605,7 @@ const saveBlock = async () => {
   try {
     const { $api } = useNuxtApp()
     
-    // Buscar ou criar cliente "BLOQUEADO"
-    let blockedClientId = null
-    try {
-      const clientsList = await $api('/clients')
-      const blockedClient = clientsList.find(c => c.name === 'BLOQUEADO' || c.name === 'Bloqueado')
-      
-      if (blockedClient) {
-        blockedClientId = blockedClient.id
-      } else {
-        // Criar cliente bloqueado se não existir
-        const newClient = await $api('/clients', {
-          method: 'POST',
-          body: {
-            name: 'BLOQUEADO',
-            phone: '00000000000'
-          }
-        })
-        blockedClientId = newClient.id
-      }
-    } catch (error) {
-      console.error('Erro ao buscar/criar cliente bloqueado:', error)
-      useToast().add({ type: 'error', title: 'Erro ao criar bloqueio' })
-      return
-    }
-
-    // Buscar primeiro usuário disponível para o bloqueio
+    // Buscar primeiro usuário disponível para o bloqueio (obrigatório pelo schema)
     let defaultUserId = null
     try {
       const usersList = await $api('/users')
@@ -678,13 +653,13 @@ const saveBlock = async () => {
     const endTimeISO = endTimeLocal.toISOString()
 
     const payload = {
-      clientId: blockedClientId,
+      clientId: null, // Bloqueios não precisam de cliente
       userId: defaultUserId,
       date: blockForm.date,
       startTime: startTimeISO,
       endTime: endTimeISO,
       status: 'BLOQUEADO',
-      procedureIds: [], // Bloqueios não têm procedimentos
+      procedureIds: [],
       observations: blockForm.observations || 'Horário bloqueado'
     }
 
@@ -827,7 +802,7 @@ const calendarEvents = computed(() => {
 
   return filtered.map(appointment => ({
     id: appointment.id,
-    title: appointment.client?.name || 'Cliente',
+    title: appointment.status === 'BLOQUEADO' ? 'BLOQUEADO' : (appointment.client?.name || 'Cliente'),
     start: appointment.startTime,
     end: appointment.endTime,
     backgroundColor: getStatusColor(appointment.status),

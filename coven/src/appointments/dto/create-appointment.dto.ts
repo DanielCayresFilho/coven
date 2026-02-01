@@ -14,7 +14,9 @@ import { PaymentMethod, AppointmentStatus } from '@prisma/client';
 export class CreateAppointmentDto {
   @IsString()
   @IsNotEmpty()
-  clientId: string;
+  @IsString()
+  @IsOptional()
+  clientId?: string;
 
   @IsString()
   @IsOptional()

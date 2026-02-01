@@ -110,7 +110,7 @@ model ProcedureProduct {
 
 model Appointment {
   id              String                 @id @default(uuid())
-  clientId        String
+  clientId        String?
   userId          String
   date            DateTime
   startTime       DateTime
