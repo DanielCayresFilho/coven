@@ -421,21 +421,32 @@
                   ></textarea>
                 </div>
                 
-                <div class="flex flex-col-reverse sm:flex-row justify-end space-y-reverse space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex flex-col-reverse sm:flex-row justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
                   <button 
-                    type="button" 
-                    @click="closeBlockModal" 
-                    class="px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                    v-if="editingBlockId"
+                    type="button"
+                    @click="deleteBlock"
+                    class="px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors flex items-center justify-center sm:justify-start"
                   >
-                    Cancelar
+                    <TrashIcon class="w-5 h-5 mr-2" />
+                    Excluir
                   </button>
-                  <button 
-                    type="submit" 
-                    class="px-6 py-3 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
-                    :disabled="saving"
-                  >
-                    {{ saving ? 'Salvando...' : (editingBlockId ? 'Atualizar Bloqueio' : 'Bloquear Horário') }}
-                  </button>
+                  <div class="flex flex-col-reverse sm:flex-row space-y-reverse space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                    <button 
+                      type="button" 
+                      @click="closeBlockModal" 
+                      class="px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="px-6 py-3 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
+                      :disabled="saving"
+                    >
+                      {{ saving ? 'Salvando...' : (editingBlockId ? 'Atualizar Bloqueio' : 'Bloquear Horário') }}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -467,7 +478,8 @@ import {
   TagIcon,
   CalculatorIcon,
   DocumentTextIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  TrashIcon
 } from '@heroicons/vue/24/outline'
 
 // Estado
@@ -537,7 +549,7 @@ const renderEventContent = (eventInfo) => {
         <div class="font-bold text-xs truncate">${event.title}</div>
         <div class="text-xs opacity-90">${props.professional}</div>
         ${props.procedures ? `<div class="text-xs opacity-75 truncate">${props.procedures}</div>` : ''}
-        ${props.price ? `<div class="text-xs font-semibold mt-1">${formatCurrency(props.price)}</div>` : ''}
+        ${props.price && props.status !== 'BLOQUEADO' ? `<div class="text-xs font-semibold mt-1">${formatCurrency(props.price)}</div>` : ''}
       </div>
     `
   }
@@ -707,10 +719,29 @@ const saveBlock = async () => {
     
     await loadData()
     closeBlockModal()
-    useToast().add({ type: 'success', title: 'Horário bloqueado com sucesso!' })
+    useToast().add({ type: 'success', title: editingBlockId.value ? 'Bloqueio atualizado!' : 'Horário bloqueado com sucesso!' })
   } catch (error) {
     console.error('Erro ao bloquear horário:', error)
-    useToast().add({ type: 'error', title: 'Erro ao bloquear horário' })
+    useToast().add({ type: 'error', title: 'Erro ao salvar bloqueio' })
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteBlock = async () => {
+  if (!confirm('Tem certeza que deseja excluir este bloqueio?')) return
+
+  saving.value = true
+  try {
+    const { $api } = useNuxtApp()
+    await $api(`/appointments/${editingBlockId.value}`, { method: 'DELETE' })
+    
+    await loadData()
+    closeBlockModal()
+    useToast().add({ type: 'success', title: 'Bloqueio removido com sucesso!' })
+  } catch (error) {
+    console.error('Erro ao excluir bloqueio:', error)
+    useToast().add({ type: 'error', title: 'Erro ao excluir bloqueio' })
   } finally {
     saving.value = false
   }

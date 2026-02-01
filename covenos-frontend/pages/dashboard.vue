@@ -90,125 +90,6 @@
       </div>
     </div>
 
-    <!-- Goals & Reminders -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-      <!-- Goals -->
-      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Metas em andamento</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Acompanhe o progresso semanal e mensal</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <button
-              @click="openGoalsModal"
-              class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 dark:bg-purple-600/80 hover:bg-blue-700 dark:hover:bg-purple-600 rounded-lg transition-colors"
-            >
-              Editar metas
-            </button>
-            <NuxtLink to="/financial" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
-              Ver financeiro →
-            </NuxtLink>
-          </div>
-        </div>
-
-        <div v-if="loadingGoals" class="space-y-3">
-          <div v-for="i in 2" :key="`goal-skeleton-${i}`" class="animate-pulse">
-            <div class="bg-gray-200 dark:bg-gray-800/40 h-24 rounded-lg"></div>
-          </div>
-        </div>
-
-        <div v-else-if="goalItems.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
-          Nenhuma meta configurada. Crie metas mensais e semanais no módulo financeiro para acompanhar seus resultados.
-        </div>
-
-        <div v-else class="space-y-4">
-          <div
-            v-for="goal in goalItems"
-            :key="goal.id"
-            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40"
-          >
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ goal.title }}</p>
-                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ goal.subtitle }}</p>
-              </div>
-              <span class="text-sm font-semibold text-blue-600 dark:text-purple-300">{{ goal.progress }}%</span>
-            </div>
-            <div class="mt-3 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div
-                class="h-2 rounded-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 dark:from-purple-500 dark:via-purple-400 dark:to-pink-400 transition-all duration-500"
-                :style="`width: ${goal.progress}%`"
-              ></div>
-            </div>
-            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-2">
-              <span>Realizado: {{ formatCurrency(goal.current) }}</span>
-              <span>Meta: {{ formatCurrency(goal.target) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reminders -->
-      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Lembretes</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Organize atividades importantes do salão</p>
-          </div>
-          <button
-            @click="openReminderModal"
-            class="inline-flex items-center space-x-2 text-sm text-blue-600 dark:text-purple-300 hover:text-blue-700 dark:hover:text-white transition-colors"
-          >
-            <PlusCircleIcon class="w-5 h-5" />
-            <span>Novo lembrete</span>
-          </button>
-        </div>
-
-        <div v-if="loadingReminders" class="space-y-3">
-          <div v-for="i in 3" :key="`reminder-skeleton-${i}`" class="animate-pulse">
-            <div class="bg-gray-200 dark:bg-gray-800/40 h-20 rounded-lg"></div>
-          </div>
-        </div>
-
-        <div v-else-if="remindersList.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
-          Nenhum lembrete ativo para os próximos 30 dias. Crie um lembrete para não esquecer de tarefas importantes.
-        </div>
-
-        <div v-else class="space-y-3">
-          <div
-            v-for="reminder in remindersList"
-            :key="reminder.id"
-            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 flex items-start justify-between space-x-4"
-          >
-            <div class="flex items-start space-x-3">
-              <div class="p-2 bg-blue-100 dark:bg-purple-500/10 rounded-lg">
-                <BellIcon class="w-5 h-5 text-blue-600 dark:text-purple-300" />
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ reminder.title }}</p>
-                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  {{ formatReminderType(reminder.type) }} • {{ formatReminderPriority(reminder.priority) }}
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  {{ formatDateTime(reminder.date) }}
-                  <span v-if="reminder.description" class="block text-[11px] text-gray-500 dark:text-gray-500 mt-1">
-                    {{ reminder.description }}
-                  </span>
-                </p>
-              </div>
-            </div>
-            <button
-              @click="completeReminder(reminder.id)"
-              class="text-xs px-3 py-1 bg-green-100 dark:bg-green-600/20 border border-green-300 dark:border-green-500/40 rounded-md text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors"
-            >
-              Concluir
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Active Comandas -->
     <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
       <div class="flex items-center justify-between mb-4">
@@ -344,68 +225,6 @@
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ações Rápidas</h2>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <NuxtLink to="/clients" class="quick-action-btn group">
-          <div class="p-3 bg-blue-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
-            <UserPlusIcon class="w-6 h-6 text-blue-600 dark:text-purple-400" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Cliente</span>
-        </NuxtLink>
-        
-        <NuxtLink to="/appointments" class="quick-action-btn group">
-          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-500/20 transition-colors mb-3">
-            <CalendarDaysIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Agendar</span>
-        </NuxtLink>
-        
-        <NuxtLink to="/products" class="quick-action-btn group">
-          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-500/20 transition-colors mb-3">
-            <CubeIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Produto</span>
-        </NuxtLink>
-        
-        <NuxtLink to="/financial" class="quick-action-btn group">
-          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-lg group-hover:bg-yellow-200 dark:group-hover:bg-yellow-500/20 transition-colors mb-3">
-            <BanknotesIcon class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Nova Transação</span>
-        </NuxtLink>
-      
-        <NuxtLink to="/procedures" class="quick-action-btn group">
-          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
-            <CubeIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
-          </div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Procedimento</span>
-        </NuxtLink>
-      </div>
-      
-      <!-- Quick Stats for Comandas -->
-      <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Comandas Ativas</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ activeComandas.length }}</p>
-          </div>
-          <div class="text-xs text-gray-500 dark:text-gray-500">
-            <div v-if="activeComandas.filter(c => c.status === 'AGENDADO').length > 0" class="text-blue-600 dark:text-blue-400">
-              {{ activeComandas.filter(c => c.status === 'AGENDADO').length }} agendados
-            </div>
-            <div v-if="activeComandas.filter(c => c.status === 'CONFIRMADO').length > 0" class="text-yellow-600 dark:text-yellow-400">
-              {{ activeComandas.filter(c => c.status === 'CONFIRMADO').length }} confirmados
-            </div>
-            <div v-if="activeComandas.filter(c => c.status === 'CONCLUIDO').length > 0" class="text-green-600 dark:text-green-400">
-              {{ activeComandas.filter(c => c.status === 'CONCLUIDO').length }} concluídos
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Recent Data Grid -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       <!-- Recent Appointments -->
@@ -505,6 +324,187 @@
                   :style="`width: ${(product.stock / (product.minStock * 2)) * 100}%`"
                 ></div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals & Reminders -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <!-- Goals -->
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Metas em andamento</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Acompanhe o progresso semanal e mensal</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              @click="openGoalsModal"
+              class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 dark:bg-purple-600/80 hover:bg-blue-700 dark:hover:bg-purple-600 rounded-lg transition-colors"
+            >
+              Editar metas
+            </button>
+            <NuxtLink to="/financial" class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors">
+              Ver financeiro →
+            </NuxtLink>
+          </div>
+        </div>
+
+        <div v-if="loadingGoals" class="space-y-3">
+          <div v-for="i in 2" :key="`goal-skeleton-${i}`" class="animate-pulse">
+            <div class="bg-gray-200 dark:bg-gray-800/40 h-24 rounded-lg"></div>
+          </div>
+        </div>
+
+        <div v-else-if="goalItems.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
+          Nenhuma meta configurada. Crie metas mensais e semanais no módulo financeiro para acompanhar seus resultados.
+        </div>
+
+        <div v-else class="space-y-4">
+          <div
+            v-for="goal in goalItems"
+            :key="goal.id"
+            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40"
+          >
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ goal.title }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ goal.subtitle }}</p>
+              </div>
+              <span class="text-sm font-semibold text-blue-600 dark:text-purple-300">{{ goal.progress }}%</span>
+            </div>
+            <div class="mt-3 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                class="h-2 rounded-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 dark:from-purple-500 dark:via-purple-400 dark:to-pink-400 transition-all duration-500"
+                :style="`width: ${goal.progress}%`"
+              ></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mt-2">
+              <span>Realizado: {{ formatCurrency(goal.current) }}</span>
+              <span>Meta: {{ formatCurrency(goal.target) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders -->
+      <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Lembretes</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Organize atividades importantes do salão</p>
+          </div>
+          <button
+            @click="openReminderModal"
+            class="inline-flex items-center space-x-2 text-sm text-blue-600 dark:text-purple-300 hover:text-blue-700 dark:hover:text-white transition-colors"
+          >
+            <PlusCircleIcon class="w-5 h-5" />
+            <span>Novo lembrete</span>
+          </button>
+        </div>
+
+        <div v-if="loadingReminders" class="space-y-3">
+          <div v-for="i in 3" :key="`reminder-skeleton-${i}`" class="animate-pulse">
+            <div class="bg-gray-200 dark:bg-gray-800/40 h-20 rounded-lg"></div>
+          </div>
+        </div>
+
+        <div v-else-if="remindersList.length === 0" class="text-center py-8 text-sm text-gray-600 dark:text-gray-400">
+          Nenhum lembrete ativo para os próximos 30 dias. Crie um lembrete para não esquecer de tarefas importantes.
+        </div>
+
+        <div v-else class="space-y-3">
+          <div
+            v-for="reminder in remindersList"
+            :key="reminder.id"
+            class="p-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-200 dark:border-gray-700/40 flex items-start justify-between space-x-4"
+          >
+            <div class="flex items-start space-x-3">
+              <div class="p-2 bg-blue-100 dark:bg-purple-500/10 rounded-lg">
+                <BellIcon class="w-5 h-5 text-blue-600 dark:text-purple-300" />
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ reminder.title }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  {{ formatReminderType(reminder.type) }} • {{ formatReminderPriority(reminder.priority) }}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  {{ formatDateTime(reminder.date) }}
+                  <span v-if="reminder.description" class="block text-[11px] text-gray-500 dark:text-gray-500 mt-1">
+                    {{ reminder.description }}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <button
+              @click="completeReminder(reminder.id)"
+              class="text-xs px-3 py-1 bg-green-100 dark:bg-green-600/20 border border-green-300 dark:border-green-500/40 rounded-md text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors"
+            >
+              Concluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ações Rápidas</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <NuxtLink to="/clients" class="quick-action-btn group">
+          <div class="p-3 bg-blue-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
+            <UserPlusIcon class="w-6 h-6 text-blue-600 dark:text-purple-400" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Cliente</span>
+        </NuxtLink>
+        
+        <NuxtLink to="/appointments" class="quick-action-btn group">
+          <div class="p-3 bg-blue-100 dark:bg-blue-500/10 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-500/20 transition-colors mb-3">
+            <CalendarDaysIcon class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Agendar</span>
+        </NuxtLink>
+        
+        <NuxtLink to="/products" class="quick-action-btn group">
+          <div class="p-3 bg-green-100 dark:bg-green-500/10 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-500/20 transition-colors mb-3">
+            <CubeIcon class="w-6 h-6 text-green-600 dark:text-green-400" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Produto</span>
+        </NuxtLink>
+        
+        <NuxtLink to="/financial" class="quick-action-btn group">
+          <div class="p-3 bg-yellow-100 dark:bg-yellow-500/10 rounded-lg group-hover:bg-yellow-200 dark:group-hover:bg-yellow-500/20 transition-colors mb-3">
+            <BanknotesIcon class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Nova Transação</span>
+        </NuxtLink>
+      
+        <NuxtLink to="/procedures" class="quick-action-btn group">
+          <div class="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-500/20 transition-colors mb-3">
+            <CubeIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Novo Procedimento</span>
+        </NuxtLink>
+      </div>
+      
+      <!-- Quick Stats for Comandas -->
+      <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Comandas Ativas</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ activeComandas.length }}</p>
+          </div>
+          <div class="text-xs text-gray-500 dark:text-gray-500">
+            <div v-if="activeComandas.filter(c => c.status === 'AGENDADO').length > 0" class="text-blue-600 dark:text-blue-400">
+              {{ activeComandas.filter(c => c.status === 'AGENDADO').length }} agendados
+            </div>
+            <div v-if="activeComandas.filter(c => c.status === 'CONFIRMADO').length > 0" class="text-yellow-600 dark:text-yellow-400">
+              {{ activeComandas.filter(c => c.status === 'CONFIRMADO').length }} confirmados
+            </div>
+            <div v-if="activeComandas.filter(c => c.status === 'CONCLUIDO').length > 0" class="text-green-600 dark:text-green-400">
+              {{ activeComandas.filter(c => c.status === 'CONCLUIDO').length }} concluídos
             </div>
           </div>
         </div>
