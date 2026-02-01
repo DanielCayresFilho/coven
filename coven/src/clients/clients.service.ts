@@ -9,7 +9,7 @@ import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createClientDto: CreateClientDto) {
     try {
@@ -22,7 +22,7 @@ export class ClientsService {
           throw new ConflictException('Email já cadastrado');
         }
       }
-      
+
       // Prepara os dados removendo campos undefined
       const data: any = {
         name: createClientDto.name,
@@ -83,7 +83,7 @@ export class ClientsService {
 
       // Buscar último atendimento para cada cliente usando uma query mais simples
       const clientIds = clients.map(c => c.id);
-      
+
       // Buscar todos os últimos atendimentos em uma única query usando raw SQL ou findMany
       const appointments = await this.prisma.appointment.findMany({
         where: {
@@ -103,9 +103,9 @@ export class ClientsService {
       // Agrupar por clientId e pegar o primeiro (mais recente) de cada
       const lastAppointmentMap = new Map<string, Date | null>();
       const seenClients = new Set<string>();
-      
+
       for (const apt of appointments) {
-        if (!seenClients.has(apt.clientId)) {
+        if (apt.clientId && !seenClients.has(apt.clientId)) {
           lastAppointmentMap.set(apt.clientId, apt.date || apt.startTime);
           seenClients.add(apt.clientId);
         }

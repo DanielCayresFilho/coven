@@ -419,7 +419,7 @@ export class AppointmentsService {
       });
 
       // TODO: Integrar com novo sistema financeiro de categorias
-      console.log(`Entrada (50%) - ${appointment.client.name} - Agendamento ${id.substring(0, 8)} - R$ ${partialPayment}`);
+      console.log(`Entrada (50%) - ${appointment.client?.name || 'Cliente'} - Agendamento ${id.substring(0, 8)} - R$ ${partialPayment}`);
     });
 
     return this.findOne(id);
@@ -685,7 +685,7 @@ export class AppointmentsService {
       const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);
 
       if (remainingAmount > 0) {
-        console.log(`Finalização - ${appointment.client.name} - Agendamento ${appointmentId.substring(0, 8)} - R$ ${remainingAmount}`);
+        console.log(`Finalização - ${appointment.client?.name || 'Cliente'} - Agendamento ${appointmentId.substring(0, 8)} - R$ ${remainingAmount}`);
       }
 
       // Registra custos dos produtos (apenas os marcados como custo)
@@ -700,7 +700,7 @@ export class AppointmentsService {
           .map(usage => `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`)
           .join(', ');
 
-        console.log(`Custos de produtos - ${appointment.client.name} - ${productDescriptions} - R$ ${totalProductCosts}`);
+        console.log(`Custos de produtos - ${appointment.client?.name || 'Cliente'} - ${productDescriptions} - R$ ${totalProductCosts}`);
       }
 
       // Atualiza as metas automaticamente quando a comanda é finalizada
