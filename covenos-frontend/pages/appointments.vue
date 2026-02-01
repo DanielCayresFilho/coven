@@ -358,8 +358,8 @@
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl w-full max-w-md">
               <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                 <div>
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Bloquear Horário</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bloqueie um horário sem precisar selecionar cliente</p>
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ editingBlockId ? 'Editar Bloqueio' : 'Bloquear Horário' }}</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ editingBlockId ? 'Atualize as informações do bloqueio' : 'Bloqueie um horário sem precisar selecionar cliente' }}</p>
                 </div>
                 <button @click="closeBlockModal" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                   <XMarkIcon class="w-5 h-5" />
@@ -434,7 +434,7 @@
                     class="px-6 py-3 bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
                     :disabled="saving"
                   >
-                    {{ saving ? 'Bloqueando...' : 'Bloquear Horário' }}
+                    {{ saving ? 'Salvando...' : (editingBlockId ? 'Atualizar Bloqueio' : 'Bloquear Horário') }}
                   </button>
                 </div>
               </form>
@@ -486,6 +486,7 @@ const procedureSearchTerm = ref('')
 const showCreateModal = ref(false)
 const showBlockModal = ref(false)
 const editingAppointment = ref(null)
+const editingBlockId = ref(null)
 const fullCalendar = ref(null)
 
 const blockForm = reactive({
@@ -544,7 +545,11 @@ const renderEventContent = (eventInfo) => {
 
 const handleEventClick = (info) => {
   const appointment = info.event.extendedProps.appointment
-  editAppointment(appointment)
+  if (appointment.status === 'BLOQUEADO') {
+    editBlock(appointment)
+  } else {
+    editAppointment(appointment)
+  }
 }
 
 const handleDateSelect = (selectInfo) => {
@@ -582,17 +587,49 @@ const openBlockModal = () => {
     endTime: '',
     observations: 'Horário bloqueado'
   })
+  editingBlockId.value = null
   showBlockModal.value = true
 }
 
 const closeBlockModal = () => {
   showBlockModal.value = false
+  editingBlockId.value = null
   Object.assign(blockForm, {
     date: '',
     startTime: '',
     endTime: '',
     observations: 'Horário bloqueado'
   })
+}
+
+const editBlock = (appointment) => {
+  editingBlockId.value = appointment.id
+  
+  const appointmentStartTime = new Date(appointment.startTime)
+  const year = appointmentStartTime.getFullYear()
+  const month = String(appointmentStartTime.getMonth() + 1).padStart(2, '0')
+  const day = String(appointmentStartTime.getDate()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day}`
+  
+  const hours = String(appointmentStartTime.getHours()).padStart(2, '0')
+  const minutes = String(appointmentStartTime.getMinutes()).padStart(2, '0')
+  const formattedTime = `${hours}:${minutes}`
+  
+  let endTimeStr = ''
+  if (appointment.endTime) {
+    const appointmentEndTime = new Date(appointment.endTime)
+    const endHours = String(appointmentEndTime.getHours()).padStart(2, '0')
+    const endMinutes = String(appointmentEndTime.getMinutes()).padStart(2, '0')
+    endTimeStr = `${endHours}:${endMinutes}`
+  }
+
+  Object.assign(blockForm, {
+    date: formattedDate,
+    startTime: formattedTime,
+    endTime: endTimeStr,
+    observations: appointment.observations || 'Horário bloqueado'
+  })
+  showBlockModal.value = true
 }
 
 const saveBlock = async () => {
@@ -663,7 +700,10 @@ const saveBlock = async () => {
       observations: blockForm.observations || 'Horário bloqueado'
     }
 
-    await $api('/appointments', { method: 'POST', body: payload })
+    const method = editingBlockId.value ? 'PATCH' : 'POST'
+    const url = editingBlockId.value ? `/appointments/${editingBlockId.value}` : '/appointments'
+
+    await $api(url, { method, body: payload })
     
     await loadData()
     closeBlockModal()
@@ -802,7 +842,9 @@ const calendarEvents = computed(() => {
 
   return filtered.map(appointment => ({
     id: appointment.id,
-    title: appointment.status === 'BLOQUEADO' ? 'BLOQUEADO' : (appointment.client?.name || 'Cliente'),
+    title: appointment.status === 'BLOQUEADO' 
+      ? (appointment.observations || 'Bloqueio') 
+      : (appointment.client?.name || 'Cliente'),
     start: appointment.startTime,
     end: appointment.endTime,
     backgroundColor: getStatusColor(appointment.status),
