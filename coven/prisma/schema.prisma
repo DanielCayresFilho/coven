@@ -130,7 +130,7 @@ model Appointment {
   updatedAt       DateTime               @updatedAt
   procedures      AppointmentProcedure[]
   productUsages   ProductUsage[]
-  client          Client                 @relation(fields: [clientId], references: [id])
+  client          Client?                @relation(fields: [clientId], references: [id])
   user            User                   @relation(fields: [userId], references: [id])
 
   @@index([clientId], map: "appointments_clientId_fkey")
