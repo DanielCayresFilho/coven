@@ -147,11 +147,18 @@ export class ProductsService {
         },
       });
 
+      const newStock = product.stock - stockMovementDto.quantity;
+      const updateData: any = { stock: newStock };
+
+      if (product.type === 'USO_INTERNO' && product.unitQuantity) {
+        const removedAmount = stockMovementDto.quantity * Number(product.unitQuantity);
+        const currentUsable = Number(product.usableAmount) || 0;
+        updateData.usableAmount = Math.max(0, currentUsable - removedAmount);
+      }
+
       return prisma.product.update({
         where: { id },
-        data: {
-          stock: product.stock - stockMovementDto.quantity,
-        },
+        data: updateData,
       });
     });
   }

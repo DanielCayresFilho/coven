@@ -475,6 +475,7 @@ const resetForm = () => {
     name: '',
     phone: '',
     email: '',
+    birthDate: '',
     observations: ''
   })
 }

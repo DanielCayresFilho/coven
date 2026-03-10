@@ -190,21 +190,25 @@ export class ClientsService {
 
   async getBirthdaysThisMonth() {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const currentMonth = now.getMonth() + 1;
 
-    const startOfMonth = new Date(year, month, 1);
-    const endOfMonth = new Date(year, month + 1, 0);
-
-    return this.prisma.client.findMany({
+    const clients = await this.prisma.client.findMany({
       where: {
         active: true,
-        birthDate: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
+        birthDate: { not: null },
       },
-      orderBy: { birthDate: 'asc' },
     });
+
+    return clients
+      .filter((client) => {
+        if (!client.birthDate) return false;
+        const birth = new Date(client.birthDate);
+        return birth.getMonth() + 1 === currentMonth;
+      })
+      .sort((a, b) => {
+        const dayA = new Date(a.birthDate!).getDate();
+        const dayB = new Date(b.birthDate!).getDate();
+        return dayA - dayB;
+      });
   }
 }

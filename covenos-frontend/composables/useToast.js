@@ -1,19 +1,17 @@
-// Composable para gerenciar notificações toast
-export const useToast = () => {
-  const toasts = ref([])
+const toasts = ref([])
 
+export const useToast = () => {
   const addToast = (message, type = 'info', duration = 5000) => {
     const id = Date.now() + Math.random()
     const toast = {
       id,
       message,
-      type, // success, error, warning, info
+      type,
       duration
     }
     
     toasts.value.push(toast)
     
-    // Auto remove after duration
     if (duration > 0) {
       setTimeout(() => {
         removeToast(id)
@@ -35,7 +33,6 @@ export const useToast = () => {
   const warning = (message, duration) => addToast(message, 'warning', duration)
   const info = (message, duration) => addToast(message, 'info', duration)
 
-  // Método add para compatibilidade com uso: useToast().add({ type, title, description })
   const add = (options) => {
     const { type = 'info', title, description, duration = 5000 } = options
     const message = description || title || 'Notificação'

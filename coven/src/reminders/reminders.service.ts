@@ -164,15 +164,27 @@ export class RemindersService {
   async createBirthdayReminders() {
     const clients = await this.clientsService.getBirthdaysThisMonth();
     const reminders: any[] = [];
+    const now = new Date();
 
     for (const client of clients) {
       if (client.birthDate) {
+        const birth = new Date(client.birthDate);
+        const birthdayThisYear = new Date(
+          now.getFullYear(),
+          birth.getMonth(),
+          birth.getDate(),
+          9, 0, 0, 0,
+        );
+
         const existingReminder = await this.prisma.reminder.findFirst({
           where: {
             type: 'ANIVERSARIO',
             clientId: client.id,
-            date: client.birthDate,
             isActive: true,
+            date: {
+              gte: new Date(now.getFullYear(), birth.getMonth(), birth.getDate()),
+              lt: new Date(now.getFullYear(), birth.getMonth(), birth.getDate() + 1),
+            },
           },
         });
 
@@ -181,7 +193,7 @@ export class RemindersService {
             type: 'ANIVERSARIO',
             title: `Aniversário de ${client.name}`,
             description: `Enviar felicitações e cupom de desconto`,
-            date: client.birthDate.toISOString(),
+            date: birthdayThisYear.toISOString(),
             clientId: client.id,
           });
           reminders.push(reminder);

@@ -564,12 +564,12 @@ const handleEventClick = (info) => {
   }
 }
 
+const { getLocalDateString, getLocalTimeString } = useDate()
+
 const handleDateSelect = (selectInfo) => {
   const startDate = selectInfo.start
-  const date = startDate.toISOString().split('T')[0]
-  const hours = startDate.getHours().toString().padStart(2, '0')
-  const minutes = startDate.getMinutes().toString().padStart(2, '0')
-  const time = `${hours}:${minutes}`
+  const date = getLocalDateString(startDate)
+  const time = getLocalTimeString(startDate)
 
   Object.assign(appointmentForm, {
     clientId: '',
@@ -588,10 +588,8 @@ const handleDateSelect = (selectInfo) => {
 
 const openBlockModal = () => {
   const now = new Date()
-  const today = now.toISOString().split('T')[0]
-  const hours = now.getHours().toString().padStart(2, '0')
-  const minutes = now.getMinutes().toString().padStart(2, '0')
-  const time = `${hours}:${minutes}`
+  const today = getLocalDateString(now)
+  const time = getLocalTimeString(now)
   
   Object.assign(blockForm, {
     date: today,
@@ -670,39 +668,22 @@ const saveBlock = async () => {
       return
     }
 
-    // Calcular hora final
-    const [year, month, day] = blockForm.date.split('-')
-    const [startHours, startMinutes] = blockForm.startTime.split(':')
-    const startTimeLocal = new Date(
-      parseInt(year),
-      parseInt(month) - 1,
-      parseInt(day),
-      parseInt(startHours),
-      parseInt(startMinutes),
-      0
-    )
+    const { buildLocalISO } = useDate()
+    const startTimeLocal = buildLocalISO(blockForm.date, blockForm.startTime)
     
     let endTimeLocal
     if (blockForm.endTime) {
-      const [endHours, endMinutes] = blockForm.endTime.split(':')
-      endTimeLocal = new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(endHours),
-        parseInt(endMinutes),
-        0
-      )
+      endTimeLocal = buildLocalISO(blockForm.date, blockForm.endTime)
     } else {
-      // Se não informou hora final, bloqueia por 1 hora
       endTimeLocal = new Date(startTimeLocal.getTime() + (60 * 60 * 1000))
     }
     
     const startTimeISO = startTimeLocal.toISOString()
     const endTimeISO = endTimeLocal.toISOString()
 
+    const isEditingBlock = !!editingBlockId.value
+
     const payload = {
-      clientId: null, // Bloqueios não precisam de cliente
       userId: defaultUserId,
       date: blockForm.date,
       startTime: startTimeISO,
@@ -712,14 +693,14 @@ const saveBlock = async () => {
       observations: blockForm.observations || 'Horário bloqueado'
     }
 
-    const method = editingBlockId.value ? 'PATCH' : 'POST'
-    const url = editingBlockId.value ? `/appointments/${editingBlockId.value}` : '/appointments'
+    const method = isEditingBlock ? 'PATCH' : 'POST'
+    const url = isEditingBlock ? `/appointments/${editingBlockId.value}` : '/appointments'
 
     await $api(url, { method, body: payload })
     
     await loadData()
     closeBlockModal()
-    useToast().add({ type: 'success', title: editingBlockId.value ? 'Bloqueio atualizado!' : 'Horário bloqueado com sucesso!' })
+    useToast().add({ type: 'success', title: isEditingBlock ? 'Bloqueio atualizado!' : 'Horário bloqueado com sucesso!' })
   } catch (error) {
     console.error('Erro ao bloquear horário:', error)
     useToast().add({ type: 'error', title: 'Erro ao salvar bloqueio' })
@@ -759,7 +740,7 @@ const handleEventDrop = async (info) => {
       body: {
         startTime: newStart.toISOString(),
         endTime: newEnd ? newEnd.toISOString() : undefined,
-        date: newStart.toISOString().split('T')[0]
+        date: getLocalDateString(newStart)
       }
     })
     
@@ -891,10 +872,11 @@ const calendarEvents = computed(() => {
   }))
 })
 
+const { isSameLocalDay } = useDate()
+
 const todayAppointments = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
   return appointments.value.filter(apt => 
-    apt.startTime?.startsWith(today)
+    apt.startTime && isSameLocalDay(apt.startTime)
   ).length
 })
 
@@ -907,9 +889,8 @@ const pendingAppointments = computed(() => {
 })
 
 const todayRevenue = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
   return appointments.value
-    .filter(apt => apt.startTime?.startsWith(today) && apt.status !== 'CANCELADO')
+    .filter(apt => apt.startTime && isSameLocalDay(apt.startTime) && apt.status !== 'CANCELADO')
     .reduce((sum, apt) => sum + (parseFloat(apt.totalPrice) || 0), 0)
 })
 
@@ -1019,24 +1000,13 @@ const closeModal = () => {
 
 const saveAppointment = async () => {
   saving.value = true
+  const isEditing = !!editingAppointment.value
 
   try {
     const { $api } = useNuxtApp()
     
-    // Cria a data/hora considerando o timezone local
-    // Formato: YYYY-MM-DDTHH:mm (sem timezone, será tratado como local)
-    const [year, month, day] = appointmentForm.date.split('-')
-    const [hours, minutes] = appointmentForm.startTime.split(':')
-    
-    // Cria Date no timezone local
-    const startTimeLocal = new Date(
-      parseInt(year),
-      parseInt(month) - 1, // mês é 0-indexed
-      parseInt(day),
-      parseInt(hours),
-      parseInt(minutes),
-      0
-    )
+    const { buildLocalISO } = useDate()
+    const startTimeLocal = buildLocalISO(appointmentForm.date, appointmentForm.startTime)
     
     const selectedProcedures = procedures.value.filter(proc => 
       appointmentForm.procedureIds.includes(proc.id)
@@ -1047,46 +1017,41 @@ const saveAppointment = async () => {
     
     const endTimeLocal = new Date(startTimeLocal.getTime() + (totalDuration * 60 * 1000))
     
-    // Envia como ISO string (com timezone) para o backend
     const startTimeISO = startTimeLocal.toISOString()
     const endTimeISO = endTimeLocal.toISOString()
 
     const payload = {
-      clientId: appointmentForm.clientId,
+      clientId: appointmentForm.clientId || undefined,
       userId: appointmentForm.userId || undefined,
       date: appointmentForm.date,
       startTime: startTimeISO,
       endTime: endTimeISO,
       procedureIds: appointmentForm.procedureIds,
-      discount: appointmentForm.discount ? parseFloat(appointmentForm.discount) : undefined,
+      discount: appointmentForm.discount != null && appointmentForm.discount !== ''
+        ? parseFloat(appointmentForm.discount)
+        : undefined,
       observations: appointmentForm.observations || undefined,
+      status: appointmentForm.status || undefined,
     }
 
     Object.keys(payload).forEach((key) => {
-      if (payload[key] === undefined || payload[key] === null || payload[key] === '') {
+      if (payload[key] === undefined) {
         delete payload[key]
       }
     })
 
-    const method = editingAppointment.value ? 'PATCH' : 'POST'
-    const url = editingAppointment.value
+    const method = isEditing ? 'PATCH' : 'POST'
+    const url = isEditing
       ? `/appointments/${editingAppointment.value.id}`
       : '/appointments'
 
     await $api(url, { method, body: payload })
 
-    if (editingAppointment.value && appointmentForm.status !== editingAppointment.value.status) {
-      await $api(`/appointments/${editingAppointment.value.id}/status`, {
-        method: 'PATCH',
-        body: { status: appointmentForm.status }
-      })
-    }
-
     await loadData()
     closeModal()
     useToast().add({ 
       type: 'success', 
-      title: editingAppointment.value ? 'Agendamento atualizado!' : 'Agendamento criado!' 
+      title: isEditing ? 'Agendamento atualizado!' : 'Agendamento criado!' 
     })
   } catch (error) {
     console.error('Erro ao salvar agendamento:', error)

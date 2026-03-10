@@ -13,17 +13,20 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
+    const orConditions: any[] = [{ username: createUserDto.username }];
+    if (createUserDto.email) {
+      orConditions.push({ email: createUserDto.email });
+    }
+
     const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: createUserDto.username },
-          { email: createUserDto.email },
-        ],
-      },
+      where: { OR: orConditions },
     });
 
     if (existingUser) {
-      throw new ConflictException('Username ou email já existem');
+      if (existingUser.username === createUserDto.username) {
+        throw new ConflictException('Username já existe');
+      }
+      throw new ConflictException('Email já cadastrado');
     }
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);

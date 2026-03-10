@@ -7,9 +7,11 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { GoalsService } from '../goals/goals.service';
+import { EntryAnalyticsService } from '../entry-analytics/entry-analytics.service';
+import { OutAnalyticsService } from '../out-analytics/out-analytics.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { Appointment, AppointmentStatus } from '@prisma/client';
+import { AppointmentStatus } from '@prisma/client';
 
 @Injectable()
 export class AppointmentsService {
@@ -17,6 +19,8 @@ export class AppointmentsService {
     private prisma: PrismaService,
     private productsService: ProductsService,
     private goalsService: GoalsService,
+    private entryAnalyticsService: EntryAnalyticsService,
+    private outAnalyticsService: OutAnalyticsService,
   ) { }
 
   // REESTRUTURADO: Lógica de criação otimizada e mais clara
@@ -29,17 +33,8 @@ export class AppointmentsService {
       clientId,
     } = createAppointmentDto;
 
-    // 1. Busca e valida os procedimentos (se fornecidos)
-    // Se for BLOQUEADO, não precisa validação de procedimentos
     const isBlock = createAppointmentDto.status === 'BLOQUEADO';
 
-    // Valida userId (obrigatório para todos)
-    if (!userId) {
-      throw new BadRequestException('userId é obrigatório.');
-    }
-    const validatedUserId = userId as string;
-
-    // Valida clientId (obrigatório se NÃO for bloqueio)
     if (!isBlock && !clientId) {
       throw new BadRequestException('clientId é obrigatório para agendamentos.');
     }
@@ -72,15 +67,13 @@ export class AppointmentsService {
       ? new Date(createAppointmentDto.endTime)
       : new Date(startTime.getTime() + (totalDuration || 60) * 60000);
 
-    // 3. Valida conflito de horário
-    await this.validateTimeConflict(validatedUserId, startTime, endTime);
+    await this.validateTimeConflict(userId, startTime, endTime);
 
-    // 4. Cria o agendamento e seus procedimentos em uma transação
     return this.prisma.$transaction(async (tx) => {
       const appointment = await tx.appointment.create({
         data: {
-          clientId: clientId || undefined, // Pode ser null se for BLOQUEIO
-          userId: validatedUserId,
+          clientId: clientId || undefined,
+          userId,
           date: new Date(date),
           startTime,
           endTime,
@@ -123,20 +116,20 @@ export class AppointmentsService {
     });
   }
 
-  // REESTRUTURADO: Lógica de atualização totalmente unificada e corrigida
   async update(id: string, updateAppointmentDto: UpdateAppointmentDto) {
-    // 1. Garante que o agendamento original exista
     const originalAppointment = await this.findOne(id);
 
-    // 2. Determina os dados finais do agendamento (sejam novos ou existentes)
     const finalProcedureIds =
-      updateAppointmentDto.procedureIds ||
+      updateAppointmentDto.procedureIds ??
       originalAppointment.procedures.map((p) => p.procedureId);
 
-    const procedures = await this.prisma.procedure.findMany({
-      where: { id: { in: finalProcedureIds }, active: true },
-    });
-    if (procedures.length !== finalProcedureIds.length) {
+    const procedures = finalProcedureIds.length > 0
+      ? await this.prisma.procedure.findMany({
+          where: { id: { in: finalProcedureIds }, active: true },
+        })
+      : [];
+
+    if (finalProcedureIds.length > 0 && procedures.length !== finalProcedureIds.length) {
       throw new BadRequestException(
         'Um ou mais procedimentos são inválidos ou inativos.',
       );
@@ -154,13 +147,22 @@ export class AppointmentsService {
     const finalStartTime = updateAppointmentDto.startTime
       ? new Date(updateAppointmentDto.startTime)
       : originalAppointment.startTime;
-    const finalEndTime = new Date(
-      finalStartTime.getTime() + totalDuration * 60000,
-    );
-    const finalUserId =
-      updateAppointmentDto.userId || originalAppointment.userId;
 
-    // 3. Valida conflito de horário com os dados finais, excluindo o próprio agendamento da checagem
+    // Respeitar endTime enviado; recalcular apenas se não fornecido
+    let finalEndTime: Date;
+    if (updateAppointmentDto.endTime) {
+      finalEndTime = new Date(updateAppointmentDto.endTime);
+    } else if (updateAppointmentDto.startTime || updateAppointmentDto.procedureIds) {
+      finalEndTime = totalDuration > 0
+        ? new Date(finalStartTime.getTime() + totalDuration * 60000)
+        : (originalAppointment.endTime ?? new Date(finalStartTime.getTime() + 60 * 60000));
+    } else {
+      finalEndTime = originalAppointment.endTime ?? new Date(finalStartTime.getTime() + 60 * 60000);
+    }
+
+    const finalUserId =
+      updateAppointmentDto.userId ?? originalAppointment.userId;
+
     await this.validateTimeConflict(
       finalUserId,
       finalStartTime,
@@ -168,51 +170,55 @@ export class AppointmentsService {
       id,
     );
 
-    // 4. Executa todas as atualizações em uma única transação
     return this.prisma.$transaction(async (tx) => {
-      // Atualiza o agendamento principal com todos os dados novos ou existentes
       const updatedAppointment = await tx.appointment.update({
         where: { id },
         data: {
           clientId:
-            updateAppointmentDto.clientId || originalAppointment.clientId,
+            updateAppointmentDto.clientId !== undefined
+              ? updateAppointmentDto.clientId
+              : originalAppointment.clientId,
           userId: finalUserId,
           date: updateAppointmentDto.date
             ? new Date(updateAppointmentDto.date)
             : originalAppointment.date,
           startTime: finalStartTime,
           endTime: finalEndTime,
-          totalPrice: finalTotalPrice,
+          totalPrice: finalTotalPrice || originalAppointment.totalPrice,
+          status:
+            updateAppointmentDto.status !== undefined
+              ? updateAppointmentDto.status
+              : originalAppointment.status,
           paymentMethod:
-            updateAppointmentDto.paymentMethod ||
-            originalAppointment.paymentMethod,
+            updateAppointmentDto.paymentMethod !== undefined
+              ? updateAppointmentDto.paymentMethod
+              : originalAppointment.paymentMethod,
           discount:
             updateAppointmentDto.discount !== undefined
               ? updateAppointmentDto.discount
               : originalAppointment.discount,
           observations:
-            updateAppointmentDto.observations ||
-            originalAppointment.observations,
+            updateAppointmentDto.observations !== undefined
+              ? updateAppointmentDto.observations
+              : originalAppointment.observations,
         },
       });
 
-      // Se os procedimentos mudaram, atualiza a tabela de junção
       if (updateAppointmentDto.procedureIds) {
-        // Deleta os antigos
         await tx.appointmentProcedure.deleteMany({
           where: { appointmentId: id },
         });
-        // Cria os novos
-        await tx.appointmentProcedure.createMany({
-          data: procedures.map((proc) => ({
-            appointmentId: id,
-            procedureId: proc.id,
-            price: proc.price,
-          })),
-        });
+        if (procedures.length > 0) {
+          await tx.appointmentProcedure.createMany({
+            data: procedures.map((proc) => ({
+              appointmentId: id,
+              procedureId: proc.id,
+              price: proc.price,
+            })),
+          });
+        }
       }
 
-      // Retorna o agendamento completo e atualizado
       return tx.appointment.findUnique({
         where: { id },
         include: {
@@ -382,12 +388,30 @@ export class AppointmentsService {
   }
 
   private async createFinancialTransactionForAppointment(appointment: any) {
-    // TODO: Integrar com novo sistema financeiro de categorias
     try {
-      const procedureNames = appointment.procedures
-        .map((ap) => ap.procedure.name)
-        .join(', ');
-      console.log(`Receita de Agendamento - Cliente: ${appointment.client.name} (${procedureNames}) - R$ ${Number(appointment.totalPrice || 0)}`);
+      for (const ap of appointment.procedures) {
+        const procedureName = ap.procedure.name;
+        const amount = Number(ap.price || 0);
+        if (amount <= 0) continue;
+
+        let category = await this.prisma.entryMoneyCategory.findUnique({
+          where: { name: procedureName },
+        });
+
+        if (!category) {
+          category = await this.prisma.entryMoneyCategory.create({
+            data: { name: procedureName },
+          });
+        }
+
+        await this.entryAnalyticsService.create({
+          date: (appointment.date || new Date()).toISOString(),
+          entryMoneyCategoryId: category.id,
+          clientId: appointment.clientId ?? undefined,
+          description: `Agendamento - ${appointment.client?.name || 'Cliente'}`,
+          amount,
+        });
+      }
     } catch (error) {
       console.error(
         'Erro ao criar transação financeira para agendamento:',
@@ -673,34 +697,78 @@ export class AppointmentsService {
         }
       });
 
-      // Atualiza o último atendimento do cliente
-      // Nota: lastAppointmentAt não existe no banco ainda, então não atualizamos
-      // TODO: Adicionar coluna lastAppointmentAt ao banco ou calcular dinamicamente
-      // await tx.client.update({
-      //   where: { id: appointment.clientId },
-      //   data: { lastAppointmentAt: new Date() }
-      // });
-
-      // TODO: Integrar com novo sistema financeiro de categorias
-      const remainingAmount = finalAmountAfterTax - (Number(appointment.partialPayment) || 0);
-
-      if (remainingAmount > 0) {
-        console.log(`Finalização - ${appointment.client?.name || 'Cliente'} - Agendamento ${appointmentId.substring(0, 8)} - R$ ${remainingAmount}`);
+      if (appointment.clientId) {
+        await tx.client.update({
+          where: { id: appointment.clientId },
+          data: { lastAppointmentAt: new Date() },
+        });
       }
 
-      // Registra custos dos produtos (apenas os marcados como custo)
-      const totalProductCosts = productUsages
-        .filter(usage => usage.product.addToCost)
-        .reduce((sum, usage) => sum + Number(usage.totalCost || 0), 0);
+      // Criar receita financeira para cada procedimento da comanda
+      try {
+        for (const ap of appointment.procedures) {
+          const procedureName = ap.procedure.name;
+          const amount = Number(ap.price || 0);
+          if (amount <= 0) continue;
 
-      if (totalProductCosts > 0) {
-        // TODO: Integrar com novo sistema financeiro de categorias
-        const productDescriptions = productUsages
-          .filter(usage => usage.product.addToCost)
-          .map(usage => `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`)
-          .join(', ');
+          let category = await tx.entryMoneyCategory.findUnique({
+            where: { name: procedureName },
+          });
+          if (!category) {
+            category = await tx.entryMoneyCategory.create({
+              data: { name: procedureName },
+            });
+          }
 
-        console.log(`Custos de produtos - ${appointment.client?.name || 'Cliente'} - ${productDescriptions} - R$ ${totalProductCosts}`);
+          await tx.entryAnalytic.create({
+            data: {
+              date: appointment.date || new Date(),
+              entryMoneyCategoryId: category.id,
+              clientId: appointment.clientId ?? undefined,
+              description: `Comanda finalizada - ${appointment.client?.name || 'Cliente'}`,
+              amount,
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao criar entrada financeira na comanda:', error);
+      }
+
+      // Registra custos dos produtos como saídas financeiras
+      const costUsages = productUsages.filter(usage => usage.product.addToCost);
+
+      if (costUsages.length > 0) {
+        try {
+          let costCategory = await tx.costVariableCategory.findUnique({
+            where: { name: 'Produtos Utilizados' },
+          });
+          if (!costCategory) {
+            costCategory = await tx.costVariableCategory.create({
+              data: { name: 'Produtos Utilizados' },
+            });
+          }
+
+          const totalProductCosts = costUsages.reduce(
+            (sum, usage) => sum + Number(usage.totalCost || 0), 0,
+          );
+
+          if (totalProductCosts > 0) {
+            const productDescriptions = costUsages
+              .map(usage => `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`)
+              .join(', ');
+
+            await tx.outAnalytic.create({
+              data: {
+                date: appointment.date || new Date(),
+                costVariableCategoryId: costCategory.id,
+                description: `Produtos usados - ${appointment.client?.name || 'Cliente'} - ${productDescriptions}`,
+                amount: totalProductCosts,
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Erro ao criar saída financeira de produtos:', error);
+        }
       }
 
       // Atualiza as metas automaticamente quando a comanda é finalizada

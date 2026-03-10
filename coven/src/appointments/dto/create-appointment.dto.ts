@@ -13,14 +13,12 @@ import { PaymentMethod, AppointmentStatus } from '@prisma/client';
 
 export class CreateAppointmentDto {
   @IsString()
-  @IsNotEmpty()
-  @IsString()
   @IsOptional()
   clientId?: string;
 
   @IsString()
-  @IsOptional()
-  userId?: string;
+  @IsNotEmpty({ message: 'userId é obrigatório' })
+  userId: string;
 
   @IsDateString()
   date: string;
