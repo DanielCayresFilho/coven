@@ -30,9 +30,9 @@ model Client {
   email             String?       @unique
   phone             String?
   birthDate         DateTime?
-  address           String?
-  observations      String?
-  lastAppointmentAt DateTime? // Data do último atendimento concluído
+  address           String?       @db.Text
+  observations      String?       @db.Text
+  lastAppointmentAt DateTime?
   active            Boolean       @default(true)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -46,8 +46,8 @@ model Client {
 model Procedure {
   id                    String                 @id @default(uuid())
   name                  String
-  description           String?
-  category              String? // Categoria do procedimento
+  description           String?                @db.Text
+  category              String?
   duration              Int
   price                 Decimal                @db.Decimal(10, 2)
   active                Boolean                @default(true)
@@ -62,17 +62,17 @@ model Procedure {
 model Product {
   id                String             @id @default(uuid())
   name              String
-  description       String?
-  category          String? // Categoria do produto
+  description       String?            @db.Text
+  category          String?
   type              ProductType
   price             Decimal?           @db.Decimal(10, 2)
-  stock             Int                @default(0) // Quantidade de unidades (ex: 2 garrafas)
+  stock             Int                @default(0)
   minStock          Int                @default(0)
   unit              String?
-  unitQuantity      Decimal?           @db.Decimal(10, 2) // ML por unidade (ex: 1000ml)
-  unitMeasurement   String? // Unidade de medida (ml, g, etc)
-  usableAmount      Decimal?           @db.Decimal(10, 2) // Quantidade usável em ML (ex: 2000ml)
-  addToCost         Boolean            @default(false) // Se deve ser adicionado como custo ao financeiro
+  unitQuantity      Decimal?           @db.Decimal(10, 2)
+  unitMeasurement   String?
+  usableAmount      Decimal?           @db.Decimal(10, 2)
+  addToCost         Boolean            @default(false)
   active            Boolean            @default(true)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -88,7 +88,7 @@ model StockMovement {
   productId String
   type      TransactionType
   quantity  Int
-  reason    String?
+  reason    String?         @db.Text
   createdAt DateTime        @default(now())
   product   Product         @relation(fields: [productId], references: [id])
 
@@ -119,13 +119,13 @@ model Appointment {
   paymentMethod   PaymentMethod?
   totalPrice      Decimal?               @db.Decimal(10, 2)
   discount        Decimal?               @db.Decimal(10, 2)
-  partialPayment  Decimal?               @db.Decimal(10, 2) // Pagamento parcial (50%)
-  finalPrice      Decimal?               @db.Decimal(10, 2) // Preço final após descontos e taxas
-  cardTax         Decimal?               @db.Decimal(5, 4) // Taxa do cartão aplicada
-  paymentData     String? // JSON com dados de pagamento detalhados
-  observations    String?
-  comandaOpenedAt DateTime? // Quando a comanda foi aberta
-  comandaClosedAt DateTime? // Quando a comanda foi finalizada
+  partialPayment  Decimal?               @db.Decimal(10, 2)
+  finalPrice      Decimal?               @db.Decimal(10, 2)
+  cardTax         Decimal?               @db.Decimal(5, 4)
+  paymentData     String?                @db.Text
+  observations    String?                @db.Text
+  comandaOpenedAt DateTime?
+  comandaClosedAt DateTime?
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
   procedures      AppointmentProcedure[]
@@ -155,9 +155,9 @@ model ProductUsage {
   id            String      @id @default(uuid())
   appointmentId String
   productId     String
-  quantityUsed  Decimal     @db.Decimal(10, 2) // Quantidade utilizada (pode ser em ml, g, etc)
-  unitCost      Decimal?    @db.Decimal(10, 2) // Custo por unidade no momento do uso
-  totalCost     Decimal?    @db.Decimal(10, 2) // Custo total calculado
+  quantityUsed  Decimal     @db.Decimal(10, 2)
+  unitCost      Decimal?    @db.Decimal(10, 2)
+  totalCost     Decimal?    @db.Decimal(10, 2)
   createdAt     DateTime    @default(now())
   appointment   Appointment @relation(fields: [appointmentId], references: [id])
   product       Product     @relation(fields: [productId], references: [id])
@@ -213,8 +213,8 @@ model EntryAnalytic {
   id              String   @id @default(uuid())
   date            DateTime
   entryMoneyCategoryId String
-  clientId        String? // Cliente que fez o procedimento
-  description     String?
+  clientId        String?
+  description     String?  @db.Text
   amount          Decimal  @db.Decimal(10, 2)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -230,12 +230,11 @@ model EntryAnalytic {
 model OutAnalytic {
   id                    String   @id @default(uuid())
   date                  DateTime
-  description           String?
+  description           String?  @db.Text
   amount                Decimal  @db.Decimal(10, 2)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   
-  // Relacionamentos opcionais com as categorias de saída
   costVariableCategoryId String?
   fixesAccountsCategoryId String?
   investmentsCategoryId   String?
@@ -250,13 +249,13 @@ model OutAnalytic {
   @@map("out_analytics")
 }
 
-// Configurações do Fluxo de Caixa (Saldo Inicial e Pró-labore por mês/ano)
+// Configurações do Fluxo de Caixa
 model CashFlowConfig {
   id            String   @id @default(uuid())
   year          Int
-  month         Int      // 1-12 (Janeiro a Dezembro)
-  initialBalance Decimal @db.Decimal(10, 2) // Saldo inicial do mês
-  prolabore     Decimal? @db.Decimal(10, 2) // Pró-labore do mês
+  month         Int
+  initialBalance Decimal @db.Decimal(10, 2)
+  prolabore     Decimal? @db.Decimal(10, 2)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -268,7 +267,7 @@ model Reminder {
   id          String           @id @default(uuid())
   type        ReminderType
   title       String
-  description String?
+  description String?          @db.Text
   date        DateTime
   priority    ReminderPriority @default(POUCO_URGENTE)
   userId      String?
@@ -354,8 +353,8 @@ model FixedExpense {
   id          String   @id @default(uuid())
   name        String
   amount      Decimal  @db.Decimal(10, 2)
-  dueDay      Int // Dia do mês que vence (1-31)
-  description String?
+  dueDay      Int
+  description String?  @db.Text
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
