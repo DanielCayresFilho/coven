@@ -135,14 +135,14 @@ export class AppointmentsService {
       );
     }
 
+    const procedureIdsExplicitlySent = updateAppointmentDto.procedureIds !== undefined;
     const totalDuration = procedures.reduce(
       (sum, proc) => sum + proc.duration,
       0,
     );
-    const finalTotalPrice = procedures.reduce(
-      (sum, proc) => sum + Number(proc.price),
-      0,
-    );
+    const finalTotalPrice = procedureIdsExplicitlySent
+      ? procedures.reduce((sum, proc) => sum + Number(proc.price), 0)
+      : Number(originalAppointment.totalPrice ?? 0);
 
     const finalStartTime = updateAppointmentDto.startTime
       ? new Date(updateAppointmentDto.startTime)
@@ -184,7 +184,9 @@ export class AppointmentsService {
             : originalAppointment.date,
           startTime: finalStartTime,
           endTime: finalEndTime,
-          totalPrice: finalTotalPrice || originalAppointment.totalPrice,
+          totalPrice: procedureIdsExplicitlySent
+            ? finalTotalPrice
+            : originalAppointment.totalPrice,
           status:
             updateAppointmentDto.status !== undefined
               ? updateAppointmentDto.status
