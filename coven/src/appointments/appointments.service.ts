@@ -125,13 +125,13 @@ export class AppointmentsService {
 
     const procedures = finalProcedureIds.length > 0
       ? await this.prisma.procedure.findMany({
-          where: { id: { in: finalProcedureIds }, active: true },
+          where: { id: { in: finalProcedureIds } },
         })
       : [];
 
     if (finalProcedureIds.length > 0 && procedures.length !== finalProcedureIds.length) {
       throw new BadRequestException(
-        'Um ou mais procedimentos são inválidos ou inativos.',
+        'Um ou mais procedimentos não foram encontrados.',
       );
     }
 
