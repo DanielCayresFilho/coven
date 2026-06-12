@@ -1,0 +1,16 @@
+---
+description: Padrões para modelagem e consultas ao banco de dados com Prisma ORM
+globs: coven/prisma/**/*, coven/**/*.service.ts
+---
+# Regras de Banco de Dados (Prisma 6 + MySQL)
+
+## Diretrizes de Modelagem e Consulta
+1. **Schema Centralizado:** O modelo de dados está em `coven/prisma/schema.prisma`.
+2. **Relacionamentos:** - Mantenha a integridade referencial, especialmente no núcleo do negócio: `Appointments` -> `Procedures` -> `ProductUsage` -> `Products`.
+   - O sistema financeiro (pagamentos via PIX, dinheiro, cartão, descontos) deve estar fortemente tipado e amarrado à comanda do agendamento.
+3. **Padrões de Consulta no NestJS:**
+   - Injete o `PrismaService` nos serviços de domínio.
+   - Evite buscar dados excessivos. Use o `select` do Prisma para retornar apenas os campos necessários, especialmente em listagens ou dados expostos à API pública.
+   - Nunca retorne senhas em hash ou dados sensíveis de usuários (`Users`) nas respostas da API.
+4. **Migrações:**
+   - Não altere o banco diretamente. Sempre crie novas *migrations* do Prisma ao alterar o schema.

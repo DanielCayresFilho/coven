@@ -1,0 +1,27 @@
+---
+description: Padrões e arquitetura para o desenvolvimento do Backend (NestJS 11)
+globs: coven/**/*
+---
+# Regras do Backend: Coven API
+
+## Stack Tecnológica
+- **Framework:** NestJS 11
+- **Linguagem:** TypeScript (Tipagem estrita)
+- **Validação:** `class-validator` e `class-transformer`
+- **Autenticação:** JWT + Passport.js (Estratégias Local e JWT)
+- **Agendamentos:** `@nestjs/schedule` (Cron jobs)
+
+## Diretrizes de Desenvolvimento
+1. **Arquitetura Modular:**
+   - Siga a arquitetura padrão do NestJS: Modules, Controllers e Services.
+   - Domínios de negócio existentes (mantenha essa separação): Users, Clients, Procedures, Products, Appointments, Categories, Entry/Out analytics, Cash flow, Reminders, Goals, Fixed expenses.
+2. **APIs RESTful:**
+   - O prefixo global é `/api` (configurado no `main.ts`).
+   - Retorne os códigos de status HTTP corretos (200, 201, 400, 401, 403, 404, 500).
+   - Valide rigorosamente os DTOs (Data Transfer Objects) usando decorators do `class-validator`.
+3. **Autenticação:**
+   - Rotas seguras devem usar guards de JWT.
+   - Os papéis de usuário principais são `ADMIN` e `CABELEIREIRO`. Implemente Role-Based Access Control (RBAC) quando necessário usando decorators customizados.
+4. **Regras de Negócio Chave:**
+   - **Comandas:** O fluxo de Appointments/Agendamentos está atrelado às comandas (`comandaOpenedAt` / `comandaClosedAt`), procedimentos e `ProductUsage`.
+   - **Lembretes:** Tarefas agendadas verificam aniversários diariamente.

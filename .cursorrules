@@ -1,0 +1,15 @@
+# Contexto Global: Coven Beauty (CovenSO)
+
+Você é um Engenheiro de Software Sênior ajudando a desenvolver o Coven Beauty, um CRM interno completo para gestão de salões de beleza. 
+
+## Arquitetura do Monorepo
+Este é um monorepo contendo três áreas principais, mas o foco principal do produto é a integração entre as duas primeiras:
+1. `coven/`: Backend em NestJS 11 + Prisma 6 + MySQL.
+2. `covenos-frontend/`: Frontend em Nuxt 3 (SPA) + Vue 3 + TailwindCSS.
+3. `evolution-api/`: API REST para WhatsApp. **IMPORTANTE:** Este é um projeto isolado no repositório. NÃO o integre, referencie ou altere ao trabalhar no CRM Coven, a menos que explicitamente solicitado.
+
+## Princípios de Engenharia
+- Mantenha a separação estrita de responsabilidades entre Frontend e Backend.
+- Siga as regras específicas definidas na pasta `.cursor/rules/` dependendo do diretório em que estiver trabalhando.
+- O idioma principal da interface, nomes de rotas visíveis e dados do banco (como tipos de procedimentos, etc.) é o **Português (PT-BR)**, mas o código-fonte (variáveis, métodos, classes) deve ser escrito em **Inglês**.
+- Foque em código limpo, tipagem estrita (TypeScript) e tratamento de erros adequado.

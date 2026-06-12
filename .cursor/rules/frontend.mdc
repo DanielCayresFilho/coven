@@ -1,0 +1,24 @@
+---
+description: Padrões e regras para o desenvolvimento do Frontend (Nuxt 3 / Vue 3)
+globs: covenos-frontend/**/*
+---
+# Regras do Frontend: CovenOS
+
+## Stack Tecnológica
+- **Framework:** Nuxt 3 (Modo SPA estrito, `ssr: false`).
+- **UI/Estilização:** Vue 3 (Composition API), Tailwind CSS, Headless UI / Heroicons.
+- **Gerenciamento de Estado:** Pinia.
+- **Utilitários:** VueUse, FullCalendar.
+
+## Diretrizes de Desenvolvimento
+1. **Sem SSR:** Nunca escreva código que dependa do ciclo de vida do servidor Node.js no Nuxt. O app é estritamente um Single Page Application focado em uso interno.
+2. **Composition API:** Utilize a sintaxe `<script setup lang="ts">` em todos os componentes. Evite a Options API.
+3. **Comunicação com a API:** - A URL base da API está configurada em `runtimeConfig.public.apiBase` (que consome `NUXT_PUBLIC_API_URL`).
+   - Todos os endpoints do backend possuem o prefixo `/api`.
+   - Gerencie o token JWT através dos cookies `covenos-token` e `covenos-user`.
+4. **Autenticação e Roteamento:**
+   - Proteja as rotas usando os middlewares do Nuxt (`auth` e `guest`).
+   - Redirecione usuários não autenticados da raiz `/` para `/login`.
+5. **Estilização:**
+   - O projeto suporta modo Claro/Escuro via `@nuxtjs/color-mode`. Garanta que novas interfaces suportem a classe `dark:` do Tailwind.
+   - Use os ícones do Heroicons para manter a consistência visual.
