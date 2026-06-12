@@ -177,6 +177,10 @@ export class GoalsService {
   }
 
   // Calcula o valor atual baseado em comandas finalizadas
+  private roundMoney(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  }
+
   private async calculateCurrentAmount(startDate: Date, endDate: Date) {
     const appointments = await this.prisma.appointment.findMany({
       where: {
@@ -188,9 +192,12 @@ export class GoalsService {
       },
     });
 
-    return appointments.reduce(
-      (sum, apt) => sum + parseFloat((apt.finalPrice || apt.totalPrice || 0).toString()),
-      0,
+    return this.roundMoney(
+      appointments.reduce((sum, apt) => {
+        const appointmentValue =
+          Number(apt.finalPrice) || Number(apt.totalPrice) || 0;
+        return this.roundMoney(sum + appointmentValue);
+      }, 0),
     );
   }
 

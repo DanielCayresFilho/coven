@@ -36,6 +36,11 @@ export class FixedExpensesController {
     return this.fixedExpensesService.getUpcomingExpenses(daysNumber);
   }
 
+  @Post(':id/pay')
+  payExpense(@Param('id') id: string) {
+    return this.fixedExpensesService.payExpense(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.fixedExpensesService.findOne(id);

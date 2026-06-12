@@ -57,10 +57,10 @@ export class ClientsService {
     }
   }
 
-  async findAll() {
+  async findAll(includeInactive = false) {
     try {
       const clients = await this.prisma.client.findMany({
-        where: { active: true },
+        where: includeInactive ? {} : { active: true },
         select: {
           id: true,
           name: true,
@@ -153,10 +153,12 @@ export class ClientsService {
   async update(id: string, updateClientDto: UpdateClientDto) {
     await this.findOne(id);
 
-    if (updateClientDto.email) {
+    const { email, birthDate, ...rest } = updateClientDto;
+
+    if (email) {
       const existingClient = await this.prisma.client.findFirst({
         where: {
-          email: updateClientDto.email,
+          email,
           NOT: { id },
         },
       });
@@ -166,12 +168,15 @@ export class ClientsService {
       }
     }
 
-    const data: any = {
-      ...updateClientDto,
-      birthDate: updateClientDto.birthDate
-        ? new Date(updateClientDto.birthDate)
-        : undefined,
-    };
+    const data: Record<string, unknown> = { ...rest };
+
+    if (email !== undefined) {
+      data.email = email || null;
+    }
+
+    if (birthDate !== undefined) {
+      data.birthDate = birthDate ? new Date(birthDate) : null;
+    }
 
     return this.prisma.client.update({
       where: { id },

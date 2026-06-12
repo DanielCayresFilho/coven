@@ -270,9 +270,13 @@
                     v-model="productForm.name"
                     type="text"
                     required
-                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    :class="[
+                      'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                      fieldBorderClass(formErrors, 'name')
+                    ]"
                     placeholder="Nome do produto"
                   />
+                  <p v-if="formErrors.name" class="text-sm text-red-500 mt-1">{{ formErrors.name }}</p>
                 </div>
                 
                 <div>
@@ -288,11 +292,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo *</label>
-                    <select v-model="productForm.type" required class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
+                    <select
+                      v-model="productForm.type"
+                      required
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'type')
+                      ]"
+                    >
                       <option value="">Selecione o tipo</option>
                       <option value="USO_INTERNO">Uso Interno</option>
                       <option value="VENDA_DIRETA">Venda Direta</option>
                     </select>
+                    <p v-if="formErrors.type" class="text-sm text-red-500 mt-1">{{ formErrors.type }}</p>
                   </div>
                   
                   <div>
@@ -318,14 +330,24 @@
                       type="number"
                       step="0.01"
                       min="0"
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'unitQuantity')
+                      ]"
                       placeholder="Ex: 100"
                     />
+                    <p v-if="formErrors.unitQuantity" class="text-sm text-red-500 mt-1">{{ formErrors.unitQuantity }}</p>
                   </div>
                   
                   <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade de Medida</label>
-                    <select v-model="productForm.unitMeasurement" class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
+                    <select
+                      v-model="productForm.unitMeasurement"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'unitMeasurement')
+                      ]"
+                    >
                       <option value="">Selecione</option>
                       <option value="ml">ml (mililitros)</option>
                       <option value="g">g (gramas)</option>
@@ -334,6 +356,7 @@
                       <option value="cm">cm (centímetros)</option>
                       <option value="m">m (metros)</option>
                     </select>
+                    <p v-if="formErrors.unitMeasurement" class="text-sm text-red-500 mt-1">{{ formErrors.unitMeasurement }}</p>
                   </div>
                   
                   <div class="md:col-span-2">
@@ -370,22 +393,37 @@
                         type="number"
                         step="0.01"
                         min="0"
-                        class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                        :class="[
+                          'w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                          fieldBorderClass(formErrors, 'price')
+                        ]"
                         placeholder="0,00"
                       />
                     </div>
+                    <p v-if="formErrors.price" class="text-sm text-red-500 mt-1">{{ formErrors.price }}</p>
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estoque Inicial *</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {{ editingProduct ? 'Estoque atual' : 'Estoque Inicial *' }}
+                    </label>
                     <input
                       v-model="productForm.stock"
                       type="number"
                       min="0"
-                      required
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :required="!editingProduct"
+                      :disabled="!!editingProduct"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'stock'),
+                        editingProduct ? 'opacity-60 cursor-not-allowed' : ''
+                      ]"
                       placeholder="0"
                     />
+                    <p v-if="editingProduct" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Use "Ajustar Estoque" para alterar a quantidade.
+                    </p>
+                    <p v-if="formErrors.stock" class="text-sm text-red-500 mt-1">{{ formErrors.stock }}</p>
                   </div>
                   
                   <div>
@@ -636,6 +674,18 @@ const editingProduct = ref(null)
 const productToDelete = ref(null)
 const stockProduct = ref(null)
 
+const { getMessage, mapFieldErrors, fieldBorderClass, clearFormErrors } = useApiError()
+
+const formErrors = reactive({
+  name: '',
+  type: '',
+  unitQuantity: '',
+  unitMeasurement: '',
+  price: '',
+  stock: '',
+  minStock: '',
+})
+
 const productForm = reactive({
   name: '',
   description: '',
@@ -781,8 +831,7 @@ const calculateTotalStock = (product) => {
 const loadProducts = async () => {
   try {
     const { $api } = useNuxtApp()
-    const toast = useToast()
-    
+
     const response = await $api('/products', {
       method: 'GET'
     })
@@ -791,7 +840,7 @@ const loadProducts = async () => {
   } catch (error) {
     console.error('Erro ao carregar produtos:', error)
     const toast = useToast()
-    toast.error('Erro ao carregar lista de produtos')
+    toast.error(getMessage(error, 'Erro ao carregar lista de produtos'))
   } finally {
     loading.value = false
   }
@@ -810,6 +859,7 @@ const resetForm = () => {
     stock: '',
     minStock: 5
   })
+  clearFormErrors(formErrors)
 }
 
 const resetStockForm = () => {
@@ -822,6 +872,7 @@ const resetStockForm = () => {
 
 const editProduct = (product) => {
   editingProduct.value = product
+  clearFormErrors(formErrors)
   Object.assign(productForm, product)
   showCreateModal.value = false
 }
@@ -839,61 +890,71 @@ const closeModal = () => {
 
 const saveProduct = async () => {
   saving.value = true
-  
+  clearFormErrors(formErrors)
+
   try {
     const { $api } = useNuxtApp()
     const toast = useToast()
-    
+
+    if (productForm.type === 'USO_INTERNO') {
+      if (!productForm.unitQuantity || !productForm.unitMeasurement) {
+        const message = 'Produtos de uso interno exigem quantidade por unidade e unidade de medida'
+        formErrors.unitQuantity = !productForm.unitQuantity ? message : ''
+        formErrors.unitMeasurement = !productForm.unitMeasurement ? message : ''
+        toast.error(message)
+        saving.value = false
+        return
+      }
+    }
+
     const method = editingProduct.value ? 'PATCH' : 'POST'
     const url = editingProduct.value ? `/products/${editingProduct.value.id}` : '/products'
-    
+
     const productData = {
       name: productForm.name.trim(),
       type: productForm.type,
-      stock: parseInt(productForm.stock) || 0,
       minStock: parseInt(productForm.minStock) || 0,
       addToCost: productForm.addToCost || false
     }
-    
+
+    if (!editingProduct.value) {
+      productData.stock = parseInt(productForm.stock) || 0
+    }
+
     if (productForm.description && productForm.description.trim()) {
       productData.description = productForm.description.trim()
     }
-    
+
     if (productForm.price && productForm.price !== '') {
       productData.price = parseFloat(productForm.price)
     }
-    
+
     if (productForm.unit && productForm.unit.trim()) {
       productData.unit = productForm.unit.trim()
     }
-    
-    // Campos específicos para produtos de uso interno
+
     if (productForm.type === 'USO_INTERNO') {
-      if (productForm.unitQuantity && productForm.unitQuantity !== '') {
-        productData.unitQuantity = parseFloat(productForm.unitQuantity)
-      }
-      
-      if (productForm.unitMeasurement && productForm.unitMeasurement.trim()) {
-        productData.unitMeasurement = productForm.unitMeasurement.trim()
-      }
+      productData.unitQuantity = parseFloat(productForm.unitQuantity)
+      productData.unitMeasurement = productForm.unitMeasurement.trim()
     }
-    
+
     await $api(url, {
       method,
       body: productData
     })
-    
+
     await loadProducts()
     closeModal()
-    
+
     toast.success(
       editingProduct.value ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!'
     )
   } catch (error) {
     console.error('Erro ao salvar produto:', error)
     const toast = useToast()
-    const errorMessage = error.response?.data?.message || 'Erro ao salvar produto'
-    toast.error(Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage)
+    const message = getMessage(error, 'Erro ao salvar produto')
+    Object.assign(formErrors, mapFieldErrors(error))
+    toast.error(message)
   } finally {
     saving.value = false
   }
@@ -954,7 +1015,7 @@ const adjustStock = async () => {
   } catch (error) {
     console.error('Erro ao ajustar estoque:', error)
     const toast = useToast()
-    toast.error('Erro ao ajustar estoque')
+    toast.error(getMessage(error, 'Erro ao ajustar estoque'))
   } finally {
     savingStock.value = false
   }
@@ -981,7 +1042,7 @@ const deleteProduct = async () => {
   } catch (error) {
     console.error('Erro ao excluir produto:', error)
     const toast = useToast()
-    toast.error('Erro ao excluir produto')
+    toast.error(getMessage(error, 'Erro ao excluir produto'))
   } finally {
     deleting.value = false
   }

@@ -110,6 +110,50 @@ export class FixedExpensesService {
     return this.serializeExpense(updated);
   }
 
+  async payExpense(id: string) {
+    const expense = await this.getExpenseOrThrow(id);
+    const amount = Number(expense.amount);
+    const reminderTitle = this.buildReminderTitle(expense);
+
+    return this.prisma.$transaction(async (tx) => {
+      let category = await tx.fixesAccountsCategory.findUnique({
+        where: { name: 'Contas Fixas' },
+      });
+
+      if (!category) {
+        category = await tx.fixesAccountsCategory.create({
+          data: { name: 'Contas Fixas' },
+        });
+      }
+
+      const outAnalytic = await tx.outAnalytic.create({
+        data: {
+          date: new Date(),
+          fixesAccountsCategoryId: category.id,
+          description: `Pagamento de despesa fixa: ${expense.name}`,
+          amount,
+        },
+      });
+
+      await tx.reminder.updateMany({
+        where: {
+          type: ReminderType.DESPESA_FIXA,
+          isActive: true,
+          title: reminderTitle,
+        },
+        data: { isActive: false },
+      });
+
+      return {
+        expense: this.serializeExpense(expense),
+        outAnalytic: {
+          ...outAnalytic,
+          amount: Number(outAnalytic.amount),
+        },
+      };
+    });
+  }
+
   // Retorna despesas que vencem nos próximos N dias
   async getUpcomingExpenses(days: number = 15) {
     const today = new Date();

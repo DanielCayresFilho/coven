@@ -68,11 +68,36 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    await this.findOne(id);
+    const product = await this.findOne(id);
+    const { stock, ...safeData } = updateProductDto;
+
+    if (stock !== undefined && stock !== product.stock) {
+      throw new BadRequestException(
+        'Use os endpoints /stock/add ou /stock/remove para alterar estoque.',
+      );
+    }
+
+    const nextType = safeData.type ?? product.type;
+    const nextUnitQty =
+      safeData.unitQuantity !== undefined
+        ? safeData.unitQuantity
+        : product.unitQuantity;
+
+    const data: Record<string, unknown> = { ...safeData };
+
+    if (nextType === 'USO_INTERNO') {
+      if (nextUnitQty) {
+        data.usableAmount = Number(product.stock) * Number(nextUnitQty);
+      }
+    } else if (nextType === 'VENDA_DIRETA') {
+      data.usableAmount = null;
+      data.unitQuantity = null;
+      data.unitMeasurement = null;
+    }
 
     return this.prisma.product.update({
       where: { id },
-      data: updateProductDto,
+      data,
     });
   }
 
@@ -86,19 +111,7 @@ export class ProductsService {
   }
 
   async addStock(id: string, stockMovementDto: StockMovementDto) {
-    console.log(
-      '📦 AddStock chamado para produto:',
-      id,
-      'quantidade:',
-      stockMovementDto.quantity,
-    );
     const product = await this.findOne(id);
-    console.log(
-      '📦 Produto encontrado:',
-      product.name,
-      'preço:',
-      product.price,
-    );
 
     const result = await this.prisma.$transaction(async (prisma) => {
       await prisma.stockMovement.create({
@@ -118,7 +131,6 @@ export class ProductsService {
         const additionalAmount = stockMovementDto.quantity * Number(product.unitQuantity);
         const currentUsable = Number(product.usableAmount) || 0;
         updateData.usableAmount = currentUsable + additionalAmount;
-        console.log(`📦 Atualizando usableAmount: ${currentUsable} + ${additionalAmount} = ${updateData.usableAmount}`);
       }
 
       return prisma.product.update({

@@ -34,13 +34,24 @@ export class ClientsController {
   }
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query('includeInactive') includeInactive?: string) {
+    return this.clientsService.findAll(includeInactive === 'true');
   }
 
   @Get('birthdays')
   getBirthdaysThisMonth() {
     return this.clientsService.getBirthdaysThisMonth();
+  }
+
+  @Get('reports/top')
+  getTopClients(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    return this.clientsReportsService.getTopClients(limitNum);
+  }
+
+  @Get('reports/:id')
+  getClientDetails(@Param('id') id: string) {
+    return this.clientsReportsService.getClientDetails(id);
   }
 
   @Get(':id')
@@ -56,16 +67,5 @@ export class ClientsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.clientsService.remove(id);
-  }
-
-  @Get('reports/top')
-  getTopClients(@Query('limit') limit?: string) {
-    const limitNum = limit ? parseInt(limit, 10) : 10;
-    return this.clientsReportsService.getTopClients(limitNum);
-  }
-
-  @Get('reports/:id')
-  getClientDetails(@Param('id') id: string) {
-    return this.clientsReportsService.getClientDetails(id);
   }
 }

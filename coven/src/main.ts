@@ -1,14 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
     // Configurar CORS
+    const corsOrigins = process.env.CORS_ORIGINS?.split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+
     app.enableCors({
-      origin: true,
+      origin: corsOrigins?.length ? corsOrigins : true,
       credentials: true,
     });
 
@@ -20,6 +25,9 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
       }),
     );
+
+    // Tratamento global de erros Prisma
+    app.useGlobalFilters(new PrismaExceptionFilter());
 
     // Prefixo global para APIs
     app.setGlobalPrefix('api');

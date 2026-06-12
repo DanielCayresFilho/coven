@@ -83,6 +83,7 @@
             >
               <option value="ABERTA">Abertas</option>
               <option value="FINALIZADA">Finalizadas</option>
+              <option value="CANCELADO">Canceladas</option>
               <option value="">Todos os status</option>
             </select>
           </div>
@@ -480,26 +481,25 @@ const filteredCommands = computed(() => {
 
   if (statusFilter.value) {
     filtered = filtered.filter(cmd => {
+      if (statusFilter.value === 'CANCELADO') {
+        return cmd.status === 'CANCELADO'
+      }
+
       if (statusFilter.value === 'ABERTA') {
-        const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO'
+        const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO' && cmd.status !== 'CANCELADO'
         if (!isOpen) return false
 
-        // Para comandas abertas, mostrar:
-        // 1. Todas as que já passaram (data < hoje)
-        // 2. As entre hoje e 60 dias no futuro
         const cmdDate = new Date(cmd.date || cmd.startTime)
         cmdDate.setHours(0, 0, 0, 0)
 
-        // Mostrar todas as passadas + próximos 60 dias
         return cmdDate <= sixtyDaysLater
-      } else {
-        return !!cmd.comandaClosedAt || cmd.status === 'CONCLUIDO'
       }
+
+      return (!!cmd.comandaClosedAt || cmd.status === 'CONCLUIDO') && cmd.status !== 'CANCELADO'
     })
   } else {
-    // Se não há filtro de status, ainda aplicar filtro de data para abertas
     filtered = filtered.filter(cmd => {
-      const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO'
+      const isOpen = !cmd.comandaClosedAt && cmd.status !== 'CONCLUIDO' && cmd.status !== 'CANCELADO'
       if (isOpen) {
         const cmdDate = new Date(cmd.date || cmd.startTime)
         cmdDate.setHours(0, 0, 0, 0)
@@ -570,8 +570,8 @@ const loadData = async () => {
     ])
     
     // Show all appointments that have procedures (commands), including old ones
-    commands.value = (commandsRes || []).filter(apt => 
-      apt.procedures && apt.procedures.length > 0 && apt.status !== 'CANCELADO'
+    commands.value = (commandsRes || []).filter(apt =>
+      apt.procedures && apt.procedures.length > 0,
     )
     clients.value = clientsRes || []
     hairdressers.value = (usersRes || []).filter(user => user.role === 'CABELEIREIRO')
@@ -691,7 +691,10 @@ const confirmReschedule = async () => {
 }
 
 const getStatusLabel = (command) => {
-  // For old commands without comandaClosedAt, use appointment status
+  if (command.status === 'CANCELADO') {
+    return 'Cancelada'
+  }
+
   if (command.comandaClosedAt || command.status === 'CONCLUIDO') {
     return 'Finalizada'
   }
@@ -699,7 +702,10 @@ const getStatusLabel = (command) => {
 }
 
 const getStatusBadgeClass = (command) => {
-  // For old commands without comandaClosedAt, use appointment status
+  if (command.status === 'CANCELADO') {
+    return 'bg-red-100 text-red-700'
+  }
+
   if (command.comandaClosedAt || command.status === 'CONCLUIDO') {
     return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-600/30'
   }

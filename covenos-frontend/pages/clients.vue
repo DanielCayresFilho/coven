@@ -216,9 +216,13 @@
                     v-model="clientForm.name"
                     type="text"
                     required
-                    class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                    :class="[
+                      'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                      fieldBorderClass(formErrors, 'name')
+                    ]"
                     placeholder="Digite o nome do cliente"
                   />
+                  <p v-if="formErrors.name" class="text-sm text-red-500 mt-1">{{ formErrors.name }}</p>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -230,9 +234,13 @@
                       v-model="clientForm.phone"
                       type="tel"
                       required
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'phone')
+                      ]"
                       placeholder="(11) 99999-9999"
                     />
+                    <p v-if="formErrors.phone" class="text-sm text-red-500 mt-1">{{ formErrors.phone }}</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -241,9 +249,13 @@
                     <input
                       v-model="clientForm.email"
                       type="email"
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'email')
+                      ]"
                       placeholder="cliente@email.com"
                     />
+                    <p v-if="formErrors.email" class="text-sm text-red-500 mt-1">{{ formErrors.email }}</p>
                   </div>
 
                   <div>
@@ -253,9 +265,29 @@
                     <input
                       v-model="clientForm.birthDate"
                       type="date"
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'birthDate')
+                      ]"
                     />
+                    <p v-if="formErrors.birthDate" class="text-sm text-red-500 mt-1">{{ formErrors.birthDate }}</p>
                   </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Endereço
+                  </label>
+                  <input
+                    v-model="clientForm.address"
+                    type="text"
+                    :class="[
+                      'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                      fieldBorderClass(formErrors, 'address')
+                    ]"
+                    placeholder="Rua, número, bairro..."
+                  />
+                  <p v-if="formErrors.address" class="text-sm text-red-500 mt-1">{{ formErrors.address }}</p>
                 </div>
                 
                 <div>
@@ -402,12 +434,23 @@ const showCreateModal = ref(false)
 const editingClient = ref(null)
 const clientToDelete = ref(null)
 
+const { getMessage, mapFieldErrors, fieldBorderClass, clearFormErrors } = useApiError()
+
+const formErrors = reactive({
+  name: '',
+  email: '',
+  phone: '',
+  birthDate: '',
+  address: '',
+})
+
 const clientForm = reactive({
   name: '',
   phone: '',
   email: '',
+  address: '',
   observations: '',
-   birthDate: ''
+  birthDate: ''
 })
 
 // Computed
@@ -418,7 +461,7 @@ const filteredClients = computed(() => {
     const term = searchTerm.value.toLowerCase()
     filtered = filtered.filter(client =>
       client.name.toLowerCase().includes(term) ||
-      client.phone.includes(term) ||
+      client.phone?.includes(term) ||
       client.email?.toLowerCase().includes(term)
     )
   }
@@ -452,19 +495,27 @@ const getNewClientsThisMonth = () => {
   }).length
 }
 
+const formatDateForInput = (value) => {
+  if (!value) return ''
+  return new Date(value).toISOString().split('T')[0]
+}
+
 const loadClients = async () => {
   try {
     const { $api } = useNuxtApp()
-    
-    const response = await $api('/clients', {
+
+    const includeInactive = statusFilter.value === '' || statusFilter.value === 'false'
+    const url = includeInactive ? '/clients?includeInactive=true' : '/clients'
+
+    const response = await $api(url, {
       method: 'GET'
     })
-    
+
     clients.value = Array.isArray(response) ? response : (response.data || [])
   } catch (error) {
     console.error('Erro ao carregar clientes:', error)
     const toast = useToast()
-    toast.error('Erro ao carregar lista de clientes')
+    toast.error(getMessage(error, 'Erro ao carregar lista de clientes'))
   } finally {
     loading.value = false
   }
@@ -475,14 +526,24 @@ const resetForm = () => {
     name: '',
     phone: '',
     email: '',
+    address: '',
     birthDate: '',
     observations: ''
   })
+  clearFormErrors(formErrors)
 }
 
 const editClient = (client) => {
   editingClient.value = client
-  Object.assign(clientForm, client)
+  clearFormErrors(formErrors)
+  Object.assign(clientForm, {
+    name: client.name ?? '',
+    phone: client.phone ?? '',
+    email: client.email ?? '',
+    address: client.address ?? '',
+    birthDate: formatDateForInput(client.birthDate),
+    observations: client.observations ?? '',
+  })
   showCreateModal.value = false
 }
 
@@ -494,50 +555,56 @@ const closeModal = () => {
 
 const saveClient = async () => {
   saving.value = true
-  
+  clearFormErrors(formErrors)
+
   try {
     const { $api } = useNuxtApp()
     const toast = useToast()
-    
+
     const method = editingClient.value ? 'PATCH' : 'POST'
     const url = editingClient.value ? `/clients/${editingClient.value.id}` : '/clients'
-    
+
     const clientData = {
       name: clientForm.name.trim()
     }
-    
+
     if (clientForm.email && clientForm.email.trim()) {
       clientData.email = clientForm.email.trim()
     }
-    
+
     if (clientForm.phone && clientForm.phone.trim()) {
       clientData.phone = clientForm.phone.trim()
     }
-    
+
+    if (clientForm.address && clientForm.address.trim()) {
+      clientData.address = clientForm.address.trim()
+    }
+
     if (clientForm.observations && clientForm.observations.trim()) {
       clientData.observations = clientForm.observations.trim()
     }
-    
+
     if (clientForm.birthDate) {
-    clientData.birthDate = clientForm.birthDate
-  }
+      clientData.birthDate = clientForm.birthDate
+    }
 
     await $api(url, {
       method,
       body: clientData
     })
-    
+
     await loadClients()
     closeModal()
-    
+
     toast.success(
       editingClient.value ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!'
     )
   } catch (error) {
     console.error('Erro ao salvar cliente:', error)
     const toast = useToast()
-    const errorMessage = error.response?.data?.message || 'Erro ao salvar cliente'
-    toast.error(Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage)
+    const message = getMessage(error, 'Erro ao salvar cliente')
+    Object.assign(formErrors, mapFieldErrors(error))
+    toast.error(message)
   } finally {
     saving.value = false
   }
@@ -564,11 +631,15 @@ const deleteClient = async () => {
   } catch (error) {
     console.error('Erro ao excluir cliente:', error)
     const toast = useToast()
-    toast.error('Erro ao excluir cliente')
+    toast.error(getMessage(error, 'Erro ao excluir cliente'))
   } finally {
     deleting.value = false
   }
 }
+
+watch(statusFilter, () => {
+  loadClients()
+})
 
 // Lifecycle
 onMounted(() => {

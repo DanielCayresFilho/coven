@@ -11,6 +11,7 @@ import { EntryAnalyticsService } from '../entry-analytics/entry-analytics.servic
 import { OutAnalyticsService } from '../out-analytics/out-analytics.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { FinishComandaDto } from './dto/finish-comanda.dto';
 import { AppointmentStatus } from '@prisma/client';
 
 @Injectable()
@@ -246,11 +247,13 @@ export class AppointmentsService {
   }
 
   async updateStatus(id: string, status: AppointmentStatus) {
-    const appointment = await this.findOne(id);
-    if (status === 'CONCLUIDO' && appointment.status !== 'CONCLUIDO') {
-      await this.consumeProducts(appointment);
-      await this.createFinancialTransactionForAppointment(appointment);
+    if (status === 'CONCLUIDO') {
+      throw new BadRequestException(
+        'Use POST /appointments/:id/finish para finalizar a comanda',
+      );
     }
+
+    await this.findOne(id);
     return this.prisma.appointment.update({
       where: { id },
       data: { status },
@@ -355,6 +358,26 @@ export class AppointmentsService {
     return conflicts.length === 0;
   }
 
+  private assertComandaEditable(appointment: {
+    status: string;
+    comandaOpenedAt: Date | null;
+    comandaClosedAt: Date | null;
+  }): void {
+    if (appointment.comandaClosedAt) {
+      throw new BadRequestException('Comanda fechada não permite alterações');
+    }
+    if (!appointment.comandaOpenedAt) {
+      throw new BadRequestException('Abra a comanda antes de adicionar itens');
+    }
+    if (appointment.status !== 'CONFIRMADO') {
+      throw new BadRequestException('Comanda não está em estado editável');
+    }
+  }
+
+  private roundMoney(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  }
+
   private async validateTimeConflict(
     userId: string,
     startTime: Date,
@@ -432,7 +455,7 @@ export class AppointmentsService {
     }
 
     // Registra 50% do valor como receita parcial no financeiro
-    const partialPayment = Number(appointment.totalPrice) * 0.5;
+    const partialPayment = this.roundMoney(Number(appointment.totalPrice) * 0.5);
 
     await this.prisma.$transaction(async (tx) => {
       // Atualiza o status para CONFIRMADO
@@ -456,6 +479,14 @@ export class AppointmentsService {
 
     if (appointment.status !== 'CONFIRMADO') {
       throw new BadRequestException('Apenas agendamentos confirmados podem ter a comanda aberta');
+    }
+
+    if (appointment.comandaClosedAt) {
+      throw new BadRequestException('Comanda já foi fechada');
+    }
+
+    if (appointment.comandaOpenedAt) {
+      throw new BadRequestException('Comanda já está aberta');
     }
 
     return this.prisma.appointment.update({
@@ -488,96 +519,92 @@ export class AppointmentsService {
 
   async addProductToComanda(appointmentId: string, productId: string, quantity: number) {
     const appointment = await this.findOne(appointmentId);
+    this.assertComandaEditable(appointment);
 
-    if (!['AGENDADO', 'CONFIRMADO'].includes(appointment.status)) {
-      throw new BadRequestException('Apenas agendamentos ativos podem receber produtos');
-    }
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.product.findUnique({ where: { id: productId } });
+      if (!product) {
+        throw new NotFoundException('Produto não encontrado');
+      }
 
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
-    if (!product) {
-      throw new NotFoundException('Produto não encontrado');
-    }
+      const quantityToUse = quantity;
+      let unitCost = 0;
 
-    // Calcula custo baseado no tipo de produto
-    let quantityToUse = quantity;
-    let unitCost = 0;
+      if (product.type === 'USO_INTERNO' && product.unitQuantity) {
+        const remainingAvailable = Number(product.usableAmount) || 0;
+        const totalCapacity = product.stock * Number(product.unitQuantity);
 
-    if (product.type === 'USO_INTERNO' && product.unitQuantity) {
-      // Para produtos por medida, verifica o estoque usando usableAmount
-      const remainingAvailable = Number(product.usableAmount) || 0;
-      const totalCapacity = product.stock * Number(product.unitQuantity);
+        if (quantity > remainingAvailable) {
+          if (remainingAvailable <= 0) {
+            throw new BadRequestException(
+              `Produto esgotado. Necessário repor estoque. Total em ${product.stock} ${product.unit} já foi usado completamente.`,
+            );
+          }
+          throw new BadRequestException(
+            `Estoque insuficiente. Disponível: ${remainingAvailable}${product.unitMeasurement} de ${totalCapacity}${product.unitMeasurement} total`,
+          );
+        }
 
-      if (quantity > remainingAvailable) {
-        if (remainingAvailable <= 0) {
-          throw new BadRequestException(`Produto esgotado. Necessário repor estoque. Total em ${product.stock} ${product.unit} já foi usado completamente.`);
-        } else {
-          throw new BadRequestException(`Estoque insuficiente. Disponível: ${remainingAvailable}${product.unitMeasurement} de ${totalCapacity}${product.unitMeasurement} total`);
+        if (product.price) {
+          unitCost = this.roundMoney(
+            Number(product.price) / Number(product.unitQuantity),
+          );
+        }
+      } else {
+        if (quantity > product.stock) {
+          throw new BadRequestException(
+            `Estoque insuficiente. Disponível: ${product.stock} ${product.unit || 'un'}`,
+          );
+        }
+
+        if (product.price) {
+          unitCost = this.roundMoney(Number(product.price));
         }
       }
 
-      if (product.price) {
-        // Custo por unidade de medida (ex: por ml)
-        unitCost = Number(product.price) / Number(product.unitQuantity);
-      }
-    } else {
-      // Para produtos de uso interno ou venda direta
-      if (quantity > product.stock) {
-        throw new BadRequestException(`Estoque insuficiente. Disponível: ${product.stock} ${product.unit || 'un'}`);
+      const totalCost = this.roundMoney(unitCost * quantityToUse);
+
+      const productUsage = await tx.productUsage.create({
+        data: {
+          appointmentId,
+          productId,
+          quantityUsed: quantityToUse,
+          unitCost,
+          totalCost: product.addToCost ? totalCost : 0,
+        },
+      });
+
+      if (product.type === 'USO_INTERNO' && product.unitQuantity) {
+        const currentUsable = Number(product.usableAmount) || 0;
+        const newUsable = Math.max(0, currentUsable - quantityToUse);
+
+        await tx.product.update({
+          where: { id: productId },
+          data: { usableAmount: newUsable },
+        });
+      } else {
+        await tx.product.update({
+          where: { id: productId },
+          data: { stock: Math.max(0, product.stock - quantityToUse) },
+        });
+
+        await tx.stockMovement.create({
+          data: {
+            productId,
+            type: 'DESPESA',
+            quantity: Math.ceil(quantityToUse),
+            reason: `Comanda ${appointmentId}`,
+          },
+        });
       }
 
-      if (product.price) {
-        unitCost = Number(product.price);
-      }
-    }
-
-    const totalCost = unitCost * quantity;
-
-    // Registra o uso do produto
-    const productUsage = await this.prisma.productUsage.create({
-      data: {
-        appointmentId,
-        productId,
-        quantityUsed: quantity,
-        unitCost,
-        totalCost: product.addToCost ? totalCost : 0, // Só calcula custo se marcado
-      }
+      return productUsage;
     });
-
-    // Atualiza o estoque
-    if (product.type === 'USO_INTERNO' && product.unitQuantity) {
-      // Para produtos por medida, reduz apenas o usableAmount, não o stock
-      // O stock representa quantas unidades físicas temos
-      // O usableAmount representa quanto ainda pode ser usado em ML
-      const currentUsable = Number(product.usableAmount) || 0;
-      const newUsable = Math.max(0, currentUsable - quantity);
-
-      await this.prisma.product.update({
-        where: { id: productId },
-        data: { usableAmount: newUsable }
-      });
-
-      console.log(`✓ Registrado uso de ${quantity}${product.unitMeasurement} de ${product.name}. Restam ${newUsable}${product.unitMeasurement} usáveis.`);
-    } else {
-      // Para produtos unitários, reduz normalmente o stock
-      await this.prisma.product.update({
-        where: { id: productId },
-        data: { stock: Math.max(0, product.stock - quantity) }
-      });
-    }
-
-    return productUsage;
   }
 
   async addProcedureToComanda(appointmentId: string, procedureId: string, customPrice?: number) {
     const appointment = await this.findOne(appointmentId);
-
-    if (appointment.status === 'CANCELADO' || appointment.status === 'CONCLUIDO') {
-      throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos cancelados ou concluídos');
-    }
-
-    if (appointment.status === 'BLOQUEADO') {
-      throw new BadRequestException('Não é possível adicionar procedimentos a agendamentos bloqueados');
-    }
+    this.assertComandaEditable(appointment);
 
     const procedure = await this.prisma.procedure.findUnique({ where: { id: procedureId } });
     if (!procedure) {
@@ -599,24 +626,26 @@ export class AppointmentsService {
     }
 
     // Adiciona o procedimento ao agendamento
-    const finalPrice = customPrice !== undefined ? customPrice : Number(procedure.price);
+    const finalPrice = customPrice !== undefined
+      ? this.roundMoney(customPrice)
+      : this.roundMoney(Number(procedure.price));
 
     return this.prisma.$transaction(async (tx) => {
-      // Cria a relação do procedimento
       const appointmentProcedure = await tx.appointmentProcedure.create({
         data: {
           appointmentId,
           procedureId,
-          price: finalPrice
-        }
+          price: finalPrice,
+        },
       });
 
-      // Atualiza o preço total do agendamento
       const currentAppointment = await tx.appointment.findUnique({ where: { id: appointmentId } });
       if (!currentAppointment) {
-        throw new Error('Appointment not found');
+        throw new NotFoundException('Agendamento não encontrado');
       }
-      const newTotalPrice = Number(currentAppointment.totalPrice || 0) + finalPrice;
+      const newTotalPrice = this.roundMoney(
+        Number(currentAppointment.totalPrice || 0) + finalPrice,
+      );
 
       await tx.appointment.update({
         where: { id: appointmentId },
@@ -627,76 +656,86 @@ export class AppointmentsService {
     });
   }
 
-  async finishComanda(appointmentId: string, finishData: {
-    paymentMethod: string;
-    discount?: number;
-    finalPrice?: number;
-  }) {
+  async finishComanda(appointmentId: string, finishData: FinishComandaDto) {
     const appointment = await this.findOne(appointmentId);
+
+    if (appointment.comandaClosedAt) {
+      throw new BadRequestException('Esta comanda já foi finalizada');
+    }
+
+    if (!appointment.comandaOpenedAt) {
+      throw new BadRequestException('A comanda precisa estar aberta antes de ser finalizada');
+    }
 
     if (appointment.status !== 'CONFIRMADO') {
       throw new BadRequestException('Apenas agendamentos confirmados podem ser finalizados');
     }
 
-    // Busca os produtos utilizados
     const productUsages = await this.prisma.productUsage.findMany({
       where: { appointmentId },
-      include: { product: true }
+      include: { product: true },
     });
 
-    // Calcula taxas de cartão
-    let cardTax = 0;
-    let finalPrice = finishData.finalPrice || Number(appointment.totalPrice);
+    const basePrice = this.roundMoney(
+      finishData.finalPrice ?? Number(appointment.totalPrice),
+    );
+    const discount = this.roundMoney(finishData.discount ?? 0);
 
-    if (finishData.discount) {
-      finalPrice -= finishData.discount;
+    if (discount > basePrice) {
+      throw new BadRequestException('Desconto não pode ser maior que o valor total');
     }
 
-    // Aplica taxas de cartão
+    const priceAfterDiscount = this.roundMoney(basePrice - discount);
+    const partialPaid = this.roundMoney(Number(appointment.partialPayment ?? 0));
+    const amountDue = this.roundMoney(Math.max(0, priceAfterDiscount - partialPaid));
+
+    let cardTax = 0;
     switch (finishData.paymentMethod) {
       case 'CARTAO_DEBITO':
-        cardTax = 0.0279; // 2.79%
+        cardTax = 0.0279;
         break;
       case 'CARTAO_CREDITO_1X':
-        cardTax = 0.0599; // 5.99%
+        cardTax = 0.0599;
         break;
       case 'CARTAO_CREDITO_2X':
-        cardTax = 0.1139; // 11.39%
+        cardTax = 0.1139;
         break;
       case 'CARTAO_CREDITO_3X':
-        cardTax = 0.1249; // 12.49%
+        cardTax = 0.1249;
         break;
       case 'CARTAO_CREDITO_ACIMA_3X':
-        // Taxa repassada ao cliente, não desconta
         cardTax = 0;
         break;
       default:
         cardTax = 0;
     }
 
-    const taxAmount = finalPrice * cardTax;
-    const finalAmountAfterTax = finalPrice - taxAmount;
+    const taxAmount = this.roundMoney(amountDue * cardTax);
+    const finalAmountAfterTax = this.roundMoney(amountDue - taxAmount);
+    const totalNetRevenue = this.roundMoney(partialPaid + finalAmountAfterTax);
 
-    return this.prisma.$transaction(async (tx) => {
-      // Atualiza o agendamento
-      const updatedAppointment = await tx.appointment.update({
+    const updatedAppointment = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.appointment.update({
         where: { id: appointmentId },
         data: {
           status: 'CONCLUIDO',
-          paymentMethod: finishData.paymentMethod as any,
-          discount: finishData.discount,
-          finalPrice: finalAmountAfterTax,
+          paymentMethod: finishData.paymentMethod,
+          discount,
+          finalPrice: totalNetRevenue,
           cardTax,
           comandaClosedAt: new Date(),
           paymentData: JSON.stringify({
-            originalPrice: Number(appointment.totalPrice),
-            discount: finishData.discount || 0,
-            priceBeforeTax: finalPrice,
+            originalPrice: this.roundMoney(Number(appointment.totalPrice)),
+            discount,
+            priceAfterDiscount,
+            partialPayment: partialPaid,
+            amountDue,
             taxRate: cardTax,
             taxAmount,
-            finalAmount: finalAmountAfterTax
-          })
-        }
+            closingAmount: finalAmountAfterTax,
+            totalNetRevenue,
+          }),
+        },
       });
 
       if (appointment.clientId) {
@@ -706,82 +745,196 @@ export class AppointmentsService {
         });
       }
 
-      // Criar receita financeira para cada procedimento da comanda
-      try {
-        for (const ap of appointment.procedures) {
-          const procedureName = ap.procedure.name;
-          const amount = Number(ap.price || 0);
-          if (amount <= 0) continue;
+      for (const ap of appointment.procedures) {
+        const procedureName = ap.procedure.name;
+        const amount = this.roundMoney(Number(ap.price || 0));
+        if (amount <= 0) continue;
 
-          let category = await tx.entryMoneyCategory.findUnique({
-            where: { name: procedureName },
+        let category = await tx.entryMoneyCategory.findUnique({
+          where: { name: procedureName },
+        });
+        if (!category) {
+          category = await tx.entryMoneyCategory.create({
+            data: { name: procedureName },
           });
-          if (!category) {
-            category = await tx.entryMoneyCategory.create({
-              data: { name: procedureName },
-            });
-          }
+        }
 
-          await tx.entryAnalytic.create({
+        await tx.entryAnalytic.create({
+          data: {
+            date: appointment.date || new Date(),
+            entryMoneyCategoryId: category.id,
+            clientId: appointment.clientId ?? undefined,
+            description: `Comanda finalizada - ${appointment.client?.name || 'Cliente'}`,
+            amount,
+          },
+        });
+      }
+
+      const costUsages = productUsages.filter((usage) => usage.product.addToCost);
+
+      if (costUsages.length > 0) {
+        let costCategory = await tx.costVariableCategory.findUnique({
+          where: { name: 'Produtos Utilizados' },
+        });
+        if (!costCategory) {
+          costCategory = await tx.costVariableCategory.create({
+            data: { name: 'Produtos Utilizados' },
+          });
+        }
+
+        const totalProductCosts = this.roundMoney(
+          costUsages.reduce(
+            (sum, usage) => sum + Number(usage.totalCost || 0),
+            0,
+          ),
+        );
+
+        if (totalProductCosts > 0) {
+          const productDescriptions = costUsages
+            .map(
+              (usage) =>
+                `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`,
+            )
+            .join(', ');
+
+          await tx.outAnalytic.create({
             data: {
               date: appointment.date || new Date(),
-              entryMoneyCategoryId: category.id,
-              clientId: appointment.clientId ?? undefined,
-              description: `Comanda finalizada - ${appointment.client?.name || 'Cliente'}`,
-              amount,
+              costVariableCategoryId: costCategory.id,
+              description: `Produtos usados - ${appointment.client?.name || 'Cliente'} - ${productDescriptions}`,
+              amount: totalProductCosts,
             },
           });
         }
-      } catch (error) {
-        console.error('Erro ao criar entrada financeira na comanda:', error);
       }
 
-      // Registra custos dos produtos como saídas financeiras
-      const costUsages = productUsages.filter(usage => usage.product.addToCost);
+      return result;
+    });
 
-      if (costUsages.length > 0) {
-        try {
-          let costCategory = await tx.costVariableCategory.findUnique({
-            where: { name: 'Produtos Utilizados' },
+    if (totalNetRevenue > 0) {
+      await this.goalsService.updateGoalsForCompletedAppointment(
+        totalNetRevenue,
+        appointment.date,
+      );
+    }
+
+    return updatedAppointment;
+  }
+
+  async cancelComanda(id: string) {
+    const appointment = await this.findOne(id);
+
+    if (appointment.status === 'CANCELADO') {
+      throw new BadRequestException('Comanda já está cancelada');
+    }
+
+    const productUsages = appointment.productUsages ?? [];
+
+    const { updatedAppointment, totalReversed } = await this.prisma.$transaction(
+      async (tx) => {
+        let totalReversed = 0;
+
+        for (const usage of productUsages) {
+          const product = await tx.product.findUnique({
+            where: { id: usage.productId },
           });
-          if (!costCategory) {
-            costCategory = await tx.costVariableCategory.create({
-              data: { name: 'Produtos Utilizados' },
-            });
+          if (!product) {
+            continue;
           }
 
-          const totalProductCosts = costUsages.reduce(
-            (sum, usage) => sum + Number(usage.totalCost || 0), 0,
-          );
+          const quantityReturned = Number(usage.quantityUsed);
 
-          if (totalProductCosts > 0) {
-            const productDescriptions = costUsages
-              .map(usage => `${usage.product.name}: ${usage.quantityUsed}${usage.product.unitMeasurement || usage.product.unit || 'un'}`)
-              .join(', ');
-
-            await tx.outAnalytic.create({
+          if (product.type === 'USO_INTERNO' && product.unitQuantity) {
+            const currentUsable = Number(product.usableAmount) || 0;
+            await tx.product.update({
+              where: { id: usage.productId },
+              data: { usableAmount: currentUsable + quantityReturned },
+            });
+          } else {
+            await tx.product.update({
+              where: { id: usage.productId },
               data: {
-                date: appointment.date || new Date(),
-                costVariableCategoryId: costCategory.id,
-                description: `Produtos usados - ${appointment.client?.name || 'Cliente'} - ${productDescriptions}`,
-                amount: totalProductCosts,
+                stock: product.stock + Math.ceil(quantityReturned),
               },
             });
+
+            if (product.type === 'VENDA_DIRETA') {
+              await tx.stockMovement.create({
+                data: {
+                  productId: usage.productId,
+                  type: 'RECEITA',
+                  quantity: Math.ceil(quantityReturned),
+                  reason: `Estorno de Cancelamento - Comanda ${id}`,
+                },
+              });
+            }
           }
-        } catch (error) {
-          console.error('Erro ao criar saída financeira de produtos:', error);
         }
-      }
 
-      // Atualiza as metas automaticamente quando a comanda é finalizada
-      if (finalAmountAfterTax > 0) {
-        await this.goalsService.updateGoalsForCompletedAppointment(
-          finalAmountAfterTax,
-          appointment.date,
-        );
-      }
+        await tx.productUsage.deleteMany({ where: { appointmentId: id } });
 
-      return updatedAppointment;
-    });
+        if (appointment.comandaClosedAt) {
+          const finishDescription = `Comanda finalizada - ${appointment.client?.name || 'Cliente'}`;
+          const procedureNames = appointment.procedures.map(
+            (ap) => ap.procedure.name,
+          );
+
+          if (procedureNames.length > 0) {
+            const categories = await tx.entryMoneyCategory.findMany({
+              where: { name: { in: procedureNames } },
+            });
+            const categoryIds = categories.map((category) => category.id);
+
+            if (categoryIds.length > 0) {
+              const originalEntries = await tx.entryAnalytic.findMany({
+                where: {
+                  ...(appointment.clientId
+                    ? { clientId: appointment.clientId }
+                    : {}),
+                  description: finishDescription,
+                  entryMoneyCategoryId: { in: categoryIds },
+                  amount: { gt: 0 },
+                },
+              });
+
+              for (const entry of originalEntries) {
+                const entryAmount = this.roundMoney(Number(entry.amount));
+                if (entryAmount <= 0) {
+                  continue;
+                }
+
+                totalReversed += entryAmount;
+
+                await tx.entryAnalytic.create({
+                  data: {
+                    date: entry.date,
+                    entryMoneyCategoryId: entry.entryMoneyCategoryId,
+                    clientId: entry.clientId,
+                    description: `[ESTORNO] ${entry.description || finishDescription}`,
+                    amount: -Math.abs(entryAmount),
+                  },
+                });
+              }
+            }
+          }
+        }
+
+        const updatedAppointment = await tx.appointment.update({
+          where: { id },
+          data: { status: 'CANCELADO' },
+        });
+
+        return { updatedAppointment, totalReversed };
+      },
+    );
+
+    if (totalReversed > 0) {
+      await this.goalsService.updateGoalsForCompletedAppointment(
+        -totalReversed,
+        appointment.date,
+      );
+    }
+
+    return updatedAppointment;
   }
 }

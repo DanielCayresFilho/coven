@@ -133,7 +133,12 @@
                 {{ entry.description || '-' }}
               </td>
               <td class="py-4 px-6 text-right">
-                <span class="text-sm font-bold text-green-600 dark:text-green-400">
+                <span
+                  class="text-sm font-bold"
+                  :class="Number(entry.amount) < 0
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-green-600 dark:text-green-400'"
+                >
                   {{ formatCurrency(entry.amount) }}
                 </span>
               </td>

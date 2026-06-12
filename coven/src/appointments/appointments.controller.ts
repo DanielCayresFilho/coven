@@ -12,6 +12,8 @@ import {
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { FinishComandaDto } from './dto/finish-comanda.dto';
+import { AddProductToComandaDto } from './dto/add-product-to-comanda.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AppointmentStatus } from '@prisma/client';
 
@@ -90,12 +92,12 @@ export class AppointmentsController {
   @Post(':id/products')
   addProductToComanda(
     @Param('id') appointmentId: string,
-    @Body() body: { productId: string; quantity: number }
+    @Body() body: AddProductToComandaDto,
   ) {
     return this.appointmentsService.addProductToComanda(
       appointmentId,
       body.productId,
-      body.quantity
+      body.quantity,
     );
   }
 
@@ -114,12 +116,13 @@ export class AppointmentsController {
   @Post(':id/finish')
   finishComanda(
     @Param('id') appointmentId: string,
-    @Body() finishData: {
-      paymentMethod: string;
-      discount?: number;
-      finalPrice?: number;
-    }
+    @Body() finishData: FinishComandaDto,
   ) {
     return this.appointmentsService.finishComanda(appointmentId, finishData);
+  }
+
+  @Post(':id/cancel')
+  cancelComanda(@Param('id') appointmentId: string) {
+    return this.appointmentsService.cancelComanda(appointmentId);
   }
 }

@@ -1,7 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class AddProductToProcedureDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID('4', { message: 'ID do produto inválido' })
   productId: string;
 }

@@ -730,6 +730,12 @@ const deleteBlock = async () => {
 
 const handleEventDrop = async (info) => {
   const appointment = info.event.extendedProps.appointment
+  if (['CONCLUIDO', 'CANCELADO', 'BLOQUEADO'].includes(appointment.status)) {
+    info.revert()
+    useToast().error('Este agendamento não pode ter seu horário alterado.')
+    return
+  }
+
   const newStart = info.event.start
   const newEnd = info.event.end
 
@@ -754,6 +760,12 @@ const handleEventDrop = async (info) => {
 
 const handleEventResize = async (info) => {
   const appointment = info.event.extendedProps.appointment
+  if (['CONCLUIDO', 'CANCELADO', 'BLOQUEADO'].includes(appointment.status)) {
+    info.revert()
+    useToast().error('Este agendamento não pode ter seu horário alterado.')
+    return
+  }
+
   const newEnd = info.event.end
 
   try {
@@ -861,7 +873,8 @@ const calendarEvents = computed(() => {
     end: appointment.endTime,
     backgroundColor: getStatusColor(appointment.status),
     borderColor: getStatusColor(appointment.status),
-    textColor: '#ffffff',
+    textColor: appointment.status === 'RETORNO' ? '#1f2937' : '#ffffff',
+    editable: !['CONCLUIDO', 'CANCELADO', 'BLOQUEADO'].includes(appointment.status),
     extendedProps: {
       appointment: appointment,
       professional: appointment.user?.name || 'Sem profissional',

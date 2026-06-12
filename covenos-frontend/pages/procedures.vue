@@ -263,14 +263,25 @@
                       v-model="procedureForm.name"
                       type="text"
                       required
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'name')
+                      ]"
                       placeholder="Nome do procedimento"
                     />
+                    <p v-if="formErrors.name" class="text-sm text-red-500 mt-1">{{ formErrors.name }}</p>
                   </div>
                   
                   <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
-                    <select v-model="procedureForm.category" required class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors">
+                    <select
+                      v-model="procedureForm.category"
+                      required
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'category')
+                      ]"
+                    >
                       <option value="">Selecione uma categoria</option>
                       <option value="CABELO">Cabelo</option>
                       <option value="ALISAMENTO">Alisamento</option>
@@ -283,6 +294,7 @@
                       <option value="ESTETICA_CORPORAL">Estética Corporal</option>
                       <option value="OUTROS">Outros</option>
                     </select>
+                    <p v-if="formErrors.category" class="text-sm text-red-500 mt-1">{{ formErrors.category }}</p>
                   </div>
                 </div>
                 
@@ -304,9 +316,13 @@
                       type="number"
                       required
                       min="1"
-                      class="w-full px-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                      :class="[
+                        'w-full px-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                        fieldBorderClass(formErrors, 'duration')
+                      ]"
                       placeholder="60"
                     />
+                    <p v-if="formErrors.duration" class="text-sm text-red-500 mt-1">{{ formErrors.duration }}</p>
                   </div>
                   
                   <div>
@@ -319,10 +335,14 @@
                         step="0.01"
                         required
                         min="0"
-                        class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500 dark:focus:border-purple-500 transition-colors"
+                        :class="[
+                          'w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800/50 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors',
+                          fieldBorderClass(formErrors, 'price')
+                        ]"
                         placeholder="0,00"
                       />
                     </div>
+                    <p v-if="formErrors.price" class="text-sm text-red-500 mt-1">{{ formErrors.price }}</p>
                   </div>
                 </div>
 
@@ -344,12 +364,12 @@
                 
                 <div class="flex items-center space-x-3 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
                   <input
-                    v-model="procedureForm.isActive"
+                    v-model="procedureForm.active"
                     type="checkbox"
-                    id="isActive"
+                    id="active"
                     class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded focus:ring-blue-500 dark:focus:ring-purple-500 focus:ring-2"
                   />
-                  <label for="isActive" class="text-sm text-gray-700 dark:text-gray-300">
+                  <label for="active" class="text-sm text-gray-700 dark:text-gray-300">
                     <strong>Procedimento ativo</strong>
                     <br>
                     <span class="text-xs text-gray-600 dark:text-gray-400">
@@ -480,13 +500,22 @@ const showCreateModal = ref(false)
 const editingProcedure = ref(null)
 const procedureToDelete = ref(null)
 
+const { getMessage, mapFieldErrors, fieldBorderClass, clearFormErrors } = useApiError()
+
+const formErrors = reactive({
+  name: '',
+  category: '',
+  duration: '',
+  price: '',
+})
+
 const procedureForm = reactive({
   name: '',
   category: '',
   description: '',
   duration: '',
   price: '',
-  isActive: true
+  active: true
 })
 
 // Computed
@@ -514,7 +543,7 @@ const filteredProcedures = computed(() => {
 })
 
 const activeProcedures = computed(() => {
-  return procedures.value.filter(p => p.isActive).length
+  return procedures.value.filter(p => p.active).length
 })
 
 const averageDuration = computed(() => {
@@ -587,20 +616,22 @@ const resetForm = () => {
     description: '',
     duration: '',
     price: '',
-    isActive: true
+    active: true
   })
+  clearFormErrors(formErrors)
 }
 
 const editProcedure = (procedure) => {
   editingProcedure.value = procedure
-  
+  clearFormErrors(formErrors)
+
   Object.assign(procedureForm, {
     name: procedure.name,
     category: procedure.category,
     description: procedure.description || '',
     duration: procedure.duration,
     price: procedure.price,
-    isActive: procedure.active
+    active: procedure.active
   })
   showCreateModal.value = false
 }
@@ -613,37 +644,46 @@ const closeModal = () => {
 
 const saveProcedure = async () => {
   saving.value = true
-  
+  clearFormErrors(formErrors)
+
+  const price = parseFloat(procedureForm.price)
+  if (Number.isNaN(price) || price < 0) {
+    const message = 'Informe um preço válido maior ou igual a zero'
+    formErrors.price = message
+    useToast().error(message)
+    saving.value = false
+    return
+  }
+
   try {
     const { $api } = useNuxtApp()
     const token = useCookie('covenos-token')
-    
+
     const payload = {
       name: procedureForm.name,
       category: procedureForm.category,
       description: procedureForm.description,
       duration: parseInt(procedureForm.duration),
-      price: parseFloat(procedureForm.price),
-      active: procedureForm.isActive
+      price,
+      active: procedureForm.active
     }
-    
+
     const method = editingProcedure.value ? 'PATCH' : 'POST'
-    const url = editingProcedure.value 
-      ? `/procedures/${editingProcedure.value.id}` 
+    const url = editingProcedure.value
+      ? `/procedures/${editingProcedure.value.id}`
       : '/procedures'
-    
-    const response = await $api(url, {
+
+    await $api(url, {
       method,
       headers: {
         'Authorization': `Bearer ${token.value}`
       },
       body: payload
     })
-    
-    
+
     await loadData()
     closeModal()
-    
+
     const toast = useToast()
     toast.success(
       editingProcedure.value ? 'Procedimento atualizado com sucesso!' : 'Procedimento criado com sucesso!'
@@ -651,7 +691,9 @@ const saveProcedure = async () => {
   } catch (error) {
     console.error('Erro ao salvar procedimento:', error)
     const toast = useToast()
-    toast.error('Erro ao salvar procedimento')
+    const message = getMessage(error, 'Erro ao salvar procedimento')
+    Object.assign(formErrors, mapFieldErrors(error))
+    toast.error(message)
   } finally {
     saving.value = false
   }
@@ -661,7 +703,7 @@ const toggleProcedureStatus = async (procedure) => {
   try {
     const { $api } = useNuxtApp()
     const token = useCookie('covenos-token')
-    
+
     await $api(`/procedures/${procedure.id}`, {
       method: 'PATCH',
       headers: {
@@ -671,10 +713,11 @@ const toggleProcedureStatus = async (procedure) => {
         active: !procedure.active
       }
     })
-    
+
     await loadData()
   } catch (error) {
     console.error('Erro ao alterar status do procedimento:', error)
+    useToast().error(getMessage(error, 'Erro ao alterar status do procedimento'))
   }
 }
 
@@ -698,8 +741,10 @@ const deleteProcedure = async () => {
     
     await loadData()
     procedureToDelete.value = null
+    useToast().success('Procedimento excluído com sucesso!')
   } catch (error) {
     console.error('Erro ao excluir procedimento:', error)
+    useToast().error(getMessage(error, 'Erro ao excluir procedimento'))
   } finally {
     deleting.value = false
   }

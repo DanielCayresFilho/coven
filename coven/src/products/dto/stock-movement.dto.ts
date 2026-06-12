@@ -1,16 +1,15 @@
 import {
   IsString,
-  IsNotEmpty,
-  IsNumber,
+  IsInt,
   Min,
   IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class StockMovementDto {
-  @IsNumber()
+  @IsInt({ message: 'Quantidade deve ser um número inteiro' })
   @Type(() => Number)
-  @Min(0.01)
+  @Min(1, { message: 'Quantidade mínima é 1' })
   quantity: number;
 
   @IsString()

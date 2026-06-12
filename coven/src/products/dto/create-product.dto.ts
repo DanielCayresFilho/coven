@@ -5,10 +5,11 @@ import {
   IsNumber,
   IsEnum,
   IsBoolean,
+  IsInt,
   Min,
   ValidateIf,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ProductType } from '@prisma/client';
 
 export class CreateProductDto {
@@ -34,12 +35,12 @@ export class CreateProductDto {
   @Min(0)
   price?: number;
 
-  @IsNumber()
+  @IsInt({ message: 'Estoque deve ser um número inteiro' })
   @Type(() => Number)
   @Min(0)
   stock: number;
 
-  @IsNumber()
+  @IsInt({ message: 'Estoque mínimo deve ser um número inteiro' })
   @Type(() => Number)
   @Min(0)
   minStock: number;
@@ -48,16 +49,18 @@ export class CreateProductDto {
   @IsOptional()
   unit?: string;
 
+  @ValidateIf((o) => o.type === ProductType.USO_INTERNO)
   @IsNumber()
   @Type(() => Number)
-  @IsOptional()
-  @Min(0)
+  @Min(0.01, { message: 'Quantidade por unidade deve ser maior que zero' })
   unitQuantity?: number;
 
+  @ValidateIf((o) => o.type === ProductType.USO_INTERNO)
   @IsString()
-  @IsOptional()
+  @IsNotEmpty({ message: 'Unidade de medida é obrigatória para produtos de uso interno' })
   unitMeasurement?: string;
 
+  @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
   @IsOptional()
   addToCost?: boolean;

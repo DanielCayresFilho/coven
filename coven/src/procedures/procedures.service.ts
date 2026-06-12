@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProcedureDto } from './dto/create-procedure.dto';
 import { UpdateProcedureDto } from './dto/update-procedure.dto';
@@ -91,6 +96,20 @@ export class ProceduresService {
   async addProduct(procedureId: string, productId: string) {
     await this.findOne(procedureId);
 
+    const product = await this.prisma.product.findFirst({
+      where: { id: productId, active: true },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Produto não encontrado');
+    }
+
+    if (product.type !== 'USO_INTERNO') {
+      throw new BadRequestException(
+        'Apenas produtos de uso interno podem ser vinculados a procedimentos',
+      );
+    }
+
     return this.prisma.procedureProduct.upsert({
       where: {
         procedureId_productId: {
@@ -107,14 +126,26 @@ export class ProceduresService {
   }
 
   async removeProduct(procedureId: string, productId: string) {
-    return this.prisma.procedureProduct.delete({
-      where: {
-        procedureId_productId: {
-          procedureId,
-          productId,
+    try {
+      return await this.prisma.procedureProduct.delete({
+        where: {
+          procedureId_productId: {
+            procedureId,
+            productId,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(
+          'Vínculo procedimento-produto não encontrado',
+        );
+      }
+      throw error;
+    }
   }
 
   // Sincroniza um procedimento com EntryMoneyCategory

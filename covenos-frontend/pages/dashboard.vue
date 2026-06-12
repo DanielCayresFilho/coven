@@ -175,7 +175,7 @@
             <!-- Botões para CONFIRMADO -->
             <button
               v-if="comanda.status === 'CONFIRMADO'"
-              @click="openComandaModal(comanda)"
+              @click="handleOpenComanda(comanda)"
               class="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors"
             >
               Abrir Comanda
@@ -438,12 +438,22 @@
                 </p>
               </div>
             </div>
-            <button
-              @click="completeReminder(reminder.id)"
-              class="text-xs px-3 py-1 bg-green-100 dark:bg-green-600/20 border border-green-300 dark:border-green-500/40 rounded-md text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors"
-            >
-              Concluir
-            </button>
+            <div class="flex flex-col gap-2 shrink-0">
+              <button
+                v-if="reminder.type === 'DESPESA_FIXA'"
+                @click="payFixedExpense(reminder)"
+                class="text-xs px-3 py-1 bg-yellow-100 dark:bg-yellow-600/20 border border-yellow-300 dark:border-yellow-500/40 rounded-md text-yellow-800 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-600/30 transition-colors"
+              >
+                Pagar
+              </button>
+              <button
+                v-else
+                @click="completeReminder(reminder.id)"
+                class="text-xs px-3 py-1 bg-green-100 dark:bg-green-600/20 border border-green-300 dark:border-green-500/40 rounded-md text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors"
+              >
+                Concluir
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1309,6 +1319,11 @@ useSeoMeta({
   description: 'Painel principal do sistema Coven Beauty'
 })
 
+const { getMessage } = useApiError()
+const toast = useToast()
+
+const roundMoney = (value) => Math.round((value + Number.EPSILON) * 100) / 100
+
 // State
 const currentDate = ref(new Date().toLocaleDateString('pt-BR', { 
   weekday: 'long', 
@@ -1341,6 +1356,7 @@ const lowStockProducts = ref([])
 const activeComandas = ref([])
 const goals = ref([])
 const reminders = ref([])
+const fixedExpenses = ref([])
 
 const showGoalsModal = ref(false)
 const isSavingGoals = ref(false)
@@ -1493,10 +1509,16 @@ const remindersList = computed(() => {
 
 const calculatedFinish = computed(() => {
   if (!selectedComanda.value || !finishForm.paymentMethod) return null
-  
-  let finalPrice = Number(selectedComanda.value.totalPrice) - (finishForm.discount || 0)
+
+  const totalPrice = Number(selectedComanda.value.totalPrice) || 0
+  const discount = Number(finishForm.discount) || 0
+  const partialPayment = Number(selectedComanda.value.partialPayment) || 0
+
+  const basePrice = roundMoney(totalPrice - discount)
+  const amountDue = roundMoney(Math.max(0, basePrice - partialPayment))
+
   let cardTax = 0
-  
+
   switch (finishForm.paymentMethod) {
     case 'CARTAO_DEBITO':
       cardTax = 0.0279
@@ -1513,14 +1535,16 @@ const calculatedFinish = computed(() => {
     default:
       cardTax = 0
   }
-  
-  const taxAmount = finalPrice * cardTax
-  const finalAmount = finalPrice - taxAmount
-  
+
+  const taxAmount = roundMoney(amountDue * cardTax)
+  const finalAmount = roundMoney(amountDue - taxAmount)
+
   return {
-    finalPrice,
+    basePrice,
+    amountDue,
+    finalPrice: basePrice,
     taxAmount,
-    finalAmount
+    finalAmount,
   }
 })
 
@@ -1577,6 +1601,35 @@ const confirmAppointment = async (comandaId) => {
   }
 }
 
+const handleOpenComanda = async (comanda) => {
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+
+    const response = await $api(`/appointments/${comanda.id}/open-comanda`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token.value}`,
+      },
+    })
+
+    comanda.comandaOpenedAt = response?.comandaOpenedAt || new Date().toISOString()
+
+    const index = activeComandas.value.findIndex((c) => c.id === comanda.id)
+    if (index !== -1) {
+      activeComandas.value[index] = {
+        ...activeComandas.value[index],
+        comandaOpenedAt: comanda.comandaOpenedAt,
+      }
+    }
+
+    toast.success('Comanda aberta com sucesso!')
+    await openComandaModal(comanda)
+  } catch (error) {
+    toast.error(getMessage(error, 'Erro ao abrir comanda'))
+  }
+}
+
 const openComandaModal = async (comanda) => {
   console.log('Abrindo modal para comanda:', comanda)
   selectedComanda.value = comanda
@@ -1586,15 +1639,20 @@ const openComandaModal = async (comanda) => {
 }
 
 const editComandaModal = async (comanda) => {
-  console.log('Editando comanda:', comanda)
-  selectedComanda.value = comanda
-  showProductModal.value = true
-  resetAllForms()
-  await Promise.all([loadProcedures(), loadProducts(), loadComandaDetails(comanda.id)])
+  if (comanda.status === 'CONFIRMADO' && !comanda.comandaOpenedAt) {
+    await handleOpenComanda(comanda)
+    return
+  }
+
+  await openComandaModal(comanda)
 }
 
 const finishComandaModal = (comanda) => {
-  console.log('Finalizando comanda:', comanda)
+  if (!comanda.comandaOpenedAt) {
+    toast.warning('Você precisa abrir a comanda antes de finalizá-la.')
+    return
+  }
+
   selectedComanda.value = comanda
   showFinishModal.value = true
   resetFinishForm()
@@ -1825,6 +1883,55 @@ const saveReminder = async () => {
     await loadDashboardData()
   } catch (error) {
     console.error('Erro ao criar lembrete:', error)
+  }
+}
+
+const FIXED_EXPENSE_REMINDER_PREFIX = 'Pagamento despesa fixa: '
+
+const resolveFixedExpenseFromReminder = (reminder) => {
+  if (reminder.type !== 'DESPESA_FIXA') {
+    return null
+  }
+
+  if (!reminder.title?.startsWith(FIXED_EXPENSE_REMINDER_PREFIX)) {
+    return null
+  }
+
+  const expenseName = reminder.title.slice(FIXED_EXPENSE_REMINDER_PREFIX.length)
+  return fixedExpenses.value.find((expense) => expense.name === expenseName) ?? null
+}
+
+const payFixedExpense = async (reminder) => {
+  const expense = resolveFixedExpenseFromReminder(reminder)
+
+  if (!expense) {
+    toast.error('Não foi possível identificar a despesa fixa deste lembrete.')
+    return
+  }
+
+  const confirmed = confirm(
+    `Deseja confirmar o pagamento de ${formatCurrency(expense.amount)} para ${expense.name}? Isso lançará uma saída no seu fluxo de caixa.`,
+  )
+
+  if (!confirmed) {
+    return
+  }
+
+  try {
+    const { $api } = useNuxtApp()
+    const token = useCookie('covenos-token')
+
+    await $api(`/fixed-expenses/${expense.id}/pay`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+    })
+
+    toast.success('Pagamento registrado com sucesso!')
+    await loadDashboardData()
+  } catch (error) {
+    toast.error(getMessage(error, 'Erro ao registrar pagamento'))
   }
 }
 
@@ -2345,30 +2452,13 @@ const finishComanda = async () => {
       },
       body: JSON.stringify(finishData)
     })
-    
-    console.log('Resposta da API:', response)
-    console.log('Comanda finalizada com sucesso!')
+
+    toast.success('Comanda finalizada com sucesso!')
     closeFinishModal()
     loadDashboardData()
-    
+
   } catch (error) {
-    console.error('Erro ao finalizar comanda:', error)
-    
-    let errorMessage = 'Erro ao finalizar comanda'
-    
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message
-    } else if (error.message) {
-      errorMessage = error.message
-    }
-    
-    // Exibir erros detalhados se houver
-    if (error.response?.data?.errors) {
-      console.error('Erros de validação:', error.response.data.errors)
-      errorMessage += ': ' + Object.values(error.response.data.errors).flat().join(', ')
-    }
-    
-    console.error('Erro ao finalizar comanda:', errorMessage)
+    toast.error(getMessage(error, 'Erro ao finalizar comanda'))
   }
 }
 
@@ -2603,7 +2693,7 @@ const loadDashboardData = async () => {
     // Carregar dados em paralelo
     const today = new Date()
 
-    const [appointmentsResponse, clientsResponse, productsResponse, goalsResponse, remindersResponse] = await Promise.all([
+    const [appointmentsResponse, clientsResponse, productsResponse, goalsResponse, remindersResponse, fixedExpensesResponse] = await Promise.all([
       $api('/appointments', {
         method: 'GET',
         headers: {
@@ -2633,7 +2723,13 @@ const loadDashboardData = async () => {
         headers: {
           'Authorization': `Bearer ${token.value}`
         }
-      }).catch(() => [])
+      }).catch(() => []),
+      $api('/fixed-expenses', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token.value}`
+        }
+      }).catch(() => []),
     ])
     
     appointments.value = appointmentsResponse || []
@@ -2641,6 +2737,10 @@ const loadDashboardData = async () => {
     products.value = productsResponse || []
     goals.value = goalsResponse || []
     reminders.value = remindersResponse || []
+    fixedExpenses.value = (fixedExpensesResponse || []).map((expense) => ({
+      ...expense,
+      amount: Number(expense.amount),
+    }))
     
     // Calcular estatísticas
     const todayStr = today.toISOString().split('T')[0]
