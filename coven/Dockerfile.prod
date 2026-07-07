@@ -8,7 +8,9 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install all dependencies (including devDependencies for build)
-RUN npm ci
+# Force NODE_ENV to ensure devDependencies are installed
+ENV NODE_ENV=development
+RUN npm ci --include=dev
 
 # Copy source code
 COPY . .
